@@ -55,7 +55,7 @@ jobs:
         env:
           OCTOPUS_API_KEY: ${{ secrets.OCTOPUS_API_KEY }}
           OCTOPUS_URL: ${{ secrets.OCTOPUS_URL }}
-          OCTOPUS_SPACE: ${{ secrets.OCTOPUS_SPACE }}
+          OCTOPUS_SPACE: ${{ secrets.OCTOPUS_SPACE_NAME }}
         with:
           packages: EnterprisePatterns.${{ steps.determine_version.outputs.semVer }}.zip
           overwrite_mode: OverwriteExisting
