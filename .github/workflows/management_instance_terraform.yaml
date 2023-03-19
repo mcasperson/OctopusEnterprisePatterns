@@ -29,7 +29,8 @@ jobs:
            --version ${{ steps.determine_version.outputs.semVer }} \
            --format zip \
            --overwrite \
-           --include '**/*'
+           --include 'managed_instances/**/*' \
+           --include 'management_instance/**/*' \
         shell: bash
       - id: create_release
         name: Create Release
