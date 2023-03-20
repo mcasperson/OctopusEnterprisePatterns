@@ -42,6 +42,12 @@ data "octopusdeploy_projects" "provision_hello_world" {
   take                   = 1
 }
 
+data "octopusdeploy_projects" "provision_environments" {
+  partial_name           = "Provision Environments"
+  skip                   = 0
+  take                   = 1
+}
+
 data "octopusdeploy_environments" "production" {
   partial_name = "Production"
   skip         = 0
@@ -62,6 +68,11 @@ resource "octopusdeploy_tenant" "europe" {
   project_environment {
     environments = [data.octopusdeploy_environments.production.environments[0].id]
     project_id   = data.octopusdeploy_projects.provision_hello_world.projects[0].id
+  }
+
+  project_environment {
+    environments = [data.octopusdeploy_environments.production.environments[0].id]
+    project_id   = data.octopusdeploy_projects.provision_environments.projects[0].id
   }
 }
 
