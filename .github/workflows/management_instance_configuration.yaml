@@ -12,7 +12,8 @@ jobs:
       - uses: hashicorp/setup-terraform@v2
 
       # Environments
-      - run: >
+      - name: Init the environments module
+        run: >
           terraform init
           -backend-config="key=environments"
           -backend-config="bucket=${{ secrets.BUCKET_NAME }}"
@@ -21,7 +22,8 @@ jobs:
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_KEY }}
-      - run: >
+      - name: Apply the environments module
+        run: >
           terraform apply -auto-approve
           -var=octopus_server=${{ secrets.OCTOPUS_URL }}
           -var=octopus_apikey=${{ secrets.OCTOPUS_API_KEY }}
@@ -32,7 +34,8 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_KEY }}
 
       # Feeds
-      - run: >
+      - name: Init the feeds module
+        run: >
           terraform init
           -backend-config="key=feeds"
           -backend-config="bucket=${{ secrets.BUCKET_NAME }}"
@@ -41,7 +44,8 @@ jobs:
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_KEY }}
-      - run: >
+      - name: Apply the feeds module
+        run: >
           terraform apply -auto-approve
           -var=octopus_server=${{ secrets.OCTOPUS_URL }}
           -var=octopus_apikey=${{ secrets.OCTOPUS_API_KEY }}
@@ -60,7 +64,7 @@ jobs:
       # deletes project releases.
       - name: Delete existing projects
         run: |
-          declare -a arr=("Deploy Octopus Resources")
+          declare -a arr=("Provision Hello World")
 
           for i in "${arr[@]}"
           do
@@ -73,7 +77,8 @@ jobs:
             fi
           done
         shell: bash
-      - run: >
+      - name: Init the project module
+        run: >
           terraform init
           -backend-config="key=hello_world_project"
           -backend-config="bucket=${{ secrets.BUCKET_NAME }}"
@@ -82,7 +87,8 @@ jobs:
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_KEY }}
-      - run: >
+      - name: Apply the project module
+        run: >
           terraform apply -auto-approve
           -var=octopus_server=${{ secrets.OCTOPUS_URL }}
           -var=octopus_apikey=${{ secrets.OCTOPUS_API_KEY }}
@@ -93,7 +99,8 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_KEY }}
 
       # Tagsets
-      - run: >
+      - name: Init the tagset module
+        run: >
           terraform init
           -backend-config="key=tagsets"
           -backend-config="bucket=${{ secrets.BUCKET_NAME }}"
@@ -102,7 +109,8 @@ jobs:
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_KEY }}
-      - run: >
+      - name: Apply the tagset module
+        run: >
           terraform apply -auto-approve
           -var=octopus_server=${{ secrets.OCTOPUS_URL }}
           -var=octopus_apikey=${{ secrets.OCTOPUS_API_KEY }}
@@ -113,7 +121,8 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_KEY }}
 
       # Tenants
-      - run: >
+      - name: Init the tenants module
+        run: >
           terraform init
           -backend-config="key=tenants"
           -backend-config="bucket=${{ secrets.BUCKET_NAME }}"
@@ -122,7 +131,8 @@ jobs:
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_KEY }}
-      - run: >
+      - name: Apply the tenants module
+        run: >
           terraform apply -auto-approve
           -var=octopus_server=${{ secrets.OCTOPUS_URL }}
           -var=octopus_apikey=${{ secrets.OCTOPUS_API_KEY }}
