@@ -61,6 +61,12 @@ data "octopusdeploy_feeds" "github" {
   take         = 1
 }
 
+data "octopusdeploy_library_variable_sets" "octopus_server" {
+  partial_name = "Octopus Server"
+  skip = 0
+  take = 1
+}
+
 # Import existing resources with the following commands:
 # RESOURCE_ID=$(curl -H "X-Octopus-ApiKey: ${OCTOPUS_CLI_API_KEY}" https://mattc.octopus.app/api/Spaces-282/Projects | jq -r '.Items[] | select(.Name=="Provision Hello World") | .Id')
 # terraform import octopusdeploy_project.project_provision_hello_world ${RESOURCE_ID}
@@ -75,7 +81,7 @@ resource "octopusdeploy_project" "project_provision_hello_world" {
   is_version_controlled                = false
   lifecycle_id                         = "${data.octopusdeploy_lifecycles.lifecycle_default_lifecycle.lifecycles[0].id}"
   project_group_id                     = "${octopusdeploy_project_group.project_group_hello_world.id}"
-  included_library_variable_sets       = []
+  included_library_variable_sets       = [data.octopusdeploy_library_variable_sets.octopus_server.library_variable_sets[0].id]
   tenanted_deployment_participation    = "Tenanted"
 
   connectivity_policy {
