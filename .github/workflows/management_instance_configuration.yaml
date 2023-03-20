@@ -15,7 +15,7 @@ jobs:
       - name: Init the accounts module
         run: >
           terraform init
-          -backend-config="key=octopus_server_variables"
+          -backend-config="key=aws_account"
           -backend-config="bucket=${{ secrets.BUCKET_NAME }}"
           -backend-config="region=${{ secrets.BUCKET_REGION }}"
         working-directory: management_instance/accounts/aws
