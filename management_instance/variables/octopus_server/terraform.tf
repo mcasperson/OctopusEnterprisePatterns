@@ -39,19 +39,9 @@ variable "octopus_space_id" {
 resource "octopusdeploy_library_variable_set" "octopus_library_variable_set" {
   name = "Octopus Server"
   description = "Variables related to interacting with an Octopus server"
-}
 
-resource "octopusdeploy_variable" "octopus_server" {
-  name = "Tenant.Octopus.Server"
-  type = "String"
-  description = "The Octopus Server URL"
-  is_sensitive = false
-  is_editable = true
-  owner_id = octopusdeploy_library_variable_set.octopus_library_variable_set.id
-
-  prompt {
-    display_settings {
-      control_type = "SingleLineText"
-    }
+  template {
+    name = "Tenant.Octopus.Server"
+    label = "The Octopus Server URL"
   }
 }
