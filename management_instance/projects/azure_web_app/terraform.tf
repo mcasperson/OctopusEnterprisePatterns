@@ -147,6 +147,37 @@ resource "octopusdeploy_deployment_process" "deployment_process" {
 
   step {
     condition           = "Success"
+    name                = "Clear Deployment Process"
+    package_requirement = "LetOctopusDecide"
+    start_trigger       = "StartAfterPrevious"
+
+    action {
+      action_type                        = "Octopus.Script"
+      name                               = "Clear Deployment Process"
+      condition                          = "Success"
+      run_on_server                      = true
+      is_disabled                        = false
+      can_be_used_for_project_versioning = false
+      is_required                        = false
+      worker_pool_id                     = "${data.octopusdeploy_worker_pools.workerpool_hosted_ubuntu.worker_pools[0].id}"
+      properties                         = {
+        "Octopus.Action.Script.ScriptSource" = "Inline"
+        "Octopus.Action.Script.Syntax" = "Bash"
+        "Octopus.Action.Script.ScriptBody" = "declare -a arr=(\"Azure Web App\")\n\nfor i in \"$${arr[@]}\"\ndo\n  DEPLOYMENT_PROCESS_ID=$(curl --silent -G --data-urlencode \"name=$i\" -H \"X-Octopus-ApiKey: #{Tenant.Octopus.ApiKey}\" #{Tenant.Octopus.Server}/api/#{Tenant.Octopus.SpaceId}/projects | jq -r \".Items[0].DeploymentProcessId\")\n  if [[ -n \"$DEPLOYMENT_PROCESS_ID\" \u0026\u0026 \"$DEPLOYMENT_PROCESS_ID\" != \"null\" ]]; then\n    echo \"Emptying project deploy process $DEPLOYMENT_PROCESS_ID for project $i\"\n    DEPLOYMENT_PROCESS=$(curl --silent -H \"X-Octopus-ApiKey: #{Tenant.Octopus.ApiKey}\" #{Tenant.Octopus.Server}/api/#{Tenant.Octopus.SpaceId}/deploymentprocesses/$${DEPLOYMENT_PROCESS_ID})\n    EMPTY_DEPLOYMENT_PROCESS=$(echo $${DEPLOYMENT_PROCESS} | jq 'del(.Steps[])')\n    NEW_DEPLOYMENT_PROCESS=$(curl --silent -X PUT -d \"$${EMPTY_DEPLOYMENT_PROCESS}\" -H \"Content-Type: application/json\" -H \"X-Octopus-ApiKey: #{Tenant.Octopus.ApiKey}\" #{Tenant.Octopus.Server}/api/#{Tenant.Octopus.SpaceId}/deploymentprocesses/$${DEPLOYMENT_PROCESS_ID})\n  fi\ndone"
+      }
+      environments                       = []
+      excluded_environments              = []
+      channels                           = []
+      tenant_tags                        = []
+      features                           = []
+    }
+
+    properties   = {}
+    target_roles = []
+  }
+
+  step {
+    condition           = "Success"
     name                = "Deploy Octopus Resources"
     package_requirement = "LetOctopusDecide"
     start_trigger       = "StartAfterPrevious"
