@@ -123,6 +123,7 @@ resource "octopusdeploy_deployment_process" "deployment_process_project_provisio
       is_required                        = false
       worker_pool_id                     = "${data.octopusdeploy_worker_pools.workerpool_hosted_ubuntu.worker_pools[0].id}"
       properties                         = {
+        "Octopus.Action.Terraform.ManagedAccount": "AWS",
         "Octopus.Action.AwsAccount.UseInstanceRole" = "False"
         "Octopus.Action.Aws.AssumeRole" = "False"
         "Octopus.Action.Aws.Region" = "ap-southeast-2"
