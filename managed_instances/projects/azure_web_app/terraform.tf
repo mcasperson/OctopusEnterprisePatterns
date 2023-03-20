@@ -40,37 +40,11 @@ resource "octopusdeploy_project_group" "project_group" {
   name = "Azure Web App"
 }
 
-data "octopusdeploy_channels" "channel_default" {
-  ids          = null
-  partial_name = "Default"
-  skip         = 0
-  take         = 1
-}
-
 data "octopusdeploy_lifecycles" "lifecycle_default_lifecycle" {
   ids          = null
   partial_name = "Default Lifecycle"
   skip         = 0
   take         = 1
-}
-
-data "octopusdeploy_feeds" "github" {
-  feed_type    = "GitHub"
-  partial_name = "Github"
-  skip         = 0
-  take         = 1
-}
-
-data "octopusdeploy_library_variable_sets" "octopus_server" {
-  partial_name = "Octopus Server"
-  skip = 0
-  take = 1
-}
-
-data "octopusdeploy_library_variable_sets" "docker_hub" {
-  partial_name = "DockerHub"
-  skip = 0
-  take = 1
 }
 
 data "octopusdeploy_accounts" "azure" {
