@@ -112,7 +112,7 @@ data "octopusdeploy_worker_pools" "workerpool_hosted_ubuntu" {
 # RESOURCE_ID=$(curl -H "X-Octopus-ApiKey: ${OCTOPUS_CLI_API_KEY}" https://mattc.octopus.app/api/Spaces-282/Projects | jq -r '.Items[] | select(.Name=="Provision Hello World") | .Id')
 # terraform import octopusdeploy_project.project ${RESOURCE_ID}
 resource "octopusdeploy_project" "project" {
-  name                                 = "Provision Hello World"
+  name                                 = "Provision Azure Web App"
   auto_create_release                  = false
   default_guided_failure_mode          = "EnvironmentDefault"
   default_to_skip_if_already_installed = false
