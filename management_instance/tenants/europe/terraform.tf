@@ -36,6 +36,20 @@ variable "octopus_space_id" {
   description = "The ID of the Octopus space to populate."
 }
 
+variable "docker_username" {
+  type        = string
+  nullable    = false
+  sensitive   = false
+  description = "DockerHub username."
+}
+
+variable "docker_password" {
+  type        = string
+  nullable    = false
+  sensitive   = true
+  description = "DockerHub password."
+}
+
 data "octopusdeploy_projects" "provision_hello_world" {
   partial_name           = "Provision Hello World"
   skip                   = 0
@@ -56,6 +70,12 @@ data "octopusdeploy_environments" "production" {
 
 data "octopusdeploy_library_variable_sets" "octopus_server" {
   partial_name = "Octopus Server"
+  skip = 0
+  take = 1
+}
+
+data "octopusdeploy_library_variable_sets" "docker_hub" {
+  partial_name = "DockerHub"
   skip = 0
   take = 1
 }
@@ -95,4 +115,18 @@ resource "octopusdeploy_tenant_common_variable" "octopus_server_space_id" {
   template_id = tolist([for tmp in data.octopusdeploy_library_variable_sets.octopus_server.library_variable_sets[0].template : tmp.id if tmp.name == "Tenant.Octopus.SpaceId"])[0]
   tenant_id = octopusdeploy_tenant.europe.id
   value = "Spaces-1628"
+}
+
+resource "octopusdeploy_tenant_common_variable" "docker_username" {
+  library_variable_set_id = data.octopusdeploy_library_variable_sets.docker_hub.library_variable_sets[0].id
+  template_id = tolist([for tmp in data.octopusdeploy_library_variable_sets.docker_hub.library_variable_sets[0].template : tmp.id if tmp.name == "Tenant.Docker.Username"])[0]
+  tenant_id = octopusdeploy_tenant.europe.id
+  value = var.docker_username
+}
+
+resource "octopusdeploy_tenant_common_variable" "docker_password" {
+  library_variable_set_id = data.octopusdeploy_library_variable_sets.docker_hub.library_variable_sets[0].id
+  template_id = tolist([for tmp in data.octopusdeploy_library_variable_sets.docker_hub.library_variable_sets[0].template : tmp.id if tmp.name == "Tenant.Docker.Password"])[0]
+  tenant_id = octopusdeploy_tenant.europe.id
+  value = var.docker_password
 }
