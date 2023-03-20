@@ -56,8 +56,8 @@ data "octopusdeploy_projects" "provision_hello_world" {
   take                   = 1
 }
 
-data "octopusdeploy_projects" "provision_environments" {
-  partial_name           = "Provision Environments"
+data "octopusdeploy_projects" "initialise_space" {
+  partial_name           = "Initialise Space"
   skip                   = 0
   take                   = 1
 }
@@ -92,7 +92,7 @@ resource "octopusdeploy_tenant" "europe" {
 
   project_environment {
     environments = [data.octopusdeploy_environments.production.environments[0].id]
-    project_id   = data.octopusdeploy_projects.provision_environments.projects[0].id
+    project_id   = data.octopusdeploy_projects.initialise_space.projects[0].id
   }
 }
 
