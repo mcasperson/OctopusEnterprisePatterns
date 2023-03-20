@@ -50,6 +50,34 @@ variable "docker_password" {
   description = "DockerHub password."
 }
 
+variable "azure_application_id" {
+  type        = string
+  nullable    = false
+  sensitive   = false
+  description = "The Azure application ID."
+}
+
+variable "azure_subscription_id" {
+  type        = string
+  nullable    = false
+  sensitive   = false
+  description = "The Azure subscription ID."
+}
+
+variable "azure_password" {
+  type        = string
+  nullable    = false
+  sensitive   = true
+  description = "The Azure password."
+}
+
+variable "azure_tenant_id" {
+  type        = string
+  nullable    = false
+  sensitive   = false
+  description = "The Azure tenant ID."
+}
+
 data "octopusdeploy_projects" "provision_hello_world" {
   partial_name           = "Provision Hello World"
   skip                   = 0
@@ -76,6 +104,12 @@ data "octopusdeploy_library_variable_sets" "octopus_server" {
 
 data "octopusdeploy_library_variable_sets" "docker_hub" {
   partial_name = "DockerHub"
+  skip = 0
+  take = 1
+}
+
+data "octopusdeploy_library_variable_sets" "azure" {
+  partial_name = "Azure"
   skip = 0
   take = 1
 }
@@ -129,4 +163,32 @@ resource "octopusdeploy_tenant_common_variable" "docker_password" {
   template_id = tolist([for tmp in data.octopusdeploy_library_variable_sets.docker_hub.library_variable_sets[0].template : tmp.id if tmp.name == "Tenant.Docker.Password"])[0]
   tenant_id = octopusdeploy_tenant.europe.id
   value = var.docker_password
+}
+
+resource "octopusdeploy_tenant_common_variable" "azure_application_id" {
+  library_variable_set_id = data.octopusdeploy_library_variable_sets.azure.library_variable_sets[0].id
+  template_id = tolist([for tmp in data.octopusdeploy_library_variable_sets.azure.library_variable_sets[0].template : tmp.id if tmp.name == "Tenant.Azure.ApplicationId"])[0]
+  tenant_id = octopusdeploy_tenant.europe.id
+  value = var.azure_application_id
+}
+
+resource "octopusdeploy_tenant_common_variable" "azure_subscription_id" {
+  library_variable_set_id = data.octopusdeploy_library_variable_sets.azure.library_variable_sets[0].id
+  template_id = tolist([for tmp in data.octopusdeploy_library_variable_sets.azure.library_variable_sets[0].template : tmp.id if tmp.name == "Tenant.Azure.SubscriptionId"])[0]
+  tenant_id = octopusdeploy_tenant.europe.id
+  value = var.azure_subscription_id
+}
+
+resource "octopusdeploy_tenant_common_variable" "azure_tenant_id" {
+  library_variable_set_id = data.octopusdeploy_library_variable_sets.azure.library_variable_sets[0].id
+  template_id = tolist([for tmp in data.octopusdeploy_library_variable_sets.azure.library_variable_sets[0].template : tmp.id if tmp.name == "Tenant.Azure.TenantId"])[0]
+  tenant_id = octopusdeploy_tenant.europe.id
+  value = var.azure_tenant_id
+}
+
+resource "octopusdeploy_tenant_common_variable" "azure_password" {
+  library_variable_set_id = data.octopusdeploy_library_variable_sets.azure.library_variable_sets[0].id
+  template_id = tolist([for tmp in data.octopusdeploy_library_variable_sets.azure.library_variable_sets[0].template : tmp.id if tmp.name == "Tenant.Azure.Password"])[0]
+  tenant_id = octopusdeploy_tenant.europe.id
+  value = var.azure_password
 }

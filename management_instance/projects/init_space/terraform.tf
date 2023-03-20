@@ -87,6 +87,12 @@ data "octopusdeploy_library_variable_sets" "docker_hub" {
   take = 1
 }
 
+data "octopusdeploy_library_variable_sets" "azure" {
+  partial_name = "Azure"
+  skip = 0
+  take = 1
+}
+
 
 data "octopusdeploy_accounts" "aws" {
   partial_name = "AWS Account"
@@ -117,7 +123,8 @@ resource "octopusdeploy_project" "project" {
   project_group_id                     = "${octopusdeploy_project_group.project_group.id}"
   included_library_variable_sets       = [
     data.octopusdeploy_library_variable_sets.octopus_server.library_variable_sets[0].id,
-    data.octopusdeploy_library_variable_sets.docker_hub.library_variable_sets[0].id
+    data.octopusdeploy_library_variable_sets.docker_hub.library_variable_sets[0].id,
+    data.octopusdeploy_library_variable_sets.azure.library_variable_sets[0].id
   ]
   tenanted_deployment_participation    = "Tenanted"
 
@@ -289,6 +296,65 @@ resource "octopusdeploy_deployment_process" "deployment_process_project" {
         "Octopus.Action.Package.DownloadOnTentacle" = "False"
         "Octopus.Action.Terraform.AdditionalInitParams" = "-backend-config=\"key=managed_instance_maven_feed\" -backend-config=\"bucket=${var.bucket_name}\" -backend-config=\"region=${var.bucket_region}\""
         "Octopus.Action.Terraform.AdditionalActionParams" = "-var=octopus_server=#{Tenant.Octopus.Server} -var=octopus_apikey=#{Tenant.Octopus.ApiKey} -var=octopus_space_id=#{Tenant.Octopus.SpaceId}"
+        "Octopus.Action.Terraform.Workspace" = "#{Octopus.Deployment.Tenant.Name | ToLower}"
+      }
+      environments                       = []
+      excluded_environments              = []
+      channels                           = []
+      tenant_tags                        = []
+
+      primary_package {
+        package_id           = "mcasperson/OctopusEnterprisePatterns"
+        acquisition_location = "Server"
+        feed_id              = data.octopusdeploy_feeds.github.feeds[0].id
+        properties           = { SelectionMode = "immediate" }
+      }
+
+      container {
+        feed_id = data.octopusdeploy_feeds.docker.feeds[0].id
+        image   = "octopusdeploy/worker-tools:5.0.0-ubuntu.22.04"
+      }
+
+      features = []
+    }
+
+    properties   = {}
+    target_roles = []
+  }
+
+  step {
+    condition           = "Success"
+    name                = "Configure Azure Account"
+    package_requirement = "LetOctopusDecide"
+    start_trigger       = "StartAfterPrevious"
+
+    action {
+      action_type                        = "Octopus.TerraformApply"
+      name                               = "Configure Azure Account"
+      condition                          = "Success"
+      run_on_server                      = true
+      is_disabled                        = false
+      can_be_used_for_project_versioning = true
+      is_required                        = false
+      worker_pool_id                     = "${data.octopusdeploy_worker_pools.workerpool_hosted_ubuntu.worker_pools[0].id}"
+      properties                         = {
+        "Octopus.Action.Terraform.ManagedAccount": "AWS",
+        "Octopus.Action.AwsAccount.UseInstanceRole" = "False"
+        "Octopus.Action.Aws.AssumeRole" = "False"
+        "Octopus.Action.Aws.Region" = "ap-southeast-2"
+        "Octopus.Action.AwsAccount.Variable" = "AWS"
+        "Octopus.Action.GoogleCloud.ImpersonateServiceAccount" = "False"
+        "Octopus.Action.Terraform.RunAutomaticFileSubstitution" = "True"
+        "Octopus.Action.Terraform.TemplateDirectory" = "shared/accounts/azure"
+        "Octopus.Action.Terraform.AllowPluginDownloads" = "True"
+        "Octopus.Action.Terraform.AzureAccount" = "False"
+        "Octopus.Action.GoogleCloud.UseVMServiceAccount" = "True"
+        "Octopus.Action.Terraform.PlanJsonOutput" = "False"
+        "Octopus.Action.Script.ScriptSource" = "Package"
+        "Octopus.Action.Terraform.GoogleCloudAccount" = "False"
+        "Octopus.Action.Package.DownloadOnTentacle" = "False"
+        "Octopus.Action.Terraform.AdditionalInitParams" = "-backend-config=\"key=managed_instance_azure_account\" -backend-config=\"bucket=${var.bucket_name}\" -backend-config=\"region=${var.bucket_region}\""
+        "Octopus.Action.Terraform.AdditionalActionParams" = "-var=octopus_server=#{Tenant.Octopus.Server} -var=octopus_apikey=#{Tenant.Octopus.ApiKey} -var=octopus_space_id=#{Tenant.Octopus.SpaceId} -var=azure_application_id=#{Tenant.Azure.ApplicationId} -var=azure_subscription_id=#{Tenant.Azure.SubscriptionId} -var=azure_password=#{Tenant.Azure.Password} -var=azure_tenant_id=#{Tenant.Azure.TenantId}"
         "Octopus.Action.Terraform.Workspace" = "#{Octopus.Deployment.Tenant.Name | ToLower}"
       }
       environments                       = []

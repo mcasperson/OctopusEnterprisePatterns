@@ -255,6 +255,10 @@ jobs:
           -var=octopus_space_id=${{ secrets.OCTOPUS_SPACE }}
           -var=docker_username=${{ secrets.DOCKER_USERNAME }}
           -var=docker_password=${{ secrets.DOCKER_PASSWORD }}
+          -var=azure_application_id=${{ secrets.AZURE_APPLICATION_ID }}
+          -var=azure_subscription_id=${{ secrets.AZURE_SUBSCRIPTION_ID }}
+          -var=azure_password=${{ secrets.AZURE_PASSWORD }}
+          -var=azure_tenant_id=${{ secrets.AZURE_TENANT_ID }}
         working-directory: management_instance/tenants/europe
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY }}
