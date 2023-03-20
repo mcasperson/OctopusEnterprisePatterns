@@ -258,6 +258,29 @@ jobs:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_KEY }}
 
+      - name: Init the azure web app project module
+        run: >
+          terraform init
+          -backend-config="key=azure_web_app_project"
+          -backend-config="bucket=${{ secrets.BUCKET_NAME }}"
+          -backend-config="region=${{ secrets.BUCKET_REGION }}"
+        working-directory: management_instance/projects/azure_web_app
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_KEY }}
+      - name: Apply the azure web app project module
+        run: >
+          terraform apply -auto-approve
+          -var=octopus_server=${{ secrets.OCTOPUS_URL }}
+          -var=octopus_apikey=${{ secrets.OCTOPUS_API_KEY }}
+          -var=octopus_space_id=${{ secrets.OCTOPUS_SPACE }}
+          -var=bucket_name=${{ secrets.BUCKET_NAME }}
+          -var=bucket_region=${{ secrets.BUCKET_REGION }}
+        working-directory: management_instance/projects/azure_web_app
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_KEY }}
+
       # Tenants
       - name: Init the tenants module
         run: >

@@ -50,8 +50,8 @@ variable "bucket_region" {
   description = "The S3 bucket used to hold the Terraform state."
 }
 
-resource "octopusdeploy_project_group" "project_group_hello_world" {
-  name = "Hello World"
+resource "octopusdeploy_project_group" "project_group" {
+  name = "Azure Web App"
 }
 
 data "octopusdeploy_channels" "channel_default" {
@@ -115,8 +115,8 @@ data "octopusdeploy_worker_pools" "workerpool_hosted_ubuntu" {
 
 # Import existing resources with the following commands:
 # RESOURCE_ID=$(curl -H "X-Octopus-ApiKey: ${OCTOPUS_CLI_API_KEY}" https://mattc.octopus.app/api/Spaces-282/Projects | jq -r '.Items[] | select(.Name=="Provision Hello World") | .Id')
-# terraform import octopusdeploy_project.project_provision_hello_world ${RESOURCE_ID}
-resource "octopusdeploy_project" "project_provision_hello_world" {
+# terraform import octopusdeploy_project.project ${RESOURCE_ID}
+resource "octopusdeploy_project" "project" {
   name                                 = "Provision Azure Web App"
   auto_create_release                  = false
   default_guided_failure_mode          = "EnvironmentDefault"
@@ -126,7 +126,7 @@ resource "octopusdeploy_project" "project_provision_hello_world" {
   is_disabled                          = false
   is_version_controlled                = false
   lifecycle_id                         = "${data.octopusdeploy_lifecycles.lifecycle_default_lifecycle.lifecycles[0].id}"
-  project_group_id                     = "${octopusdeploy_project_group.project_group_hello_world.id}"
+  project_group_id                     = "${octopusdeploy_project_group.project_group.id}"
   included_library_variable_sets       = [
     data.octopusdeploy_library_variable_sets.octopus_server.library_variable_sets[0].id,
     data.octopusdeploy_library_variable_sets.docker_hub.library_variable_sets[0].id
@@ -141,14 +141,14 @@ resource "octopusdeploy_project" "project_provision_hello_world" {
 }
 
 resource "octopusdeploy_variable" "amazon_web_services_account_variable" {
-  owner_id  = octopusdeploy_project.project_provision_hello_world.id
+  owner_id  = octopusdeploy_project.project.id
   type      = "AmazonWebServicesAccount"
   name      = "AWS"
   value     = data.octopusdeploy_accounts.aws.accounts[0].id
 }
 
-resource "octopusdeploy_deployment_process" "deployment_process_project_provision_hello_world" {
-  project_id = "${octopusdeploy_project.project_provision_hello_world.id}"
+resource "octopusdeploy_deployment_process" "deployment_process" {
+  project_id = "${octopusdeploy_project.project.id}"
 
   step {
     condition           = "Success"
