@@ -48,6 +48,12 @@ data "octopusdeploy_environments" "production" {
   take         = 1
 }
 
+data "octopusdeploy_library_variable_sets" "octopus_server" {
+  partial_name = "Octopus Server"
+  skip = 0
+  take = 1
+}
+
 resource "octopusdeploy_tenant" "europe" {
   name        = "Europe"
   description = "The Europe DevOps team"
@@ -57,4 +63,11 @@ resource "octopusdeploy_tenant" "europe" {
     environments = [data.octopusdeploy_environments.production.environments[0].id]
     project_id   = data.octopusdeploy_projects.provision_hello_world.projects[0].id
   }
+}
+
+resource "octopusdeploy_tenant_common_variable" "octopus_server" {
+  library_variable_set_id = data.octopusdeploy_library_variable_sets.octopus_server.library_variable_sets[0].id
+  template_id = toset([for tmp in data.octopusdeploy_library_variable_sets.octopus_server.library_variable_sets[0].library_variable_sets : tmp.id if tmp.name == 'Tenant.Octopus.Server'])[0]
+  tenant_id = octopusdeploy_tenant.europe.id
+  value = "https://mattc.octopus.app"
 }
