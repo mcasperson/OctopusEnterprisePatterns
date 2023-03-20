@@ -116,7 +116,7 @@ resource "octopusdeploy_project" "project_provision_hello_world" {
   project_group_id                     = "${octopusdeploy_project_group.project_group_hello_world.id}"
   included_library_variable_sets       = [
     data.octopusdeploy_library_variable_sets.octopus_server.library_variable_sets[0].id,
-    data.octopusdeploy_library_variable_sets.octopus_server.docker_hub[0].id
+    data.octopusdeploy_library_variable_sets.docker_hub.library_variable_sets[0].id
   ]
   tenanted_deployment_participation    = "Tenanted"
 
