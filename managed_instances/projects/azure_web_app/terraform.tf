@@ -79,7 +79,7 @@ resource "octopusdeploy_project" "project" {
   lifecycle_id                         = "${data.octopusdeploy_lifecycles.lifecycle_default_lifecycle.lifecycles[0].id}"
   project_group_id                     = "${octopusdeploy_project_group.project_group.id}"
   included_library_variable_sets       = []
-  tenanted_deployment_participation    = "Tenanted"
+  tenanted_deployment_participation    = "Untenanted"
 
   connectivity_policy {
     allow_deployments_to_no_targets = true
