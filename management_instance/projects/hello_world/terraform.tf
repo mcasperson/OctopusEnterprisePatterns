@@ -54,6 +54,13 @@ data "octopusdeploy_lifecycles" "lifecycle_default_lifecycle" {
   take         = 1
 }
 
+data "octopusdeploy_feeds" "github" {
+  feed_type    = "GitHub"
+  partial_name = "Github"
+  skip         = 0
+  take         = 1
+}
+
 # Import existing resources with the following commands:
 # RESOURCE_ID=$(curl -H "X-Octopus-ApiKey: ${OCTOPUS_CLI_API_KEY}" https://mattc.octopus.app/api/Spaces-282/Projects | jq -r '.Items[] | select(.Name=="Provision Hello World") | .Id')
 # terraform import octopusdeploy_project.project_provision_hello_world ${RESOURCE_ID}
@@ -67,7 +74,7 @@ resource "octopusdeploy_project" "project_provision_hello_world" {
   is_disabled                          = false
   is_version_controlled                = false
   lifecycle_id                         = "${data.octopusdeploy_lifecycles.lifecycle_default_lifecycle.lifecycles[0].id}"
-  project_group_id                     = "${octopusdeploy_project_group.project_group_aa_training.id}"
+  project_group_id                     = "${octopusdeploy_project_group.project_group_hello_world.id}"
   included_library_variable_sets       = []
   tenanted_deployment_participation    = "Tenanted"
 
@@ -117,7 +124,7 @@ resource "octopusdeploy_deployment_process" "deployment_process_project_provisio
       primary_package {
         package_id           = "mcasperson/OctopusEnterprisePatterns"
         acquisition_location = "Server"
-        feed_id              = "${octopusdeploy_github_repository_feed.feed_github.id}"
+        feed_id              = data.octopusdeploy_feeds.github.feeds[0].id
         properties           = { SelectionMode = "immediate" }
       }
 
