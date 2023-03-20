@@ -71,6 +71,26 @@ jobs:
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_KEY }}
+
+      # Tagsets
+      - run: >
+          terraform init
+          -backend-config="key=tagsets"
+          -backend-config="bucket=${{ secrets.BUCKET_NAME }}"
+          -backend-config="region=${{ secrets.BUCKET_REGION }}"
+        working-directory: management_instance/tenants/tagsets
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_KEY }}
+      - run: >
+          terraform apply -auto-approve
+          -var=octopus_server=${{ secrets.OCTOPUS_URL }}
+          -var=octopus_apikey=${{ secrets.OCTOPUS_API_KEY }}
+          -var=octopus_space_id=${{ secrets.OCTOPUS_SPACE }}
+        working-directory: management_instance/tenants/tagsets
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_KEY }}
 permissions:
   id-token: write
   checks: write
