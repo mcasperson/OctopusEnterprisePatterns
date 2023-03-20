@@ -43,5 +43,8 @@ resource "octopusdeploy_library_variable_set" "octopus_library_variable_set" {
   template {
     name = "Tenant.Octopus.Server"
     label = "The Octopus Server URL"
+    display_settings = {
+      Octopus.ControlType:	"SingleLineText"
+    }
   }
 }
