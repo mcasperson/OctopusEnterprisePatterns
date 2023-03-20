@@ -49,7 +49,9 @@ resource "octopusdeploy_variable" "octopus_server" {
   is_editable = true
   owner_id = octopusdeploy_library_variable_set.octopus_library_variable_set.id
 
-  display_settings {
-    control_type = "SingleLineText"
+  prompt {
+    display_settings {
+      control_type = "SingleLineText"
+    }
   }
 }
