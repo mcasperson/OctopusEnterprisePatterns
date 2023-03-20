@@ -50,8 +50,8 @@ variable "bucket_region" {
   description = "The S3 bucket used to hold the Terraform state."
 }
 
-resource "octopusdeploy_project_group" "project_group_hello_world" {
-  name = "Hello World"
+resource "octopusdeploy_project_group" "project_group" {
+  name = "Azure Web App"
 }
 
 data "octopusdeploy_channels" "channel_default" {
@@ -87,8 +87,8 @@ data "octopusdeploy_library_variable_sets" "docker_hub" {
   take = 1
 }
 
-data "octopusdeploy_accounts" "aws" {
-  partial_name = "AWS Account"
+data "octopusdeploy_accounts" "azure" {
+  partial_name = "Azure"
   skip         = 0
   take         = 1
 }
@@ -100,11 +100,18 @@ data "octopusdeploy_feeds" "docker" {
   take         = 1
 }
 
+data "octopusdeploy_worker_pools" "workerpool_hosted_ubuntu" {
+  name = "Hosted Ubuntu"
+  ids  = null
+  skip = 0
+  take = 1
+}
+
 # Import existing resources with the following commands:
 # RESOURCE_ID=$(curl -H "X-Octopus-ApiKey: ${OCTOPUS_CLI_API_KEY}" https://mattc.octopus.app/api/Spaces-282/Projects | jq -r '.Items[] | select(.Name=="Provision Hello World") | .Id')
-# terraform import octopusdeploy_project.project_provision_hello_world ${RESOURCE_ID}
-resource "octopusdeploy_project" "project_provision_hello_world" {
-  name                                 = "Provision Hello World"
+# terraform import octopusdeploy_project.project ${RESOURCE_ID}
+resource "octopusdeploy_project" "project" {
+  name                                 = "Provision Azure Web App"
   auto_create_release                  = false
   default_guided_failure_mode          = "EnvironmentDefault"
   default_to_skip_if_already_installed = false
@@ -113,7 +120,7 @@ resource "octopusdeploy_project" "project_provision_hello_world" {
   is_disabled                          = false
   is_version_controlled                = false
   lifecycle_id                         = "${data.octopusdeploy_lifecycles.lifecycle_default_lifecycle.lifecycles[0].id}"
-  project_group_id                     = "${octopusdeploy_project_group.project_group_hello_world.id}"
+  project_group_id                     = "${octopusdeploy_project_group.project_group.id}"
   included_library_variable_sets       = [
     data.octopusdeploy_library_variable_sets.octopus_server.library_variable_sets[0].id,
     data.octopusdeploy_library_variable_sets.docker_hub.library_variable_sets[0].id
@@ -127,25 +134,18 @@ resource "octopusdeploy_project" "project_provision_hello_world" {
   }
 }
 
-resource "octopusdeploy_variable" "amazon_web_services_account_variable" {
-  owner_id  = octopusdeploy_project.project_provision_hello_world.id
-  type      = "AmazonWebServicesAccount"
-  name      = "AWS"
-  value     = data.octopusdeploy_accounts.aws.accounts[0].id
-}
-
-resource "octopusdeploy_deployment_process" "deployment_process_project_provision_hello_world" {
-  project_id = "${octopusdeploy_project.project_provision_hello_world.id}"
+resource "octopusdeploy_deployment_process" "deployment_process" {
+  project_id = "${octopusdeploy_project.project.id}"
 
   step {
     condition           = "Success"
-    name                = "Deploy Octopus Resources"
+    name                = "Create Web App"
     package_requirement = "LetOctopusDecide"
     start_trigger       = "StartAfterPrevious"
 
     action {
-      action_type                        = "Octopus.TerraformApply"
-      name                               = "Deploy Octopus Resources"
+      action_type                        = "Octopus.AzurePowerShell"
+      name                               = "Create Web App"
       condition                          = "Success"
       run_on_server                      = true
       is_disabled                        = false
@@ -153,35 +153,11 @@ resource "octopusdeploy_deployment_process" "deployment_process_project_provisio
       is_required                        = false
       worker_pool_id                     = "${data.octopusdeploy_worker_pools.workerpool_hosted_ubuntu.worker_pools[0].id}"
       properties                         = {
-        "Octopus.Action.Terraform.ManagedAccount": "AWS",
-        "Octopus.Action.AwsAccount.UseInstanceRole" = "False"
-        "Octopus.Action.Aws.AssumeRole" = "False"
-        "Octopus.Action.Aws.Region" = "ap-southeast-2"
-        "Octopus.Action.AwsAccount.Variable" = "AWS"
-        "Octopus.Action.GoogleCloud.ImpersonateServiceAccount" = "False"
-        "Octopus.Action.Terraform.RunAutomaticFileSubstitution" = "True"
-        "Octopus.Action.Terraform.TemplateDirectory" = "managed_instances/projects/azure_web_app"
-        "Octopus.Action.Terraform.AllowPluginDownloads" = "True"
-        "Octopus.Action.Terraform.AzureAccount" = "False"
-        "Octopus.Action.GoogleCloud.UseVMServiceAccount" = "True"
-        "Octopus.Action.Terraform.PlanJsonOutput" = "False"
-        "Octopus.Action.Script.ScriptSource" = "Package"
-        "Octopus.Action.Terraform.GoogleCloudAccount" = "False"
-        "Octopus.Action.Package.DownloadOnTentacle" = "False"
-        "Octopus.Action.Terraform.AdditionalInitParams" = "-backend-config=\"key=managed_instance_project_hello_world\" -backend-config=\"bucket=${var.bucket_name}\" -backend-config=\"region=${var.bucket_region}\""
-        "Octopus.Action.Terraform.AdditionalActionParams" = "-var=octopus_server=#{Tenant.Octopus.Server} -var=octopus_apikey=#{Tenant.Octopus.ApiKey} -var=octopus_space_id=#{Tenant.Octopus.SpaceId}"
-        "Octopus.Action.Terraform.Workspace" = "#{Octopus.Deployment.Tenant.Name | ToLower}"
-      }
-      environments                       = []
-      excluded_environments              = []
-      channels                           = []
-      tenant_tags                        = []
-
-      primary_package {
-        package_id           = "mcasperson/OctopusEnterprisePatterns"
-        acquisition_location = "Server"
-        feed_id              = data.octopusdeploy_feeds.github.feeds[0].id
-        properties           = { SelectionMode = "immediate" }
+        "Octopus.Action.Script.ScriptSource" = "Inline"
+        "Octopus.Action.Script.Syntax" = "Bash"
+        "Octopus.Action.Azure.AccountId" = data.octopusdeploy_accounts.azure.accounts[0].id
+        "Octopus.Action.Script.ScriptBody" = "NOW=$(date +%s)\nCREATED=$${NOW}\nRESOURCE_NAME=#{Octopus.Space.Name | Replace \"[^A-Za-z0-9]\" \"-\" | ToLower}-#{Octopus.Project.Name | Replace \"[^A-Za-z0-9]\" \"-\" | ToLower}-#{Octopus.Environment.Name | Replace \"[^A-Za-z0-9]\" \"-\" | ToLower}\n\n# az tag list --resource-id /subscriptions/#{Octopus.Action.Azure.SubscriptionId}/resourcegroups/$${RESOURCE_NAME}rg\n\n# Test if the resource group exists\nEXISTING_RG=$(az group list --query \"[?name=='$${RESOURCE_NAME}-rg']\")\nLENGTH=$(echo $${EXISTING_RG} | jq '. | length' \u003e /dev/null)\n\nif [[ $LENGTH != \"0\" ]]\nthen\n\techo \"Creating new resource group\"\n\taz group create -l westus -n \"$${RESOURCE_NAME}-rg\" --tags LifeTimeInDays=7 Created=$${NOW}\nelse\n\techo \"Resource group already exists\"\nfi\n\nEXISTING_SP=$(az appservice plan list --resource-group \"$${RESOURCE_NAME}-rg\")\nLENGTH=$(echo $${EXISTING_SP} | jq '. | length' \u003e /dev/null)\nif [[ $LENGTH != \"0\" ]]\nthen\n\techo \"Creating new service plan\"\n\taz appservice plan create \\\n      --sku B1 \\\n      --name \"$${RESOURCE_NAME}-sp\" \\\n      --resource-group \"$${RESOURCE_NAME}-rg\" \\\n      --is-linux\nelse\n\techo \"Service plan already exists\"\nfi\n\nEXISTING_WA=$(az webapp list --resource-group \"$${RESOURCE_NAME}-rg\")\nLENGTH=$(echo $${EXISTING_WA} | jq '. | length' \u003e /dev/null)\nif [[ $LENGTH != \"0\" ]]\nthen\n\techo \"Creating new web app\"\n\taz webapp create \\\n      --resource-group \"$${RESOURCE_NAME}-rg\" \\\n      --plan \"$${RESOURCE_NAME}-sp\" \\\n      --name \"$${RESOURCE_NAME}-wa\" \\\n      --deployment-container-image-name nginx \nelse\n\techo \"Web App already exists\"\nfi"
+        "OctopusUseBundledTooling" = "False"
       }
 
       container {
@@ -189,18 +165,14 @@ resource "octopusdeploy_deployment_process" "deployment_process_project_provisio
         image   = "octopusdeploy/worker-tools:5.0.0-ubuntu.22.04"
       }
 
-      features = []
+      environments          = []
+      excluded_environments = []
+      channels              = []
+      tenant_tags           = []
+      features              = []
     }
 
     properties   = {}
     target_roles = []
   }
 }
-
-data "octopusdeploy_worker_pools" "workerpool_hosted_ubuntu" {
-  name = "Hosted Ubuntu"
-  ids  = null
-  skip = 0
-  take = 1
-}
-
