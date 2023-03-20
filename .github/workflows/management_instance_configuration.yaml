@@ -150,7 +150,7 @@ jobs:
       - name: Init the docker variable set module
         run: >
           terraform init
-          -backend-config="key=octopus_server_variables"
+          -backend-config="key=octopus_docker_variables"
           -backend-config="bucket=${{ secrets.BUCKET_NAME }}"
           -backend-config="region=${{ secrets.BUCKET_REGION }}"
         working-directory: management_instance/variables/docker
@@ -171,7 +171,7 @@ jobs:
       - name: Init the azure variable set module
         run: >
           terraform init
-          -backend-config="key=octopus_server_variables"
+          -backend-config="key=octopus_azure_variables"
           -backend-config="bucket=${{ secrets.BUCKET_NAME }}"
           -backend-config="region=${{ secrets.BUCKET_REGION }}"
         working-directory: management_instance/variables/azure
