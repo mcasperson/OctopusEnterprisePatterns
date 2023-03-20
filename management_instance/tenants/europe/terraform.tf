@@ -57,7 +57,7 @@ data "octopusdeploy_library_variable_sets" "octopus_server" {
 resource "octopusdeploy_tenant" "europe" {
   name        = "Europe"
   description = "The Europe DevOps team"
-  tenant_tags = ["region/eu"]
+  tenant_tags = ["region/eu", "type/managed_instance"]
 
   project_environment {
     environments = [data.octopusdeploy_environments.production.environments[0].id]

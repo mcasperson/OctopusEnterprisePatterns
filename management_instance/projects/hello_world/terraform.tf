@@ -67,6 +67,12 @@ data "octopusdeploy_library_variable_sets" "octopus_server" {
   take = 1
 }
 
+data "octopusdeploy_accounts" "aws" {
+  partial_name = "AWS Account"
+  skip         = 0
+  take         = 1
+}
+
 # Import existing resources with the following commands:
 # RESOURCE_ID=$(curl -H "X-Octopus-ApiKey: ${OCTOPUS_CLI_API_KEY}" https://mattc.octopus.app/api/Spaces-282/Projects | jq -r '.Items[] | select(.Name=="Provision Hello World") | .Id')
 # terraform import octopusdeploy_project.project_provision_hello_world ${RESOURCE_ID}
@@ -89,6 +95,13 @@ resource "octopusdeploy_project" "project_provision_hello_world" {
     exclude_unhealthy_targets       = false
     skip_machine_behavior           = "None"
   }
+}
+
+resource "octopusdeploy_variable" "amazon_web_services_account_variable" {
+  owner_id  = octopusdeploy_project.project_provision_hello_world.id
+  type      = "AmazonWebServicesAccount"
+  name      = "AWS"
+  value     = data.octopusdeploy_accounts.aws.accounts[0].id
 }
 
 resource "octopusdeploy_deployment_process" "deployment_process_project_provision_hello_world" {
