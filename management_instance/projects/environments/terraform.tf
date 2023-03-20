@@ -36,8 +36,8 @@ variable "octopus_space_id" {
   description = "The ID of the Octopus space to populate."
 }
 
-resource "octopusdeploy_project_group" "project_group_hello_world" {
-  name = "Hello World"
+resource "octopusdeploy_project_group" "project_group" {
+  name = "Space Setup"
 }
 
 data "octopusdeploy_channels" "channel_default" {
@@ -75,9 +75,9 @@ data "octopusdeploy_accounts" "aws" {
 
 # Import existing resources with the following commands:
 # RESOURCE_ID=$(curl -H "X-Octopus-ApiKey: ${OCTOPUS_CLI_API_KEY}" https://mattc.octopus.app/api/Spaces-282/Projects | jq -r '.Items[] | select(.Name=="Provision Hello World") | .Id')
-# terraform import octopusdeploy_project.project_provision_hello_world ${RESOURCE_ID}
-resource "octopusdeploy_project" "project_provision_hello_world" {
-  name                                 = "Provision Hello World"
+# terraform import octopusdeploy_project.project ${RESOURCE_ID}
+resource "octopusdeploy_project" "project" {
+  name                                 = "Provision Environments"
   auto_create_release                  = false
   default_guided_failure_mode          = "EnvironmentDefault"
   default_to_skip_if_already_installed = false
@@ -86,7 +86,7 @@ resource "octopusdeploy_project" "project_provision_hello_world" {
   is_disabled                          = false
   is_version_controlled                = false
   lifecycle_id                         = "${data.octopusdeploy_lifecycles.lifecycle_default_lifecycle.lifecycles[0].id}"
-  project_group_id                     = "${octopusdeploy_project_group.project_group_hello_world.id}"
+  project_group_id                     = "${octopusdeploy_project_group.project_group.id}"
   included_library_variable_sets       = [data.octopusdeploy_library_variable_sets.octopus_server.library_variable_sets[0].id]
   tenanted_deployment_participation    = "Tenanted"
 
@@ -98,14 +98,14 @@ resource "octopusdeploy_project" "project_provision_hello_world" {
 }
 
 resource "octopusdeploy_variable" "amazon_web_services_account_variable" {
-  owner_id  = octopusdeploy_project.project_provision_hello_world.id
+  owner_id  = octopusdeploy_project.project.id
   type      = "AmazonWebServicesAccount"
   name      = "AWS"
   value     = data.octopusdeploy_accounts.aws.accounts[0].id
 }
 
-resource "octopusdeploy_deployment_process" "deployment_process_project_provision_hello_world" {
-  project_id = "${octopusdeploy_project.project_provision_hello_world.id}"
+resource "octopusdeploy_deployment_process" "deployment_process_project" {
+  project_id = "${octopusdeploy_project.project.id}"
 
   step {
     condition           = "Success"
@@ -130,7 +130,7 @@ resource "octopusdeploy_deployment_process" "deployment_process_project_provisio
         "Octopus.Action.AwsAccount.Variable" = "AWS"
         "Octopus.Action.GoogleCloud.ImpersonateServiceAccount" = "False"
         "Octopus.Action.Terraform.RunAutomaticFileSubstitution" = "True"
-        "Octopus.Action.Terraform.TemplateDirectory" = "managed_instances/projects/hello_world"
+        "Octopus.Action.Terraform.TemplateDirectory" = "managed_instances/environments/dev_test_prod"
         "Octopus.Action.Terraform.AllowPluginDownloads" = "True"
         "Octopus.Action.Terraform.AzureAccount" = "False"
         "Octopus.Action.GoogleCloud.UseVMServiceAccount" = "True"
@@ -138,7 +138,7 @@ resource "octopusdeploy_deployment_process" "deployment_process_project_provisio
         "Octopus.Action.Script.ScriptSource" = "Package"
         "Octopus.Action.Terraform.GoogleCloudAccount" = "False"
         "Octopus.Action.Package.DownloadOnTentacle" = "False"
-        "Octopus.Action.Terraform.AdditionalInitParams" = "-backend-config=\"key=project_hello_world\" -backend-config=\"bucket=$${{ secrets.BUCKET_NAME }}\" -backend-config=\"region=$${{ secrets.BUCKET_REGION }}\""
+        "Octopus.Action.Terraform.AdditionalInitParams" = "-backend-config=\"key=project_environments\" -backend-config=\"bucket=$${{ secrets.BUCKET_NAME }}\" -backend-config=\"region=$${{ secrets.BUCKET_REGION }}\""
         "Octopus.Action.Terraform.AdditionalActionParams" = "-var=octopus_server=#{Tenant.Octopus.Server} -var=octopus_apikey=#{Tenant.Octopus.ApiKey} -var=octopus_space_id=#{Tenant.Octopus.SpaceId}"
         "Octopus.Action.Terraform.Workspace" = "#{Octopus.Tenant.Name | ToLower}"
       }
