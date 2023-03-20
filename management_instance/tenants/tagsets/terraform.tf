@@ -42,7 +42,7 @@ resource "octopusdeploy_tag_set" "tagset_type" {
   sort_order  = 0
 }
 
-resource "octopusdeploy_tag" "tag_managed_instance{
+resource "octopusdeploy_tag" "tag_managed_instance" {
   name        = "managed_instance"
   color       = "#008000"
   description = "Managed Instance"
