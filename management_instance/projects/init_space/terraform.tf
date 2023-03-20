@@ -255,6 +255,65 @@ resource "octopusdeploy_deployment_process" "deployment_process_project" {
     properties   = {}
     target_roles = []
   }
+
+  step {
+    condition           = "Success"
+    name                = "Configure Maven Feed"
+    package_requirement = "LetOctopusDecide"
+    start_trigger       = "StartAfterPrevious"
+
+    action {
+      action_type                        = "Octopus.TerraformApply"
+      name                               = "Configure Maven Feed"
+      condition                          = "Success"
+      run_on_server                      = true
+      is_disabled                        = false
+      can_be_used_for_project_versioning = true
+      is_required                        = false
+      worker_pool_id                     = "${data.octopusdeploy_worker_pools.workerpool_hosted_ubuntu.worker_pools[0].id}"
+      properties                         = {
+        "Octopus.Action.Terraform.ManagedAccount": "AWS",
+        "Octopus.Action.AwsAccount.UseInstanceRole" = "False"
+        "Octopus.Action.Aws.AssumeRole" = "False"
+        "Octopus.Action.Aws.Region" = "ap-southeast-2"
+        "Octopus.Action.AwsAccount.Variable" = "AWS"
+        "Octopus.Action.GoogleCloud.ImpersonateServiceAccount" = "False"
+        "Octopus.Action.Terraform.RunAutomaticFileSubstitution" = "True"
+        "Octopus.Action.Terraform.TemplateDirectory" = "shared/feeds/maven"
+        "Octopus.Action.Terraform.AllowPluginDownloads" = "True"
+        "Octopus.Action.Terraform.AzureAccount" = "False"
+        "Octopus.Action.GoogleCloud.UseVMServiceAccount" = "True"
+        "Octopus.Action.Terraform.PlanJsonOutput" = "False"
+        "Octopus.Action.Script.ScriptSource" = "Package"
+        "Octopus.Action.Terraform.GoogleCloudAccount" = "False"
+        "Octopus.Action.Package.DownloadOnTentacle" = "False"
+        "Octopus.Action.Terraform.AdditionalInitParams" = "-backend-config=\"key=managed_instance_maven_feed\" -backend-config=\"bucket=${var.bucket_name}\" -backend-config=\"region=${var.bucket_region}\""
+        "Octopus.Action.Terraform.AdditionalActionParams" = "-var=octopus_server=#{Tenant.Octopus.Server} -var=octopus_apikey=#{Tenant.Octopus.ApiKey} -var=octopus_space_id=#{Tenant.Octopus.SpaceId}"
+        "Octopus.Action.Terraform.Workspace" = "#{Octopus.Deployment.Tenant.Name | ToLower}"
+      }
+      environments                       = []
+      excluded_environments              = []
+      channels                           = []
+      tenant_tags                        = []
+
+      primary_package {
+        package_id           = "mcasperson/OctopusEnterprisePatterns"
+        acquisition_location = "Server"
+        feed_id              = data.octopusdeploy_feeds.github.feeds[0].id
+        properties           = { SelectionMode = "immediate" }
+      }
+
+      container {
+        feed_id = data.octopusdeploy_feeds.docker.feeds[0].id
+        image   = "octopusdeploy/worker-tools:5.0.0-ubuntu.22.04"
+      }
+
+      features = []
+    }
+
+    properties   = {}
+    target_roles = []
+  }
 }
 
 data "octopusdeploy_worker_pools" "workerpool_hosted_ubuntu" {
