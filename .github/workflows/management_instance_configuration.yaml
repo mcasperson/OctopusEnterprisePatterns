@@ -53,6 +53,26 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_KEY }}
 
       # Projects
+
+      # There is a bug with the Terraform provider that means step package references are incorrectly
+      # associated with new steps. The easiest fix is to delete the projects before recreating them.
+      # Note that you will likely want to remove this step if you intend to update projects via Terraform, as this
+      # deletes project releases.
+      - name: Delete existing projects
+        run: |
+          declare -a arr=("Deploy Octopus Resources")
+
+          for i in "${arr[@]}"
+          do
+            DEPLOYMENT_PROCESS_ID=$(curl --silent -G --data-urlencode 'name=$i' -H "X-Octopus-ApiKey: ${{ secrets.OCTOPUS_API_KEY }}" ${{ secrets.OCTOPUS_URL }}/api/${{ secrets.OCTOPUS_SPACE }}/projects | jq -r ".Items[0].DeploymentProcessId")
+            if [[ -n "$DEPLOYMENT_PROCESS_ID" && "$DEPLOYMENT_PROCESS_ID" != "null" ]]; then
+              echo "Emptying project deploy process $DEPLOYMENT_PROCESS_ID for project $i"
+              DEPLOYMENT_PROCESS=$(curl --silent -H "X-Octopus-ApiKey: ${{ secrets.OCTOPUS_API_KEY }}" ${{ secrets.OCTOPUS_URL }}/api/${{ secrets.OCTOPUS_SPACE }}/deploymentprocesses/${DEPLOYMENT_PROCESS_ID})
+              EMPTY_DEPLOYMENT_PROCESS=$(echo ${DEPLOYMENT_PROCESS} | jq 'del(.Steps[])')
+              NEW_DEPLOYMENT_PROCESS=$(curl --silent -X PUT -d "${EMPTY_DEPLOYMENT_PROCESS}" -H "Content-Type: application/json" -H "X-Octopus-ApiKey: ${{ secrets.OCTOPUS_API_KEY }}" ${{ secrets.OCTOPUS_URL }}/api/${{ secrets.OCTOPUS_SPACE }}/deploymentprocesses/${DEPLOYMENT_PROCESS_ID})
+            fi
+          done
+        shell: bash
       - run: >
           terraform init
           -backend-config="key=hello_world_project"
@@ -88,6 +108,26 @@ jobs:
           -var=octopus_apikey=${{ secrets.OCTOPUS_API_KEY }}
           -var=octopus_space_id=${{ secrets.OCTOPUS_SPACE }}
         working-directory: management_instance/tenants/tagsets
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_KEY }}
+
+      # Tenants
+      - run: >
+          terraform init
+          -backend-config="key=tenants"
+          -backend-config="bucket=${{ secrets.BUCKET_NAME }}"
+          -backend-config="region=${{ secrets.BUCKET_REGION }}"
+        working-directory: management_instance/tenants/europe
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_KEY }}
+      - run: >
+          terraform apply -auto-approve
+          -var=octopus_server=${{ secrets.OCTOPUS_URL }}
+          -var=octopus_apikey=${{ secrets.OCTOPUS_API_KEY }}
+          -var=octopus_space_id=${{ secrets.OCTOPUS_SPACE }}
+        working-directory: management_instance/tenants/europe
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_KEY }}
