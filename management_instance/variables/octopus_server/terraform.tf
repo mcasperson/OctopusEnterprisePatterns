@@ -47,4 +47,21 @@ resource "octopusdeploy_library_variable_set" "octopus_library_variable_set" {
       "Octopus.ControlType": "SingleLineText"
     }
   }
+
+  template {
+    name = "Tenant.Octopus.ApiKey"
+    label = "The Octopus Server API Key"
+    display_settings = {
+      "Octopus.ControlType": "Sensitive"
+    }
+  }
+
+  template {
+    name = "Tenant.Octopus.SpaceId"
+    label = "The Octopus Server Space ID"
+    display_settings = {
+      "Octopus.ControlType": "SingleLineText"
+    }
+  }
 }
+

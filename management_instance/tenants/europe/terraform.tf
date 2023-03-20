@@ -69,5 +69,19 @@ resource "octopusdeploy_tenant_common_variable" "octopus_server" {
   library_variable_set_id = data.octopusdeploy_library_variable_sets.octopus_server.library_variable_sets[0].id
   template_id = tolist([for tmp in data.octopusdeploy_library_variable_sets.octopus_server.library_variable_sets[0].template : tmp.id if tmp.name == "Tenant.Octopus.Server"])[0]
   tenant_id = octopusdeploy_tenant.europe.id
-  value = "https://mattc.octopus.app"
+  value = var.octopus_server
+}
+
+resource "octopusdeploy_tenant_common_variable" "octopus_server_api" {
+  library_variable_set_id = data.octopusdeploy_library_variable_sets.octopus_server.library_variable_sets[0].id
+  template_id = tolist([for tmp in data.octopusdeploy_library_variable_sets.octopus_server.library_variable_sets[0].template : tmp.id if tmp.name == "Tenant.Octopus.ApiKey"])[0]
+  tenant_id = octopusdeploy_tenant.europe.id
+  value = var.octopus_apikey
+}
+
+resource "octopusdeploy_tenant_common_variable" "octopus_server_space_id" {
+  library_variable_set_id = data.octopusdeploy_library_variable_sets.octopus_server.library_variable_sets[0].id
+  template_id = tolist([for tmp in data.octopusdeploy_library_variable_sets.octopus_server.library_variable_sets[0].template : tmp.id if tmp.name == "Tenant.Octopus.SpaceId"])[0]
+  tenant_id = octopusdeploy_tenant.europe.id
+  value = "Spaces-1628"
 }
