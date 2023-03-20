@@ -67,9 +67,6 @@ data "octopusdeploy_worker_pools" "workerpool_hosted_ubuntu" {
   take = 1
 }
 
-# Import existing resources with the following commands:
-# RESOURCE_ID=$(curl -H "X-Octopus-ApiKey: ${OCTOPUS_CLI_API_KEY}" https://mattc.octopus.app/api/Spaces-282/Projects | jq -r '.Items[] | select(.Name=="Provision Hello World") | .Id')
-# terraform import octopusdeploy_project.project ${RESOURCE_ID}
 resource "octopusdeploy_project" "project" {
   name                                 = "Provision Azure Web App"
   auto_create_release                  = false
@@ -81,10 +78,7 @@ resource "octopusdeploy_project" "project" {
   is_version_controlled                = false
   lifecycle_id                         = "${data.octopusdeploy_lifecycles.lifecycle_default_lifecycle.lifecycles[0].id}"
   project_group_id                     = "${octopusdeploy_project_group.project_group.id}"
-  included_library_variable_sets       = [
-    data.octopusdeploy_library_variable_sets.octopus_server.library_variable_sets[0].id,
-    data.octopusdeploy_library_variable_sets.docker_hub.library_variable_sets[0].id
-  ]
+  included_library_variable_sets       = []
   tenanted_deployment_participation    = "Tenanted"
 
   connectivity_policy {
