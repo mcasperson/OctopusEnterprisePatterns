@@ -163,7 +163,7 @@ resource "octopusdeploy_deployment_process" "deployment_process_project" {
 
       container {
         feed_id = data.octopusdeploy_feeds.docker.feeds[0].id
-        image   = "hashicorp/terraform"
+        image   = "octopusdeploy/worker-tools:5.0.0-ubuntu.22.04"
       }
 
       features = []
