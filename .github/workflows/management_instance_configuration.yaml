@@ -118,6 +118,8 @@ jobs:
           -var=octopus_server=${{ secrets.OCTOPUS_URL }}
           -var=octopus_apikey=${{ secrets.OCTOPUS_API_KEY }}
           -var=octopus_space_id=${{ secrets.OCTOPUS_SPACE }}
+          -var=docker_username=${{ secrets.DOCKER_USERNAME }}
+          -var=docker_password=${{ secrets.DOCKER_PASSWORD }}
         working-directory: management_instance/feeds/dockerhub
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY }}
