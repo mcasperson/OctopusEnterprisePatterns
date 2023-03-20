@@ -138,7 +138,7 @@ resource "octopusdeploy_deployment_process" "deployment_process_project_provisio
         "Octopus.Action.Script.ScriptSource" = "Package"
         "Octopus.Action.Terraform.GoogleCloudAccount" = "False"
         "Octopus.Action.Package.DownloadOnTentacle" = "False"
-        "Octopus.Action.Terraform.AdditionalInitParams" = "-backend-config=\"key=project_hello_world\" -backend-config=\"bucket=$${{ secrets.BUCKET_NAME }}\" -backend-config=\"region=$${{ secrets.BUCKET_REGION }}\""
+        "Octopus.Action.Terraform.AdditionalInitParams" = "-backend-config=\"key=managed_instance_project_hello_world\" -backend-config=\"bucket=$${{ secrets.BUCKET_NAME }}\" -backend-config=\"region=$${{ secrets.BUCKET_REGION }}\""
         "Octopus.Action.Terraform.AdditionalActionParams" = "-var=octopus_server=#{Tenant.Octopus.Server} -var=octopus_apikey=#{Tenant.Octopus.ApiKey} -var=octopus_space_id=#{Tenant.Octopus.SpaceId}"
         "Octopus.Action.Terraform.Workspace" = "#{Octopus.Tenant.Name | ToLower}"
       }
