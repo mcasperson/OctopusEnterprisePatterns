@@ -67,7 +67,6 @@ jobs:
           -var=octopus_server=${{ secrets.OCTOPUS_URL }}
           -var=octopus_apikey=${{ secrets.OCTOPUS_API_KEY }}
           -var=octopus_space_id=${{ secrets.OCTOPUS_SPACE }}
-          -var=feed_github_password=${{ secrets.GH_TOKEN }}
         working-directory: management_instance/projects/hello_world
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY }}
