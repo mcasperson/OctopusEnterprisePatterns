@@ -176,7 +176,7 @@ jobs:
       # deletes project releases.
       - name: Delete existing projects
         run: |
-          declare -a arr=("Provision Hello World" "Provision Environments")
+          declare -a arr=("Provision Hello World" "Initialise Space")
 
           for i in "${arr[@]}"
           do
