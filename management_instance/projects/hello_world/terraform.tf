@@ -36,6 +36,20 @@ variable "octopus_space_id" {
   description = "The ID of the Octopus space to populate."
 }
 
+variable "bucket_name" {
+  type        = string
+  nullable    = false
+  sensitive   = false
+  description = "The S3 bucket used to hold the Terraform state."
+}
+
+variable "bucket_region" {
+  type        = string
+  nullable    = false
+  sensitive   = false
+  description = "The S3 bucket used to hold the Terraform state."
+}
+
 resource "octopusdeploy_project_group" "project_group_hello_world" {
   name = "Hello World"
 }
@@ -145,7 +159,7 @@ resource "octopusdeploy_deployment_process" "deployment_process_project_provisio
         "Octopus.Action.Script.ScriptSource" = "Package"
         "Octopus.Action.Terraform.GoogleCloudAccount" = "False"
         "Octopus.Action.Package.DownloadOnTentacle" = "False"
-        "Octopus.Action.Terraform.AdditionalInitParams" = "-backend-config=\"key=managed_instance_project_hello_world\" -backend-config=\"bucket=$${{ secrets.BUCKET_NAME }}\" -backend-config=\"region=$${{ secrets.BUCKET_REGION }}\""
+        "Octopus.Action.Terraform.AdditionalInitParams" = "-backend-config=\"key=managed_instance_project_hello_world\" -backend-config=\"bucket=${var.bucket_name}\" -backend-config=\"region=${var.bucket_region}\""
         "Octopus.Action.Terraform.AdditionalActionParams" = "-var=octopus_server=#{Tenant.Octopus.Server} -var=octopus_apikey=#{Tenant.Octopus.ApiKey} -var=octopus_space_id=#{Tenant.Octopus.SpaceId}"
         "Octopus.Action.Terraform.Workspace" = "#{Octopus.Tenant.Name | ToLower}"
       }
