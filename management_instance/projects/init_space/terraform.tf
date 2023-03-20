@@ -81,6 +81,13 @@ data "octopusdeploy_library_variable_sets" "octopus_server" {
   take = 1
 }
 
+data "octopusdeploy_library_variable_sets" "docker_hub" {
+  partial_name = "DockerHub"
+  skip = 0
+  take = 1
+}
+
+
 data "octopusdeploy_accounts" "aws" {
   partial_name = "AWS Account"
   skip         = 0
@@ -108,7 +115,10 @@ resource "octopusdeploy_project" "project" {
   is_version_controlled                = false
   lifecycle_id                         = "${data.octopusdeploy_lifecycles.lifecycle_default_lifecycle.lifecycles[0].id}"
   project_group_id                     = "${octopusdeploy_project_group.project_group.id}"
-  included_library_variable_sets       = [data.octopusdeploy_library_variable_sets.octopus_server.library_variable_sets[0].id]
+  included_library_variable_sets       = [
+    data.octopusdeploy_library_variable_sets.octopus_server.library_variable_sets[0].id,
+    data.octopusdeploy_library_variable_sets.octopus_server.docker_hub[0].id
+  ]
   tenanted_deployment_participation    = "Tenanted"
 
   connectivity_policy {
