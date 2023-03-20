@@ -44,7 +44,7 @@ resource "octopusdeploy_tag_set" "tagset_region" {
 
 resource "octopusdeploy_tag" "tag_europe" {
   name        = "eu"
-  color       = "#00ff00"
+  color       = "#008000"
   description = "Europe"
   sort_order  = 0
   tag_set_id = octopusdeploy_tag_set.tagset_region.id
@@ -52,7 +52,7 @@ resource "octopusdeploy_tag" "tag_europe" {
 
 resource "octopusdeploy_tag" "tag_america" {
   name        = "us"
-  color       = "#00ffff"
+  color       = "#000080"
   description = "United States"
   sort_order  = 0
   tag_set_id = octopusdeploy_tag_set.tagset_region.id
