@@ -118,7 +118,6 @@ resource "octopusdeploy_deployment_process" "deployment_process_project_provisio
         package_id           = "mcasperson/OctopusEnterprisePatterns"
         acquisition_location = "Server"
         feed_id              = "${octopusdeploy_github_repository_feed.feed_github.id}"
-        id                   = "1645673f-d1b2-4dec-8536-ee48317c35ab"
         properties           = { SelectionMode = "immediate" }
       }
 
