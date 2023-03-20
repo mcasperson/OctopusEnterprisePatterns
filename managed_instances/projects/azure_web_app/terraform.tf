@@ -36,20 +36,6 @@ variable "octopus_space_id" {
   description = "The ID of the Octopus space to populate."
 }
 
-variable "bucket_name" {
-  type        = string
-  nullable    = false
-  sensitive   = false
-  description = "The S3 bucket used to hold the Terraform state."
-}
-
-variable "bucket_region" {
-  type        = string
-  nullable    = false
-  sensitive   = false
-  description = "The S3 bucket used to hold the Terraform state."
-}
-
 resource "octopusdeploy_project_group" "project_group" {
   name = "Azure Web App"
 }
