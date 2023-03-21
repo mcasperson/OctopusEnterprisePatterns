@@ -34,6 +34,14 @@ variable "octopus_space_id" {
   description = "The ID of the Octopus space to populate."
 }
 
+data "octopusdeploy_lifecycles" "lifecycle_simple" {
+  ids          = null
+  partial_name = "Simple"
+  skip         = 0
+  take         = 1
+}
+
+
 resource "octopusdeploy_deployment_process" "deployment_process_project_hello_world" {
   project_id = "${octopusdeploy_project.project_hello_world.id}"
 
@@ -83,7 +91,7 @@ resource "octopusdeploy_project" "project_hello_world" {
   discrete_channel_release             = false
   is_disabled                          = false
   is_version_controlled                = false
-  lifecycle_id                         = "${data.octopusdeploy_lifecycles.lifecycle_default_lifecycle.lifecycles[0].id}"
+  lifecycle_id                         = "${data.octopusdeploy_lifecycles.lifecycle_simple.lifecycles[0].id}"
   project_group_id                     = "${octopusdeploy_project_group.project_group_hello_world.id}"
   included_library_variable_sets       = []
   tenanted_deployment_participation    = "Untenanted"
