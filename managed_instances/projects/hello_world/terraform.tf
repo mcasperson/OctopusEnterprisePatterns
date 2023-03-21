@@ -88,7 +88,6 @@ resource "octopusdeploy_project" "project_hello_world" {
   auto_create_release                  = false
   default_guided_failure_mode          = "EnvironmentDefault"
   default_to_skip_if_already_installed = false
-  description                          = ""
   discrete_channel_release             = false
   is_disabled                          = false
   is_version_controlled                = false
