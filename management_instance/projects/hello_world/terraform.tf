@@ -100,9 +100,6 @@ data "octopusdeploy_feeds" "docker" {
   take         = 1
 }
 
-# Import existing resources with the following commands:
-# RESOURCE_ID=$(curl -H "X-Octopus-ApiKey: ${OCTOPUS_CLI_API_KEY}" https://mattc.octopus.app/api/Spaces-282/Projects | jq -r '.Items[] | select(.Name=="Provision Hello World") | .Id')
-# terraform import octopusdeploy_project.project_provision_hello_world ${RESOURCE_ID}
 resource "octopusdeploy_project" "project_provision_hello_world" {
   name                                 = "Provision Hello World"
   auto_create_release                  = false
