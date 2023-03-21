@@ -9,7 +9,6 @@ terraform {
   }
 }
 
-
 provider "octopusdeploy" {
   address  = "${var.octopus_server}"
   api_key  = "${var.octopus_apikey}"
@@ -77,10 +76,6 @@ resource "octopusdeploy_environment" "environment_test" {
   }
 }
 
-
-# Import existing resources with the following commands:
-# RESOURCE_ID=$(curl -H "X-Octopus-ApiKey: ${OCTOPUS_CLI_API_KEY}" https://mattc.octopus.app/api/Spaces-282/Environments | jq -r '.Items[] | select(.Name=="Production") | .Id')
-# terraform import octopusdeploy_environment.environment_production ${RESOURCE_ID}
 resource "octopusdeploy_environment" "environment_production" {
   name                         = "Production"
   description                  = ""
