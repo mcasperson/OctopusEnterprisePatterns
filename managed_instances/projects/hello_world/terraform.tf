@@ -62,14 +62,14 @@ resource "octopusdeploy_deployment_process" "deployment_process_project_hello_wo
       worker_pool_id                     = "${data.octopusdeploy_worker_pools.workerpool_hosted_ubuntu.worker_pools[0].id}"
       properties                         = {
         "Octopus.Action.Script.ScriptSource" = "Inline"
-        "Octopus.Action.Script.ScriptBody" = "echo 'Hello world, using Bash'\n\n#TODO: Experiment with steps of your own :)\n\necho '[Learn more about the types of steps available in Octopus](https://oc.to/OnboardingAddStepsLearnMore)'"
-        "Octopus.Action.Script.Syntax" = "Bash"
+        "Octopus.Action.Script.ScriptBody"   = "echo 'Hello world, using Bash'\n\n#TODO: Experiment with steps of your own :)\n\necho '[Learn more about the types of steps available in Octopus](https://oc.to/OnboardingAddStepsLearnMore)'"
+        "Octopus.Action.Script.Syntax"       = "Bash"
       }
-      environments                       = []
-      excluded_environments              = []
-      channels                           = []
-      tenant_tags                        = []
-      features                           = []
+      environments          = []
+      excluded_environments = []
+      channels              = []
+      tenant_tags           = []
+      features              = []
     }
 
     properties   = {}
@@ -84,6 +84,7 @@ resource "octopusdeploy_project_group" "project_group_hello_world" {
 
 resource "octopusdeploy_project" "project_hello_world" {
   name                                 = "Hello World"
+  description                          = "An example of a project that is created by Terraform and owned by Terraform"
   auto_create_release                  = false
   default_guided_failure_mode          = "EnvironmentDefault"
   default_to_skip_if_already_installed = false

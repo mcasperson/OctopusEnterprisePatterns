@@ -89,6 +89,7 @@ data "octopusdeploy_worker_pools" "workerpool_hosted_ubuntu" {
 
 resource "octopusdeploy_project" "project" {
   name                                 = "Azure Web App"
+  description                          = "A project that is created by Terraform but then able to be edited."
   auto_create_release                  = false
   default_guided_failure_mode          = "EnvironmentDefault"
   default_to_skip_if_already_installed = false
@@ -109,13 +110,19 @@ resource "octopusdeploy_project" "project" {
 }
 
 resource "octopusdeploy_variable" "cloud_discovery" {
-  owner_id  = octopusdeploy_project.project.id
-  type      = "AzureAccount"
-  name      = "Octopus.Azure.Account"
-  value     = data.octopusdeploy_accounts.azure.accounts[0].id
+  owner_id = octopusdeploy_project.project.id
+  type     = "AzureAccount"
+  name     = "Octopus.Azure.Account"
+  value    = data.octopusdeploy_accounts.azure.accounts[0].id
 }
 
 resource "octopusdeploy_deployment_process" "deployment_process" {
+  lifecycle {
+    ignore_changes = [
+      step,
+    ]
+  }
+
   project_id = "${octopusdeploy_project.project.id}"
 
   step {
@@ -135,9 +142,9 @@ resource "octopusdeploy_deployment_process" "deployment_process" {
       worker_pool_id                     = "${data.octopusdeploy_worker_pools.workerpool_hosted_ubuntu.worker_pools[0].id}"
       properties                         = {
         "Octopus.Action.Script.ScriptSource" = "Inline"
-        "Octopus.Action.Script.Syntax" = "Bash"
-        "Octopus.Action.Azure.AccountId" = data.octopusdeploy_accounts.azure.accounts[0].id
-        "Octopus.Action.Script.ScriptBody" = <<EOT
+        "Octopus.Action.Script.Syntax"       = "Bash"
+        "Octopus.Action.Azure.AccountId"     = data.octopusdeploy_accounts.azure.accounts[0].id
+        "Octopus.Action.Script.ScriptBody"   = <<EOT
 NOW=$(date +%s)
 CREATED=$${NOW}
 RESOURCE_NAME=##{Octopus.Space.Name | Replace "[^A-Za-z0-9]" "-" | ToLower}-##{Octopus.Project.Name | Replace "[^A-Za-z0-9]" "-" | ToLower}-##{Octopus.Environment.Name | Replace "[^A-Za-z0-9]" "-" | ToLower}
@@ -189,7 +196,7 @@ else
 	echo "Web App already exists"
 fi
 EOT
-        "OctopusUseBundledTooling" = "False"
+        "OctopusUseBundledTooling"           = "False"
       }
 
       container {
@@ -224,14 +231,14 @@ EOT
       is_required                        = false
       worker_pool_id                     = "${data.octopusdeploy_worker_pools.workerpool_hosted_ubuntu.worker_pools[0].id}"
       properties                         = {
-        "OctopusUseBundledTooling" = "False"
-        "Octopus.Action.Azure.DeploymentType" = "Container"
+        "OctopusUseBundledTooling"                  = "False"
+        "Octopus.Action.Azure.DeploymentType"       = "Container"
         "Octopus.Action.Package.DownloadOnTentacle" = "False"
       }
-      environments                       = []
+      environments          = []
       excluded_environments = [data.octopusdeploy_environments.security.environments[0].id]
-      channels                           = []
-      tenant_tags                        = []
+      channels              = []
+      tenant_tags           = []
 
       primary_package {
         package_id           = "octopussamples/octopub"
@@ -240,7 +247,10 @@ EOT
         properties           = { SelectionMode = "immediate" }
       }
 
-      features = ["Octopus.Features.JsonConfigurationVariables", "Octopus.Features.ConfigurationTransforms", "Octopus.Features.SubstituteInFiles"]
+      features = [
+        "Octopus.Features.JsonConfigurationVariables", "Octopus.Features.ConfigurationTransforms",
+        "Octopus.Features.SubstituteInFiles"
+      ]
     }
 
     properties   = {}
@@ -263,14 +273,14 @@ EOT
       worker_pool_id                     = "${data.octopusdeploy_worker_pools.workerpool_hosted_ubuntu.worker_pools[0].id}"
       properties                         = {
         "Octopus.Action.SubstituteInFiles.Enabled" = "True"
-        "Octopus.Action.Script.ScriptBody" = "echo \"##octopus[stdout-verbose]\"\ndocker pull appthreat/dep-scan\necho \"##octopus[stdout-default]\"\n\nTIMESTAMP=$(date +%s%3N)\nSUCCESS=0\nfor x in $(find . -name bom.xml -type f -print); do\n    echo \"Scanning $${x}\"\n\n    # Delete any existing report file\n    if [[ -f \"$PWD/depscan-bom.json\" ]]; then\n      rm \"$PWD/depscan-bom.json\"\n    fi\n\n    # Generate the report, capturing the output, and ensuring $? is set to the exit code\n    OUTPUT=$(bash -c \"docker run --rm -v \\\"$PWD:/app\\\" appthreat/dep-scan --bom \\\"/app/$${x}\\\" --type bom --report_file /app/depscan.json; exit \\$?\" 2\u003e\u00261)\n\n    # Success is set to 1 if the exit code is not zero\n    if [[ $? -ne 0 ]]; then\n        SUCCESS=1\n    fi\n\n    # Print the output stripped of ANSI colour codes\n    echo -e \"$${OUTPUT}\" | sed 's/\\x1b\\[[0-9;]*m//g'\ndone\n\nset_octopusvariable \"VerificationResult\" $SUCCESS\n\nif [[ $SUCCESS -ne 0 ]]; then\n  \u003e\u00262 echo \"Critical vulnerabilities were detected\"\nfi\n\nexit 0\n"
-        "Octopus.Action.Script.ScriptSource" = "Inline"
-        "Octopus.Action.Script.Syntax" = "Bash"
+        "Octopus.Action.Script.ScriptBody"         = "echo \"##octopus[stdout-verbose]\"\ndocker pull appthreat/dep-scan\necho \"##octopus[stdout-default]\"\n\nTIMESTAMP=$(date +%s%3N)\nSUCCESS=0\nfor x in $(find . -name bom.xml -type f -print); do\n    echo \"Scanning $${x}\"\n\n    # Delete any existing report file\n    if [[ -f \"$PWD/depscan-bom.json\" ]]; then\n      rm \"$PWD/depscan-bom.json\"\n    fi\n\n    # Generate the report, capturing the output, and ensuring $? is set to the exit code\n    OUTPUT=$(bash -c \"docker run --rm -v \\\"$PWD:/app\\\" appthreat/dep-scan --bom \\\"/app/$${x}\\\" --type bom --report_file /app/depscan.json; exit \\$?\" 2\u003e\u00261)\n\n    # Success is set to 1 if the exit code is not zero\n    if [[ $? -ne 0 ]]; then\n        SUCCESS=1\n    fi\n\n    # Print the output stripped of ANSI colour codes\n    echo -e \"$${OUTPUT}\" | sed 's/\\x1b\\[[0-9;]*m//g'\ndone\n\nset_octopusvariable \"VerificationResult\" $SUCCESS\n\nif [[ $SUCCESS -ne 0 ]]; then\n  \u003e\u00262 echo \"Critical vulnerabilities were detected\"\nfi\n\nexit 0\n"
+        "Octopus.Action.Script.ScriptSource"       = "Inline"
+        "Octopus.Action.Script.Syntax"             = "Bash"
       }
-      environments                       = []
-      excluded_environments              = []
-      channels                           = []
-      tenant_tags                        = []
+      environments          = []
+      excluded_environments = []
+      channels              = []
+      tenant_tags           = []
 
       package {
         name                      = "sbom"
