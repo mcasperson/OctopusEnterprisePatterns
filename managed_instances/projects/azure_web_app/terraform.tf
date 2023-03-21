@@ -67,6 +67,12 @@ data "octopusdeploy_feeds" "maven" {
   take         = 1
 }
 
+data "octopusdeploy_environments" "security" {
+  partial_name = "Security"
+  skip         = 0
+  take         = 1
+}
+
 data "octopusdeploy_worker_pools" "workerpool_hosted_ubuntu" {
   name = "Hosted Ubuntu"
   ids  = null
@@ -185,7 +191,7 @@ EOT
       }
 
       environments          = []
-      excluded_environments = []
+      excluded_environments = [data.octopusdeploy_environments.security.environments[0].id]
       channels              = []
       tenant_tags           = []
       features              = []
@@ -216,7 +222,7 @@ EOT
         "Octopus.Action.Package.DownloadOnTentacle" = "False"
       }
       environments                       = []
-      excluded_environments              = []
+      excluded_environments = [data.octopusdeploy_environments.security.environments[0].id]
       channels                           = []
       tenant_tags                        = []
 
