@@ -110,7 +110,57 @@ resource "octopusdeploy_deployment_process" "deployment_process" {
         "Octopus.Action.Script.ScriptSource" = "Inline"
         "Octopus.Action.Script.Syntax" = "Bash"
         "Octopus.Action.Azure.AccountId" = data.octopusdeploy_accounts.azure.accounts[0].id
-        "Octopus.Action.Script.ScriptBody" = "NOW=$(date +%s)\nCREATED=$${NOW}\nRESOURCE_NAME=##{Octopus.Space.Name | Replace \"[^A-Za-z0-9]\" \"-\" | ToLower}-##{Octopus.Project.Name | Replace \"[^A-Za-z0-9]\" \"-\" | ToLower}-##{Octopus.Environment.Name | Replace \"[^A-Za-z0-9]\" \"-\" | ToLower}\n\n# az tag list --resource-id /subscriptions/#{Octopus.Action.Azure.SubscriptionId}/resourcegroups/$${RESOURCE_NAME}rg\n\n# Test if the resource group exists\nEXISTING_RG=$(az group list --query \"[?name=='$${RESOURCE_NAME}-rg']\")\nLENGTH=$(echo $${EXISTING_RG} | jq '. | length' \u003e /dev/null)\n\nif [[ $LENGTH != \"0\" ]]\nthen\n\techo \"Creating new resource group\"\n\taz group create -l westus -n \"$${RESOURCE_NAME}-rg\" --tags LifeTimeInDays=7 Created=$${NOW}\nelse\n\techo \"Resource group already exists\"\nfi\n\nEXISTING_SP=$(az appservice plan list --resource-group \"$${RESOURCE_NAME}-rg\")\nLENGTH=$(echo $${EXISTING_SP} | jq '. | length' \u003e /dev/null)\nif [[ $LENGTH != \"0\" ]]\nthen\n\techo \"Creating new service plan\"\n\taz appservice plan create \\\n      --sku B1 \\\n      --name \"$${RESOURCE_NAME}-sp\" \\\n      --resource-group \"$${RESOURCE_NAME}-rg\" \\\n      --is-linux\nelse\n\techo \"Service plan already exists\"\nfi\n\nEXISTING_WA=$(az webapp list --resource-group \"$${RESOURCE_NAME}-rg\")\nLENGTH=$(echo $${EXISTING_WA} | jq '. | length' \u003e /dev/null)\nif [[ $LENGTH != \"0\" ]]\nthen\n\techo \"Creating new web app\"\n\taz webapp create \\\n      --resource-group \"$${RESOURCE_NAME}-rg\" \\\n      --plan \"$${RESOURCE_NAME}-sp\" \\\n      --name \"$${RESOURCE_NAME}-wa\" \\\n      --deployment-container-image-name nginx \nelse\n\techo \"Web App already exists\"\nfi"
+        "Octopus.Action.Script.ScriptBody" = <<EOT
+NOW=$(date +%s)
+CREATED=$${NOW}
+RESOURCE_NAME=##{Octopus.Space.Name | Replace "[^A-Za-z0-9]" "-" | ToLower}-##{Octopus.Project.Name | Replace "[^A-Za-z0-9]" "-" | ToLower}-##{Octopus.Environment.Name | Replace "[^A-Za-z0-9]" "-" | ToLower}
+
+# az tag list --resource-id /subscriptions/#{Octopus.Action.Azure.SubscriptionId}/resourcegroups/$${RESOURCE_NAME}rg
+
+# Test if the resource group exists
+EXISTING_RG=$(az group list --query "[?name=='$${RESOURCE_NAME}-rg']")
+LENGTH=$(echo $${EXISTING_RG} | jq '. | length' > /dev/null)
+
+if [[ $LENGTH != "0" ]]
+then
+	echo "Creating new resource group"
+	az group create -l westus -n "$${RESOURCE_NAME}-rg" --tags LifeTimeInDays=7 Created=$${NOW}
+else
+	echo "Resource group already exists"
+fi
+
+EXISTING_SP=$(az appservice plan list --resource-group "$${RESOURCE_NAME}-rg")
+LENGTH=$(echo $${EXISTING_SP} | jq '. | length' > /dev/null)
+if [[ $LENGTH != "0" ]]
+then
+	echo "Creating new service plan"
+	az appservice plan create \
+      --sku B1 \
+      --name "$${RESOURCE_NAME}-sp" \
+      --resource-group "$${RESOURCE_NAME}-rg" \
+      --is-linux
+else
+	echo "Service plan already exists"
+fi
+
+EXISTING_WA=$(az webapp list --resource-group "$${RESOURCE_NAME}-rg")
+LENGTH=$(echo $${EXISTING_WA} | jq '. | length' > /dev/null)
+if [[ $LENGTH != "0" ]]
+then
+	echo "Creating new web app"
+	az webapp create \
+      --resource-group "$${RESOURCE_NAME}-rg" \
+      --plan "$${RESOURCE_NAME}-sp" \
+      --name "$${RESOURCE_NAME}-wa" \
+      --deployment-container-image-name nginx \
+      --tags \
+      	octopus-environment=##{Octopus.Space.Name} \
+        octopus-space="##{Octopus.Space.Name}" \
+        octopus-project="##{Octopus.Project.Name}" \
+else
+	echo "Web App already exists"
+fi
+EOT
         "OctopusUseBundledTooling" = "False"
       }
 
