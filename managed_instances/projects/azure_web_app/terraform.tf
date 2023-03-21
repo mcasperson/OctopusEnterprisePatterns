@@ -154,7 +154,7 @@ then
       --name "$${RESOURCE_NAME}-wa" \
       --deployment-container-image-name nginx \
       --tags \
-      	octopus-environment=##{Octopus.Space.Name} \
+      	octopus-environment="##{Octopus.Environment.Name}" \
         octopus-space="##{Octopus.Space.Name}" \
         octopus-project="##{Octopus.Project.Name}" \
 else
