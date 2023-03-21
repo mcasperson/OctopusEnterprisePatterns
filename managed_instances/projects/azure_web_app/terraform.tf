@@ -128,7 +128,7 @@ RESOURCE_NAME=##{Octopus.Space.Name | Replace "[^A-Za-z0-9]" "-" | ToLower}-##{O
 EXISTING_RG=$(az group list --query "[?name=='$${RESOURCE_NAME}-rg']")
 LENGTH=$(echo $${EXISTING_RG} | jq '. | length')
 
-if [[ $LENGTH != "0" ]]
+if [[ $LENGTH == "0" ]]
 then
 	echo "Creating new resource group"
 	az group create -l westus -n "$${RESOURCE_NAME}-rg" --tags LifeTimeInDays=7 Created=$${NOW}
@@ -138,7 +138,7 @@ fi
 
 EXISTING_SP=$(az appservice plan list --resource-group "$${RESOURCE_NAME}-rg")
 LENGTH=$(echo $${EXISTING_SP} | jq '. | length')
-if [[ $LENGTH != "0" ]]
+if [[ $LENGTH == "0" ]]
 then
 	echo "Creating new service plan"
 	az appservice plan create \
@@ -152,7 +152,7 @@ fi
 
 EXISTING_WA=$(az webapp list --resource-group "$${RESOURCE_NAME}-rg")
 LENGTH=$(echo $${EXISTING_WA} | jq '. | length')
-if [[ $LENGTH != "0" ]]
+if [[ $LENGTH == "0" ]]
 then
 	echo "Creating new web app"
 	az webapp create \
