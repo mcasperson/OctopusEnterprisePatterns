@@ -88,6 +88,13 @@ resource "octopusdeploy_project" "project" {
   }
 }
 
+resource "octopusdeploy_variable" "cloud_discovery" {
+  owner_id  = octopusdeploy_project.project.id
+  type      = "String"
+  name      = "Octopus.Azure.Account"
+  value     = data.octopusdeploy_accounts.azure.accounts[0].id
+}
+
 resource "octopusdeploy_deployment_process" "deployment_process" {
   project_id = "${octopusdeploy_project.project.id}"
 
@@ -157,6 +164,7 @@ then
       	octopus-environment="##{Octopus.Environment.Name}" \
         octopus-space="##{Octopus.Space.Name}" \
         octopus-project="##{Octopus.Project.Name}" \
+        octopus-role="octopub"
 else
 	echo "Web App already exists"
 fi
