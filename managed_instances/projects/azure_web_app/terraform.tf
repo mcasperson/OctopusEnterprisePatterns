@@ -90,7 +90,7 @@ resource "octopusdeploy_project" "project" {
 
 resource "octopusdeploy_variable" "cloud_discovery" {
   owner_id  = octopusdeploy_project.project.id
-  type      = "String"
+  type      = "AzureAccount"
   name      = "Octopus.Azure.Account"
   value     = data.octopusdeploy_accounts.azure.accounts[0].id
 }
@@ -126,7 +126,7 @@ RESOURCE_NAME=##{Octopus.Space.Name | Replace "[^A-Za-z0-9]" "-" | ToLower}-##{O
 
 # Test if the resource group exists
 EXISTING_RG=$(az group list --query "[?name=='$${RESOURCE_NAME}-rg']")
-LENGTH=$(echo $${EXISTING_RG} | jq '. | length' > /dev/null)
+LENGTH=$(echo $${EXISTING_RG} | jq '. | length')
 
 if [[ $LENGTH != "0" ]]
 then
@@ -136,8 +136,8 @@ else
 	echo "Resource group already exists"
 fi
 
-EXISTING_SP=$(az appservice plan list --resource-group "$${RESOURCE_NAME}-rg")
-LENGTH=$(echo $${EXISTING_SP} | jq '. | length' > /dev/null)
+EXISTING_SP=$(az appservice plan list --resource-group "$${RESOURCE_NAME}-sp")
+LENGTH=$(echo $${EXISTING_SP} | jq '. | length')
 if [[ $LENGTH != "0" ]]
 then
 	echo "Creating new service plan"
@@ -150,8 +150,8 @@ else
 	echo "Service plan already exists"
 fi
 
-EXISTING_WA=$(az webapp list --resource-group "$${RESOURCE_NAME}-rg")
-LENGTH=$(echo $${EXISTING_WA} | jq '. | length' > /dev/null)
+EXISTING_WA=$(az webapp list --resource-group "$${RESOURCE_NAME}-wa")
+LENGTH=$(echo $${EXISTING_WA} | jq '. | length')
 if [[ $LENGTH != "0" ]]
 then
 	echo "Creating new web app"
@@ -186,5 +186,44 @@ EOT
 
     properties   = {}
     target_roles = []
+  }
+
+  step {
+    condition           = "Success"
+    name                = "Deploy Web App"
+    package_requirement = "LetOctopusDecide"
+    start_trigger       = "StartAfterPrevious"
+
+    action {
+      action_type                        = "Octopus.AzureAppService"
+      name                               = "Deploy Web App"
+      condition                          = "Success"
+      run_on_server                      = true
+      is_disabled                        = false
+      can_be_used_for_project_versioning = true
+      is_required                        = false
+      worker_pool_id                     = "${data.octopusdeploy_worker_pools.workerpool_hosted_ubuntu.worker_pools[0].id}"
+      properties                         = {
+        "OctopusUseBundledTooling" = "False"
+        "Octopus.Action.Azure.DeploymentType" = "Container"
+        "Octopus.Action.Package.DownloadOnTentacle" = "False"
+      }
+      environments                       = []
+      excluded_environments              = []
+      channels                           = []
+      tenant_tags                        = []
+
+      primary_package {
+        package_id           = "octopussamples/octopub"
+        acquisition_location = "NotAcquired"
+        feed_id              = data.octopusdeploy_feeds.docker.feeds[0].id
+        properties           = { SelectionMode = "immediate" }
+      }
+
+      features = ["Octopus.Features.JsonConfigurationVariables", "Octopus.Features.ConfigurationTransforms", "Octopus.Features.SubstituteInFiles"]
+    }
+
+    properties   = {}
+    target_roles = ["octopub"]
   }
 }
