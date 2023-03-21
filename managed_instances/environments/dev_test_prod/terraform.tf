@@ -204,3 +204,74 @@ resource "octopusdeploy_lifecycle" "devsecops_lifecycle" {
     }
   }
 }
+
+resource "octopusdeploy_lifecycle" "simple_lifecycle" {
+  description = "Lifecycle including security scanning"
+  name        = "Simple"
+
+  release_retention_policy {
+    quantity_to_keep    = 1
+    should_keep_forever = true
+    unit                = "Days"
+  }
+
+  tentacle_retention_policy {
+    quantity_to_keep    = 30
+    should_keep_forever = false
+    unit                = "Items"
+  }
+
+  phase {
+    automatic_deployment_targets = []
+    optional_deployment_targets  = [octopusdeploy_environment.environment_dev.id]
+    name                         = octopusdeploy_environment.environment_dev.name
+
+    release_retention_policy {
+      quantity_to_keep    = 1
+      should_keep_forever = true
+      unit                = "Days"
+    }
+
+    tentacle_retention_policy {
+      quantity_to_keep    = 30
+      should_keep_forever = false
+      unit                = "Items"
+    }
+  }
+
+  phase {
+    automatic_deployment_targets = []
+    optional_deployment_targets  = [octopusdeploy_environment.environment_test.id]
+    name                         = octopusdeploy_environment.environment_test.name
+
+    release_retention_policy {
+      quantity_to_keep    = 1
+      should_keep_forever = true
+      unit                = "Days"
+    }
+
+    tentacle_retention_policy {
+      quantity_to_keep    = 30
+      should_keep_forever = false
+      unit                = "Items"
+    }
+  }
+
+  phase {
+    automatic_deployment_targets = []
+    optional_deployment_targets  = [octopusdeploy_environment.environment_production.id]
+    name                         = octopusdeploy_environment.environment_production.name
+
+    release_retention_policy {
+      quantity_to_keep    = 30
+      should_keep_forever = true
+      unit                = "Days"
+    }
+
+    tentacle_retention_policy {
+      quantity_to_keep    = 30
+      should_keep_forever = false
+      unit                = "Items"
+    }
+  }
+}
