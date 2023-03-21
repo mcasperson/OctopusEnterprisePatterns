@@ -60,6 +60,13 @@ data "octopusdeploy_feeds" "docker" {
   take         = 1
 }
 
+data "octopusdeploy_feeds" "maven" {
+  feed_type    = "Maven"
+  partial_name = "Sales Maven Feed"
+  skip         = 0
+  take         = 1
+}
+
 data "octopusdeploy_worker_pools" "workerpool_hosted_ubuntu" {
   name = "Hosted Ubuntu"
   ids  = null
@@ -225,5 +232,45 @@ EOT
 
     properties   = {}
     target_roles = ["octopub"]
+  }
+  step {
+    condition           = "Success"
+    name                = "Check for Vulnerabilities"
+    package_requirement = "LetOctopusDecide"
+    start_trigger       = "StartAfterPrevious"
+
+    action {
+      action_type                        = "Octopus.Script"
+      name                               = "Check for Vulnerabilities"
+      condition                          = "Success"
+      run_on_server                      = true
+      is_disabled                        = false
+      can_be_used_for_project_versioning = true
+      is_required                        = true
+      worker_pool_id                     = "${data.octopusdeploy_worker_pools.workerpool_hosted_ubuntu.worker_pools[0].id}"
+      properties                         = {
+        "Octopus.Action.SubstituteInFiles.Enabled" = "True"
+        "Octopus.Action.Script.ScriptBody" = "echo \"##octopus[stdout-verbose]\"\ndocker pull appthreat/dep-scan\necho \"##octopus[stdout-default]\"\n\nTIMESTAMP=$(date +%s%3N)\nSUCCESS=0\nfor x in $(find . -name bom.xml -type f -print); do\n    echo \"Scanning $${x}\"\n\n    # Delete any existing report file\n    if [[ -f \"$PWD/depscan-bom.json\" ]]; then\n      rm \"$PWD/depscan-bom.json\"\n    fi\n\n    # Generate the report, capturing the output, and ensuring $? is set to the exit code\n    OUTPUT=$(bash -c \"docker run --rm -v \\\"$PWD:/app\\\" appthreat/dep-scan scan --bom \\\"/app/$${x}\\\" --type bom --report_file /app/depscan.json; exit \\$?\" 2\u003e\u00261)\n\n    # Success is set to 1 if the exit code is not zero\n    if [[ $? -ne 0 ]]; then\n        SUCCESS=1\n    fi\n\n    # Print the output stripped of ANSI colour codes\n    echo -e \"$${OUTPUT}\" | sed 's/\\x1b\\[[0-9;]*m//g'\ndone\n\nset_octopusvariable \"VerificationResult\" $SUCCESS\n\nif [[ $SUCCESS -ne 0 ]]; then\n  \u003e\u00262 echo \"Critical vulnerabilities were detected\"\nelse\n  echo \"No critical vulnerabilities were detected\"\nfi\n\nexit 0\n"
+        "Octopus.Action.Script.ScriptSource" = "Inline"
+        "Octopus.Action.Script.Syntax" = "Bash"
+      }
+      environments                       = []
+      excluded_environments              = []
+      channels                           = []
+      tenant_tags                        = []
+
+      package {
+        name                      = "sbom"
+        package_id                = "com.octopus:octopub-sbom"
+        acquisition_location      = "Server"
+        extract_during_deployment = false
+        feed_id                   = data.octopusdeploy_feeds.maven.feeds[0].id
+        properties                = { Extract = "True" }
+      }
+      features = ["Octopus.Features.SubstituteInFiles"]
+    }
+
+    properties   = {}
+    target_roles = []
   }
 }
