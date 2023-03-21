@@ -136,7 +136,7 @@ else
 	echo "Resource group already exists"
 fi
 
-EXISTING_SP=$(az appservice plan list --resource-group "$${RESOURCE_NAME}-sp")
+EXISTING_SP=$(az appservice plan list --resource-group "$${RESOURCE_NAME}-rg")
 LENGTH=$(echo $${EXISTING_SP} | jq '. | length')
 if [[ $LENGTH != "0" ]]
 then
@@ -150,7 +150,7 @@ else
 	echo "Service plan already exists"
 fi
 
-EXISTING_WA=$(az webapp list --resource-group "$${RESOURCE_NAME}-wa")
+EXISTING_WA=$(az webapp list --resource-group "$${RESOURCE_NAME}-rg")
 LENGTH=$(echo $${EXISTING_WA} | jq '. | length')
 if [[ $LENGTH != "0" ]]
 then
