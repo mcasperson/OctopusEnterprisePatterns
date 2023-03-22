@@ -12,21 +12,16 @@ jobs:
       - uses: hashicorp/setup-terraform@v2
 
       # Tagsets
-      - name: Init the tagset module
-        run: >
-          terraform init
-          -backend-config="key=tagsets"
-          -backend-config="bucket=${{ secrets.BUCKET_NAME }}"
-          -backend-config="region=${{ secrets.BUCKET_REGION }}"
-        working-directory: management_instance/tenants/tagsets/s3backend
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_KEY }}
       - name: Apply the tagset module
-        run: >
-          terraform apply -auto-approve
-          -var=octopus_server=${{ secrets.OCTOPUS_URL }}
-          -var=octopus_apikey=${{ secrets.OCTOPUS_API_KEY }}
+        run: |
+          terraform init \
+          -backend-config="key=tagsets" \
+          -backend-config="bucket=${{ secrets.BUCKET_NAME }}" \
+          -backend-config="region=${{ secrets.BUCKET_REGION }}"
+          
+          terraform apply -auto-approve \
+          -var=octopus_server=${{ secrets.OCTOPUS_URL }} \
+          -var=octopus_apikey=${{ secrets.OCTOPUS_API_KEY }} \
           -var=octopus_space_id=${{ secrets.OCTOPUS_SPACE }}
         working-directory: management_instance/tenants/tagsets/s3backend
         env:
@@ -34,23 +29,18 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_KEY }}
 
       # Accounts
-      - name: Init the accounts module
-        run: >
-          terraform init
-          -backend-config="key=aws_account"
-          -backend-config="bucket=${{ secrets.BUCKET_NAME }}"
-          -backend-config="region=${{ secrets.BUCKET_REGION }}"
-        working-directory: shared/accounts/aws/s3backend
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_KEY }}
       - name: Apply the variable set module
-        run: >
-          terraform apply -auto-approve
-          -var=octopus_server=${{ secrets.OCTOPUS_URL }}
-          -var=octopus_apikey=${{ secrets.OCTOPUS_API_KEY }}
-          -var=octopus_space_id=${{ secrets.OCTOPUS_SPACE }}
-          -var=aws_access_key=${{ secrets.AWS_ACCESS_KEY }}
+        run: |
+          terraform init \
+          -backend-config="key=aws_account" \
+          -backend-config="bucket=${{ secrets.BUCKET_NAME }}" \
+          -backend-config="region=${{ secrets.BUCKET_REGION }}"
+          
+          terraform apply -auto-approve \
+          -var=octopus_server=${{ secrets.OCTOPUS_URL }} \
+          -var=octopus_apikey=${{ secrets.OCTOPUS_API_KEY }} \
+          -var=octopus_space_id=${{ secrets.OCTOPUS_SPACE }} \
+          -var=aws_access_key=${{ secrets.AWS_ACCESS_KEY }} \
           -var=aws_secret_key=${{ secrets.AWS_SECRET_KEY }}
         working-directory: shared/accounts/aws/s3backend
         env:
@@ -58,21 +48,16 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_KEY }}
 
       # Environments
-      - name: Init the environments module
-        run: >
-          terraform init
-          -backend-config="key=environments"
-          -backend-config="bucket=${{ secrets.BUCKET_NAME }}"
-          -backend-config="region=${{ secrets.BUCKET_REGION }}"
-        working-directory: management_instance/environments/production/s3backend
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_KEY }}
       - name: Apply the environments module
-        run: >
-          terraform apply -auto-approve
-          -var=octopus_server=${{ secrets.OCTOPUS_URL }}
-          -var=octopus_apikey=${{ secrets.OCTOPUS_API_KEY }}
+        run: |
+          terraform init \
+          -backend-config="key=environments" \
+          -backend-config="bucket=${{ secrets.BUCKET_NAME }}" \
+          -backend-config="region=${{ secrets.BUCKET_REGION }}"
+          
+          terraform apply -auto-approve \
+          -var=octopus_server=${{ secrets.OCTOPUS_URL }} \
+          -var=octopus_apikey=${{ secrets.OCTOPUS_API_KEY }} \
           -var=octopus_space_id=${{ secrets.OCTOPUS_SPACE }}
         working-directory: management_instance/environments/production/s3backend
         env:
@@ -80,45 +65,35 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_KEY }}
 
       # Feeds
-      - name: Init the feeds module
-        run: >
-          terraform init
-          -backend-config="key=feeds"
-          -backend-config="bucket=${{ secrets.BUCKET_NAME }}"
-          -backend-config="region=${{ secrets.BUCKET_REGION }}"
-        working-directory: shared/feeds/github/s3backend
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_KEY }}
       - name: Apply the feeds module
-        run: >
-          terraform apply -auto-approve
-          -var=octopus_server=${{ secrets.OCTOPUS_URL }}
-          -var=octopus_apikey=${{ secrets.OCTOPUS_API_KEY }}
-          -var=octopus_space_id=${{ secrets.OCTOPUS_SPACE }}
+        run: |
+          terraform init \
+          -backend-config="key=feeds" \
+          -backend-config="bucket=${{ secrets.BUCKET_NAME }}" \
+          -backend-config="region=${{ secrets.BUCKET_REGION }}"
+          
+          terraform apply -auto-approve \
+          -var=octopus_server=${{ secrets.OCTOPUS_URL }} \
+          -var=octopus_apikey=${{ secrets.OCTOPUS_API_KEY }} \
+          -var=octopus_space_id=${{ secrets.OCTOPUS_SPACE }} \
           -var=feed_github_password=${{ secrets.GH_TOKEN }}
         working-directory: shared/feeds/github/s3backend
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_KEY }}
 
-      - name: Init the dockerhub feeds module
-        run: >
-          terraform init
-          -backend-config="key=dockerhubfeeds"
-          -backend-config="bucket=${{ secrets.BUCKET_NAME }}"
-          -backend-config="region=${{ secrets.BUCKET_REGION }}"
-        working-directory: shared/feeds/dockerhub/s3backend
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_KEY }}
       - name: Apply the dockerhub feeds module
-        run: >
-          terraform apply -auto-approve
-          -var=octopus_server=${{ secrets.OCTOPUS_URL }}
-          -var=octopus_apikey=${{ secrets.OCTOPUS_API_KEY }}
-          -var=octopus_space_id=${{ secrets.OCTOPUS_SPACE }}
-          -var=docker_username=${{ secrets.DOCKER_USERNAME }}
+        run: |
+          terraform init \
+          -backend-config="key=dockerhubfeeds" \
+          -backend-config="bucket=${{ secrets.BUCKET_NAME }}" \
+          -backend-config="region=${{ secrets.BUCKET_REGION }}"
+          
+          terraform apply -auto-approve \
+          -var=octopus_server=${{ secrets.OCTOPUS_URL }} \
+          -var=octopus_apikey=${{ secrets.OCTOPUS_API_KEY }} \
+          -var=octopus_space_id=${{ secrets.OCTOPUS_SPACE }} \
+          -var=docker_username=${{ secrets.DOCKER_USERNAME }} \
           -var=docker_password=${{ secrets.DOCKER_PASSWORD }}
         working-directory: shared/feeds/dockerhub/s3backend
         env:
@@ -126,63 +101,48 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_KEY }}
 
       # Library Variable Sets
-      - name: Init the octopus server variable set module
-        run: >
-          terraform init
-          -backend-config="key=docker_hub_variables"
-          -backend-config="bucket=${{ secrets.BUCKET_NAME }}"
-          -backend-config="region=${{ secrets.BUCKET_REGION }}"
-        working-directory: management_instance/variables/octopus_server/s3backend
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_KEY }}
       - name: Apply the octopus server variable set module
-        run: >
-          terraform apply -auto-approve
-          -var=octopus_server=${{ secrets.OCTOPUS_URL }}
-          -var=octopus_apikey=${{ secrets.OCTOPUS_API_KEY }}
+        run: |
+          terraform init \
+          -backend-config="key=docker_hub_variables" \
+          -backend-config="bucket=${{ secrets.BUCKET_NAME }}" \
+          -backend-config="region=${{ secrets.BUCKET_REGION }}"
+          
+          terraform apply -auto-approve \
+          -var=octopus_server=${{ secrets.OCTOPUS_URL }} \
+          -var=octopus_apikey=${{ secrets.OCTOPUS_API_KEY }} \
           -var=octopus_space_id=${{ secrets.OCTOPUS_SPACE }}
         working-directory: management_instance/variables/octopus_server/s3backend
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_KEY }}
 
-      - name: Init the docker variable set module
-        run: >
-          terraform init
-          -backend-config="key=octopus_docker_variables"
-          -backend-config="bucket=${{ secrets.BUCKET_NAME }}"
-          -backend-config="region=${{ secrets.BUCKET_REGION }}"
-        working-directory: management_instance/variables/docker/s3backend
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_KEY }}
       - name: Apply the docker variable set module
-        run: >
-          terraform apply -auto-approve
-          -var=octopus_server=${{ secrets.OCTOPUS_URL }}
-          -var=octopus_apikey=${{ secrets.OCTOPUS_API_KEY }}
+        run: |
+          terraform init \
+          -backend-config="key=octopus_docker_variables" \
+          -backend-config="bucket=${{ secrets.BUCKET_NAME }}" \
+          -backend-config="region=${{ secrets.BUCKET_REGION }}"
+          
+          terraform apply -auto-approve \
+          -var=octopus_server=${{ secrets.OCTOPUS_URL }} \
+          -var=octopus_apikey=${{ secrets.OCTOPUS_API_KEY }} \
           -var=octopus_space_id=${{ secrets.OCTOPUS_SPACE }}
         working-directory: management_instance/variables/docker/s3backend
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_KEY }}
 
-      - name: Init the azure variable set module
-        run: >
-          terraform init
-          -backend-config="key=octopus_azure_variables"
-          -backend-config="bucket=${{ secrets.BUCKET_NAME }}"
-          -backend-config="region=${{ secrets.BUCKET_REGION }}"
-        working-directory: management_instance/variables/azure/s3backend
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_KEY }}
       - name: Apply the azure variable set module
-        run: >
-          terraform apply -auto-approve
-          -var=octopus_server=${{ secrets.OCTOPUS_URL }}
-          -var=octopus_apikey=${{ secrets.OCTOPUS_API_KEY }}
+        run: |
+          terraform init \
+          -backend-config="key=octopus_azure_variables" \
+          -backend-config="bucket=${{ secrets.BUCKET_NAME }}" \
+          -backend-config="region=${{ secrets.BUCKET_REGION }}"
+          
+          terraform apply -auto-approve \
+          -var=octopus_server=${{ secrets.OCTOPUS_URL }} \
+          -var=octopus_apikey=${{ secrets.OCTOPUS_API_KEY }} \
           -var=octopus_space_id=${{ secrets.OCTOPUS_SPACE }}
         working-directory: management_instance/variables/azure/s3backend
         env:
@@ -198,7 +158,7 @@ jobs:
       # deletes project releases.
       - name: Delete existing projects
         run: |
-          declare -a arr=("Provision Hello World" "Initialise Space" "Provision Azure Web App")
+          declare -a arr=("Provision Hello World" "Initialise Space" "Provision Managed Azure Web App")
 
           for i in "${arr[@]}"
           do
