@@ -1,3 +1,9 @@
+terraform {
+  required_providers {
+    octopusdeploy = { source = "OctopusDeployLabs/octopusdeploy", version = "0.11.1" }
+  }
+}
+
 variable "docker_username" {
   type        = string
   nullable    = false

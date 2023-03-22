@@ -19,7 +19,6 @@ module "octopus" {
   source = "../octopus"
 }
 
-
 variable "octopus_server" {
   type        = string
   nullable    = false

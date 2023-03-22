@@ -1,3 +1,9 @@
+terraform {
+  required_providers {
+    octopusdeploy = { source = "OctopusDeployLabs/octopusdeploy", version = "0.11.1" }
+  }
+}
+
 resource "octopusdeploy_library_variable_set" "octopus_library_variable_set" {
   name = "Azure"
   description = "Variables related to interacting with Azure"

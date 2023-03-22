@@ -1,3 +1,9 @@
+terraform {
+  required_providers {
+    octopusdeploy = { source = "OctopusDeployLabs/octopusdeploy", version = "0.11.1" }
+  }
+}
+
 resource "octopusdeploy_maven_feed" "sales_maven_feed" {
   download_attempts              = 3
   download_retry_backoff_seconds = 20

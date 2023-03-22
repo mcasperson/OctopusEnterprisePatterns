@@ -1,3 +1,9 @@
+terraform {
+  required_providers {
+    octopusdeploy = { source = "OctopusDeployLabs/octopusdeploy", version = "0.11.1" }
+  }
+}
+
 variable "bucket_name" {
   type        = string
   nullable    = false

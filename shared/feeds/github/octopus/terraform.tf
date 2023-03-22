@@ -1,3 +1,9 @@
+terraform {
+  required_providers {
+    octopusdeploy = { source = "OctopusDeployLabs/octopusdeploy", version = "0.11.1" }
+  }
+}
+
 resource "octopusdeploy_github_repository_feed" "feed_github" {
   name                                 = "GitHub"
   password                             = "${var.feed_github_password}"
