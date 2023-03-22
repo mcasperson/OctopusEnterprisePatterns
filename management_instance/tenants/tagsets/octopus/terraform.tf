@@ -1,3 +1,9 @@
+terraform {
+  required_providers {
+    octopusdeploy = { source = "OctopusDeployLabs/octopusdeploy", version = "0.11.1" }
+  }
+}
+
 resource "octopusdeploy_tag_set" "tagset_type" {
   name        = "type"
   description = "Tenant type tags"
