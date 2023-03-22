@@ -79,7 +79,7 @@ resource "octopusdeploy_project_group" "project_group" {
 }
 
 resource "octopusdeploy_project" "project" {
-  name                                 = "Azure Web App"
+  name                                 = var.project_name
   description                          = "A project that is created by Terraform but then able to be edited."
   auto_create_release                  = false
   default_guided_failure_mode          = "EnvironmentDefault"
