@@ -4,6 +4,20 @@ terraform {
   }
 }
 
+variable "octopus_server" {
+  type        = string
+  nullable    = false
+  sensitive   = false
+  description = "The URL of the Octopus server e.g. https://myinstance.octopus.app."
+}
+
+variable "octopus_apikey" {
+  type        = string
+  nullable    = false
+  sensitive   = true
+  description = "The API key used to access the Octopus server. See https://octopus.com/docs/octopus-rest-api/how-to-create-an-api-key for details on creating an API key."
+}
+
 variable "docker_username" {
   type        = string
   nullable    = false
@@ -127,7 +141,7 @@ resource "octopusdeploy_tenant_common_variable" "octopus_server_space_id" {
   library_variable_set_id = data.octopusdeploy_library_variable_sets.octopus_server.library_variable_sets[0].id
   template_id = tolist([for tmp in data.octopusdeploy_library_variable_sets.octopus_server.library_variable_sets[0].template : tmp.id if tmp.name == "Tenant.Octopus.SpaceId"])[0]
   tenant_id = octopusdeploy_tenant.europe.id
-  value = "Spaces-1628"
+  value = "Spaces-1649"
 }
 
 resource "octopusdeploy_tenant_common_variable" "docker_username" {

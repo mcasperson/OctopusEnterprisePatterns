@@ -76,7 +76,7 @@ data "octopusdeploy_worker_pools" "workerpool_hosted_ubuntu" {
 }
 
 resource "octopusdeploy_project" "project" {
-  name                                 = "Provision Azure Web App"
+  name                                 = "Provision Unmanaged Azure Web App"
   auto_create_release                  = false
   default_guided_failure_mode          = "EnvironmentDefault"
   default_to_skip_if_already_installed = false
@@ -132,7 +132,7 @@ resource "octopusdeploy_deployment_process" "deployment_process" {
         "Octopus.Action.AwsAccount.Variable" = "AWS"
         "Octopus.Action.GoogleCloud.ImpersonateServiceAccount" = "False"
         "Octopus.Action.Terraform.RunAutomaticFileSubstitution" = "True"
-        "Octopus.Action.Terraform.TemplateDirectory" = "managed_instances/projects/azure_web_app/octopus"
+        "Octopus.Action.Terraform.TemplateDirectory" = "managed_instances/projects/azure_web_app/localbackend"
         "Octopus.Action.Terraform.AllowPluginDownloads" = "True"
         "Octopus.Action.Terraform.AzureAccount" = "False"
         "Octopus.Action.GoogleCloud.UseVMServiceAccount" = "True"

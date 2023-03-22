@@ -80,6 +80,8 @@ variable "azure_tenant_id" {
 
 module "octopus" {
   source = "../octopus"
+  octopus_server = var.octopus_server
+  octopus_apikey = var.octopus_apikey
   docker_username = var.docker_username
   docker_password = var.docker_password
   azure_application_id = var.azure_application_id
