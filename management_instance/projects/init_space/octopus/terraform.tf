@@ -133,7 +133,7 @@ resource "octopusdeploy_deployment_process" "deployment_process_project" {
         "Octopus.Action.AwsAccount.Variable" = "AWS"
         "Octopus.Action.GoogleCloud.ImpersonateServiceAccount" = "False"
         "Octopus.Action.Terraform.RunAutomaticFileSubstitution" = "True"
-        "Octopus.Action.Terraform.TemplateDirectory" = "managed_instances/environments/dev_test_prod"
+        "Octopus.Action.Terraform.TemplateDirectory" = "managed_instances/environments/dev_test_prod/s3backend"
         "Octopus.Action.Terraform.AllowPluginDownloads" = "True"
         "Octopus.Action.Terraform.AzureAccount" = "False"
         "Octopus.Action.GoogleCloud.UseVMServiceAccount" = "True"
