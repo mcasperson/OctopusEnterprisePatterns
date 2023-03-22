@@ -226,7 +226,7 @@ jobs:
       - name: Apply the managed azure web app project module
         run: |
           terraform init \
-          -backend-config="key=azure_web_app_project" \
+          -backend-config="key=managed_azure_web_app_project" \
           -backend-config="bucket=${{ secrets.BUCKET_NAME }}" \
           -backend-config="region=${{ secrets.BUCKET_REGION }}"
           
@@ -244,7 +244,7 @@ jobs:
       - name: Apply the unmanaged azure web app project module
         run: |
           terraform init \
-          -backend-config="key=azure_web_app_project" \
+          -backend-config="key=unmanaged_azure_web_app_project" \
           -backend-config="bucket=${{ secrets.BUCKET_NAME }}" \
           -backend-config="region=${{ secrets.BUCKET_REGION }}"
           
