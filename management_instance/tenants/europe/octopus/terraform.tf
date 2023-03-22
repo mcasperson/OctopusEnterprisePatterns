@@ -67,7 +67,7 @@ data "octopusdeploy_projects" "provision_hello_world" {
 }
 
 data "octopusdeploy_projects" "provision_azure_web_app" {
-  partial_name           = "Provision Managed Azure Web App"
+  partial_name           = "Provision Manged Azure Web App"
   skip                   = 0
   take                   = 1
 }
