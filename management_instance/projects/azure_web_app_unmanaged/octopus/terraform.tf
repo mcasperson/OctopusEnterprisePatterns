@@ -18,8 +18,10 @@ variable "bucket_region" {
   description = "The S3 bucket used to hold the Terraform state."
 }
 
-resource "octopusdeploy_project_group" "project_group" {
-  name = "Azure Web App"
+data "octopusdeploy_project_groups" "project_group" {
+  partial_name = "Azure Web App"
+  skip         = 0
+  take         = 1
 }
 
 data "octopusdeploy_channels" "channel_default" {
@@ -85,7 +87,7 @@ resource "octopusdeploy_project" "project" {
   is_disabled                          = false
   is_version_controlled                = false
   lifecycle_id                         = "${data.octopusdeploy_lifecycles.lifecycle_default_lifecycle.lifecycles[0].id}"
-  project_group_id                     = "${octopusdeploy_project_group.project_group.id}"
+  project_group_id                     = data.octopusdeploy_project_groups.project_group.project_groups[0].id
   included_library_variable_sets       = [
     data.octopusdeploy_library_variable_sets.octopus_server.library_variable_sets[0].id,
     data.octopusdeploy_library_variable_sets.docker_hub.library_variable_sets[0].id
