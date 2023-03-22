@@ -108,7 +108,7 @@ resource "octopusdeploy_variable" "amazon_web_services_account_variable" {
   value     = data.octopusdeploy_accounts.aws.accounts[0].id
 }
 
-resource "octopusdeploy_variable" "amazon_web_services_account_variable" {
+resource "octopusdeploy_variable" "project_name_variable" {
   owner_id  = octopusdeploy_project.project.id
   type      = "String"
   name      = "Project.Name"
