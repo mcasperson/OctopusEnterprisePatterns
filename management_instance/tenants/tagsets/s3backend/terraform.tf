@@ -3,6 +3,14 @@ terraform {
   }
 }
 
+module "octopus" {
+  source = "../octopus"
+  octopus_server = var.octopus_server
+  octopus_apikey = var.octopus_apikey
+  octopus_space_id = var.octopus_space_id
+}
+
+
 variable "octopus_server" {
   type        = string
   nullable    = false
@@ -22,11 +30,4 @@ variable "octopus_space_id" {
   nullable    = false
   sensitive   = false
   description = "The ID of the Octopus space to populate."
-}
-
-module "octopus" {
-  source = "../octopus"
-  octopus_server = var.octopus_server
-  octopus_apikey = var.octopus_apikey
-  octopus_space_id = var.octopus_space_id
 }
