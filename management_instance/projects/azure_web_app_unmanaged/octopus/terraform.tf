@@ -164,7 +164,7 @@ resource "octopusdeploy_deployment_process" "deployment_process" {
         "Octopus.Action.AwsAccount.Variable" = "AWS"
         "Octopus.Action.GoogleCloud.ImpersonateServiceAccount" = "False"
         "Octopus.Action.Terraform.RunAutomaticFileSubstitution" = "True"
-        "Octopus.Action.Terraform.TemplateDirectory" = "managed_instances/projects/azure_web_app"
+        "Octopus.Action.Terraform.TemplateDirectory" = "managed_instances/projects/azure_web_app/octopus"
         "Octopus.Action.Terraform.AllowPluginDownloads" = "True"
         "Octopus.Action.Terraform.AzureAccount" = "False"
         "Octopus.Action.GoogleCloud.UseVMServiceAccount" = "True"
@@ -172,8 +172,8 @@ resource "octopusdeploy_deployment_process" "deployment_process" {
         "Octopus.Action.Script.ScriptSource" = "Package"
         "Octopus.Action.Terraform.GoogleCloudAccount" = "False"
         "Octopus.Action.Package.DownloadOnTentacle" = "False"
-        "Octopus.Action.Terraform.AdditionalInitParams" = "-backend-config=\"key=managed_instance_project_azure_web_app\" -backend-config=\"bucket=${var.bucket_name}\" -backend-config=\"region=${var.bucket_region}\""
-        "Octopus.Action.Terraform.AdditionalActionParams" = "-var=octopus_server=#{Tenant.Octopus.Server} -var=octopus_apikey=#{Tenant.Octopus.ApiKey} -var=octopus_space_id=#{Tenant.Octopus.SpaceId}"
+        "Octopus.Action.Terraform.AdditionalInitParams" = ""
+        "Octopus.Action.Terraform.AdditionalActionParams" = "-var=octopus_server=#{Tenant.Octopus.Server} -var=octopus_apikey=#{Tenant.Octopus.ApiKey} -var=octopus_space_id=#{Tenant.Octopus.SpaceId} \"-var=existing_project_group=Default Project Group\""
         "Octopus.Action.Terraform.Workspace" = "#{Octopus.Deployment.Tenant.Name | ToLower}"
       }
       environments                       = []

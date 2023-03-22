@@ -4,11 +4,6 @@ terraform {
   }
 }
 
-terraform {
-  backend "s3" {
-  }
-}
-
 provider "octopusdeploy" {
   address  = "${var.octopus_server}"
   api_key  = "${var.octopus_apikey}"
@@ -37,38 +32,30 @@ variable "octopus_space_id" {
 }
 
 resource "octopusdeploy_library_variable_set" "octopus_library_variable_set" {
-  name = "Azure"
-  description = "Variables related to interacting with Azure"
+  name = "Octopus Server"
+  description = "Variables related to interacting with an Octopus server"
 
   template {
-    name = "Tenant.Azure.ApplicationId"
-    label = "The Azure Application ID"
+    name = "Tenant.Octopus.Server"
+    label = "The Octopus Server URL"
     display_settings = {
       "Octopus.ControlType": "SingleLineText"
     }
   }
 
   template {
-    name = "Tenant.Azure.SubscriptionId"
-    label = "The Azure Subscription ID"
-    display_settings = {
-      "Octopus.ControlType": "SingleLineText"
-    }
-  }
-
-  template {
-    name = "Tenant.Azure.TenantId"
-    label = "The Azure Tenant ID"
-    display_settings = {
-      "Octopus.ControlType": "SingleLineText"
-    }
-  }
-
-  template {
-    name = "Tenant.Azure.Password"
-    label = "The Azure Password"
+    name = "Tenant.Octopus.ApiKey"
+    label = "The Octopus Server API Key"
     display_settings = {
       "Octopus.ControlType": "Sensitive"
+    }
+  }
+
+  template {
+    name = "Tenant.Octopus.SpaceId"
+    label = "The Octopus Server Space ID"
+    display_settings = {
+      "Octopus.ControlType": "SingleLineText"
     }
   }
 }

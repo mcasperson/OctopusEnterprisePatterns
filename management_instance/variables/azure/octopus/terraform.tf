@@ -4,11 +4,6 @@ terraform {
   }
 }
 
-terraform {
-  backend "s3" {
-  }
-}
-
 provider "octopusdeploy" {
   address  = "${var.octopus_server}"
   api_key  = "${var.octopus_apikey}"
@@ -36,22 +31,40 @@ variable "octopus_space_id" {
   description = "The ID of the Octopus space to populate."
 }
 
-resource "octopusdeploy_environment" "environment_production" {
-  name                         = "Production"
-  description                  = ""
-  allow_dynamic_infrastructure = true
-  use_guided_failure           = false
-  sort_order                   = 2
+resource "octopusdeploy_library_variable_set" "octopus_library_variable_set" {
+  name = "Azure"
+  description = "Variables related to interacting with Azure"
 
-  jira_extension_settings {
-    environment_type = "unmapped"
+  template {
+    name = "Tenant.Azure.ApplicationId"
+    label = "The Azure Application ID"
+    display_settings = {
+      "Octopus.ControlType": "SingleLineText"
+    }
   }
 
-  jira_service_management_extension_settings {
-    is_enabled = false
+  template {
+    name = "Tenant.Azure.SubscriptionId"
+    label = "The Azure Subscription ID"
+    display_settings = {
+      "Octopus.ControlType": "SingleLineText"
+    }
   }
 
-  servicenow_extension_settings {
-    is_enabled = false
+  template {
+    name = "Tenant.Azure.TenantId"
+    label = "The Azure Tenant ID"
+    display_settings = {
+      "Octopus.ControlType": "SingleLineText"
+    }
+  }
+
+  template {
+    name = "Tenant.Azure.Password"
+    label = "The Azure Password"
+    display_settings = {
+      "Octopus.ControlType": "Sensitive"
+    }
   }
 }
+

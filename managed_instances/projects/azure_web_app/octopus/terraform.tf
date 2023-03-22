@@ -4,11 +4,6 @@ terraform {
   }
 }
 
-terraform {
-  backend "s3" {
-  }
-}
-
 provider "octopusdeploy" {
   address  = "${var.octopus_server}"
   api_key  = "${var.octopus_apikey}"
@@ -36,8 +31,12 @@ variable "octopus_space_id" {
   description = "The ID of the Octopus space to populate."
 }
 
-resource "octopusdeploy_project_group" "project_group" {
-  name = "Azure Web App"
+variable "existing_project_group" {
+  type        = string
+  nullable    = false
+  sensitive   = false
+  description = "The name of the existing project group to place the project into."
+  default     = ""
 }
 
 data "octopusdeploy_lifecycles" "lifecycle_default_lifecycle" {
@@ -87,6 +86,17 @@ data "octopusdeploy_worker_pools" "workerpool_hosted_ubuntu" {
   take = 1
 }
 
+data "octopusdeploy_project_groups" "project_group" {
+  partial_name = var.existing_project_group
+  skip         = 0
+  take         = 1
+}
+
+resource "octopusdeploy_project_group" "project_group" {
+  count = var.existing_project_group == "" ? 1 : 0
+  name = "Azure Web App"
+}
+
 resource "octopusdeploy_project" "project" {
   name                                 = "Azure Web App"
   description                          = "A project that is created by Terraform but then able to be edited."
@@ -97,7 +107,7 @@ resource "octopusdeploy_project" "project" {
   is_disabled                          = false
   is_version_controlled                = false
   lifecycle_id                         = "${data.octopusdeploy_lifecycles.lifecycle_devsecops.lifecycles[0].id}"
-  project_group_id                     = "${octopusdeploy_project_group.project_group.id}"
+  project_group_id                     = var.existing_project_group == "" ? octopusdeploy_project_group.project_group.id : data.octopusdeploy_project_groups.project_group.project_groups[0].id
   included_library_variable_sets       = []
   tenanted_deployment_participation    = "Untenanted"
 

@@ -4,11 +4,6 @@ terraform {
   }
 }
 
-terraform {
-  backend "s3" {
-  }
-}
-
 provider "octopusdeploy" {
   address  = "${var.octopus_server}"
   api_key  = "${var.octopus_apikey}"
@@ -36,32 +31,38 @@ variable "octopus_space_id" {
   description = "The ID of the Octopus space to populate."
 }
 
-resource "octopusdeploy_library_variable_set" "octopus_library_variable_set" {
-  name = "Octopus Server"
-  description = "Variables related to interacting with an Octopus server"
-
-  template {
-    name = "Tenant.Octopus.Server"
-    label = "The Octopus Server URL"
-    display_settings = {
-      "Octopus.ControlType": "SingleLineText"
-    }
-  }
-
-  template {
-    name = "Tenant.Octopus.ApiKey"
-    label = "The Octopus Server API Key"
-    display_settings = {
-      "Octopus.ControlType": "Sensitive"
-    }
-  }
-
-  template {
-    name = "Tenant.Octopus.SpaceId"
-    label = "The Octopus Server Space ID"
-    display_settings = {
-      "Octopus.ControlType": "SingleLineText"
-    }
-  }
+resource "octopusdeploy_tag_set" "tagset_type" {
+  name        = "type"
+  description = "Tenant type tags"
+  sort_order  = 0
 }
 
+resource "octopusdeploy_tag" "tag_managed_instance" {
+  name        = "managed_instance"
+  color       = "#008000"
+  description = "Managed Instance"
+  sort_order  = 0
+  tag_set_id = octopusdeploy_tag_set.tagset_type.id
+}
+
+resource "octopusdeploy_tag_set" "tagset_region" {
+  name        = "region"
+  description = "Region tags"
+  sort_order  = 0
+}
+
+resource "octopusdeploy_tag" "tag_europe" {
+  name        = "eu"
+  color       = "#008000"
+  description = "Europe"
+  sort_order  = 0
+  tag_set_id = octopusdeploy_tag_set.tagset_region.id
+}
+
+resource "octopusdeploy_tag" "tag_america" {
+  name        = "us"
+  color       = "#000080"
+  description = "United States"
+  sort_order  = 0
+  tag_set_id = octopusdeploy_tag_set.tagset_region.id
+}
