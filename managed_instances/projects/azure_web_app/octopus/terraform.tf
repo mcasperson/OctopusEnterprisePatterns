@@ -88,7 +88,7 @@ resource "octopusdeploy_project" "project" {
   is_disabled                          = false
   is_version_controlled                = false
   lifecycle_id                         = "${data.octopusdeploy_lifecycles.lifecycle_devsecops.lifecycles[0].id}"
-  project_group_id                     = var.existing_project_group == "" ? octopusdeploy_project_group.project_group.id : data.octopusdeploy_project_groups.project_group.project_groups[0].id
+  project_group_id                     = var.existing_project_group == "" ? octopusdeploy_project_group.project_group[0].id : data.octopusdeploy_project_groups.project_group.project_groups[0].id
   included_library_variable_sets       = []
   tenanted_deployment_participation    = "Untenanted"
 
