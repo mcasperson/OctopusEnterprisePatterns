@@ -36,27 +36,38 @@ variable "octopus_space_id" {
   description = "The ID of the Octopus space to populate."
 }
 
-variable "aws_access_key" {
+variable "azure_application_id" {
   type        = string
   nullable    = false
   sensitive   = false
-  description = "The AWS Access key."
+  description = "The Azure application ID."
 }
 
-variable "aws_secret_key" {
+variable "azure_subscription_id" {
   type        = string
   nullable    = false
   sensitive   = false
-  description = "The AWS Secret key."
+  description = "The Azure subscription ID."
 }
 
-resource "octopusdeploy_aws_account" "account_aws_account" {
-  name                              = "AWS Account"
-  description                       = ""
-  environments                      = null
-  tenant_tags                       = ["type/managed_instance"]
-  tenants                           = null
-  tenanted_deployment_participation = "TenantedOrUntenanted"
-  access_key                        = var.aws_access_key
-  secret_key                        = var.aws_secret_key
+variable "azure_password" {
+  type        = string
+  nullable    = false
+  sensitive   = true
+  description = "The Azure password."
+}
+
+variable "azure_tenant_id" {
+  type        = string
+  nullable    = false
+  sensitive   = false
+  description = "The Azure tenant ID."
+}
+
+module "octopus" {
+  source = "../octopus"
+  azure_application_id = var.azure_application_id
+  azure_subscription_id = var.azure_subscription_id
+  azure_password = var.azure_password
+  azure_tenant_id = var.azure_tenant_id
 }

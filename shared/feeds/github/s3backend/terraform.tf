@@ -36,9 +36,14 @@ variable "octopus_space_id" {
   description = "The ID of the Octopus space to populate."
 }
 
-resource "octopusdeploy_maven_feed" "sales_maven_feed" {
-  download_attempts              = 3
-  download_retry_backoff_seconds = 20
-  feed_uri                       = "https://octopus-sales-public-maven-repo.s3.ap-southeast-2.amazonaws.com/snapshot"
-  name                           = "Sales Maven Feed"
+variable "feed_github_password" {
+  type        = string
+  nullable    = false
+  sensitive   = true
+  description = "The password used by the feed GitHub"
+}
+
+module "octopus" {
+  source = "../octopus"
+  feed_github_password = var.feed_github_password
 }

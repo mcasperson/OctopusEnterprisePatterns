@@ -1,11 +1,11 @@
 terraform {
-  backend "s3" {
+  required_providers {
+    octopusdeploy = { source = "OctopusDeployLabs/octopusdeploy", version = "0.11.1" }
   }
 }
 
 terraform {
-  required_providers {
-    octopusdeploy = { source = "OctopusDeployLabs/octopusdeploy", version = "0.11.1" }
+  backend "s3" {
   }
 }
 
@@ -14,7 +14,6 @@ provider "octopusdeploy" {
   api_key  = "${var.octopus_apikey}"
   space_id = "${var.octopus_space_id}"
 }
-
 
 variable "octopus_server" {
   type        = string
@@ -37,15 +36,22 @@ variable "octopus_space_id" {
   description = "The ID of the Octopus space to populate."
 }
 
-variable "existing_project_group" {
+variable "aws_access_key" {
   type        = string
   nullable    = false
   sensitive   = false
-  description = "The name of the existing project group to place the project into."
-  default     = ""
+  description = "The AWS Access key."
+}
+
+variable "aws_secret_key" {
+  type        = string
+  nullable    = false
+  sensitive   = false
+  description = "The AWS Secret key."
 }
 
 module "octopus" {
   source = "../octopus"
-  existing_project_group = var.existing_project_group
+  aws_access_key = var.aws_access_key
+  aws_secret_key = var.aws_secret_key
 }

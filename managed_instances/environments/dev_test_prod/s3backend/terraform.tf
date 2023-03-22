@@ -3,6 +3,18 @@ terraform {
   }
 }
 
+terraform {
+  required_providers {
+    octopusdeploy = { source = "OctopusDeployLabs/octopusdeploy", version = "0.11.1" }
+  }
+}
+
+provider "octopusdeploy" {
+  address  = "${var.octopus_server}"
+  api_key  = "${var.octopus_apikey}"
+  space_id = "${var.octopus_space_id}"
+}
+
 variable "octopus_server" {
   type        = string
   nullable    = false
@@ -26,7 +38,4 @@ variable "octopus_space_id" {
 
 module "octopus" {
   source = "../octopus"
-  octopus_server = var.octopus_server
-  octopus_apikey = var.octopus_apikey
-  octopus_space_id = var.octopus_space_id
 }
