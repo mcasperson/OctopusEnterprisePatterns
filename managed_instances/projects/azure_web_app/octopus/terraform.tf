@@ -12,6 +12,14 @@ variable "existing_project_group" {
   default     = ""
 }
 
+variable "project_name" {
+  type        = string
+  nullable    = false
+  sensitive   = false
+  description = "The name of the new project."
+  default     = "Azure Web App"
+}
+
 data "octopusdeploy_lifecycles" "lifecycle_default_lifecycle" {
   ids          = null
   partial_name = "Default Lifecycle"
@@ -67,7 +75,7 @@ data "octopusdeploy_project_groups" "project_group" {
 
 resource "octopusdeploy_project_group" "project_group" {
   count = var.existing_project_group == "" ? 1 : 0
-  name = "Azure Web App"
+  name  = "Azure Web App"
 }
 
 resource "octopusdeploy_project" "project" {

@@ -45,7 +45,16 @@ variable "existing_project_group" {
   default     = ""
 }
 
+variable "project_name" {
+  type        = string
+  nullable    = false
+  sensitive   = false
+  description = "The name of the new project."
+  default     = "Azure Web App"
+}
+
 module "octopus" {
   source = "../octopus"
   existing_project_group = var.existing_project_group
+  project_name = var.project_name
 }
