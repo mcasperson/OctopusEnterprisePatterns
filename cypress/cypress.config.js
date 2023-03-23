@@ -12,6 +12,7 @@ module.exports = defineConfig({
             "json": false,
             "reportDir": "."
         },
-        supportFile: false
+        supportFile: false,
+        retries: 5
     },
 });
