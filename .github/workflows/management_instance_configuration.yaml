@@ -189,7 +189,7 @@ jobs:
       # deletes project releases.
       - name: Delete existing projects
         run: |
-          declare -a arr=("Provision Hello World" "Initialise Space" "Provision Unmanaged Azure Web App" "Provision Unmanaged Azure Web App (CaC)")
+          declare -a arr=("Provision Hello World" "Initialise Space" "Provision Unmanaged Azure Web App" "Provision Unmanaged Azure Web App (CaC)" "Provision Azure Logs")
 
           for i in "${arr[@]}"
           do
@@ -217,6 +217,24 @@ jobs:
           -var=bucket_name=${{ secrets.BUCKET_NAME }} \
           -var=bucket_region=${{ secrets.BUCKET_REGION }}
         working-directory: management_instance/projects/hello_world/s3backend
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_KEY }}
+
+      - name: Apply the azure logs project module
+        run: |
+          terraform init \
+          -backend-config="key=azure_logs_project" \
+          -backend-config="bucket=${{ secrets.BUCKET_NAME }}" \
+          -backend-config="region=${{ secrets.BUCKET_REGION }}"
+          
+          terraform apply -auto-approve \
+          -var=octopus_server=${{ secrets.OCTOPUS_URL }} \
+          -var=octopus_apikey=${{ secrets.OCTOPUS_API_KEY }} \
+          -var=octopus_space_id=${{ secrets.OCTOPUS_SPACE }} \
+          -var=bucket_name=${{ secrets.BUCKET_NAME }} \
+          -var=bucket_region=${{ secrets.BUCKET_REGION }}
+        working-directory: management_instance/projects/azure_logs/s3backend
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_KEY }}

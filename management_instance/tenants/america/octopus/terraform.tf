@@ -99,6 +99,12 @@ data "octopusdeploy_projects" "provision_unmanaged_azure_web_app" {
   take                   = 1
 }
 
+data "octopusdeploy_projects" "provision_azure_logs" {
+  partial_name           = "Provision Azure Logs"
+  skip                   = 0
+  take                   = 1
+}
+
 data "octopusdeploy_projects" "initialise_space" {
   partial_name           = "Initialise Space"
   skip                   = 0
@@ -158,6 +164,11 @@ resource "octopusdeploy_tenant" "america" {
   project_environment {
     environments = [data.octopusdeploy_environments.production.environments[0].id]
     project_id   = data.octopusdeploy_projects.provision_azure_web_app_cac.projects[0].id
+  }
+
+  project_environment {
+    environments = [data.octopusdeploy_environments.production.environments[0].id]
+    project_id   = data.octopusdeploy_projects.provision_azure_logs.projects[0].id
   }
 }
 
