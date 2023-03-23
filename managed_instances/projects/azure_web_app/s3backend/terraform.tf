@@ -53,8 +53,17 @@ variable "project_name" {
   default     = "Azure Web App"
 }
 
+variable "role_name" {
+  type        = string
+  nullable    = false
+  sensitive   = false
+  description = "The name of the new target role."
+  default     = "octopub-webapp"
+}
+
 module "octopus" {
-  source = "../octopus"
+  source                 = "../octopus"
   existing_project_group = var.existing_project_group
-  project_name = var.project_name
+  project_name           = var.project_name
+  role_name              = var.role_name
 }
