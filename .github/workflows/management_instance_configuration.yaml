@@ -189,7 +189,7 @@ jobs:
       # deletes project releases.
       - name: Delete existing projects
         run: |
-          declare -a arr=("Provision Hello World" "Initialise Space" "Provision Managed Azure Web App" "Provision Unmanaged Azure Web App")
+          declare -a arr=("Provision Hello World" "Initialise Space" "Provision Managed Azure Web App" "Provision Unmanaged Azure Web App" "Provision Managed Azure Web App (CaC)")
 
           for i in "${arr[@]}"
           do
