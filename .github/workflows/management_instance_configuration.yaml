@@ -310,9 +310,9 @@ jobs:
           -var=azure_application_id=${{ secrets.AZURE_APPLICATION_ID }} \
           -var=azure_subscription_id=${{ secrets.AZURE_SUBSCRIPTION_ID }} \
           -var=azure_password=${{ secrets.AZURE_PASSWORD }} \
-          -var=azure_tenant_id=${{ secrets.AZURE_TENANT_ID }}
-          -var=cac_username=${{ secrets.CAC_GH_USERNAME }}
-          -var=cac_password=${{ secrets.CAC_GH_TOKEN }}
+          -var=azure_tenant_id=${{ secrets.AZURE_TENANT_ID }} \
+          -var=cac_username=${{ secrets.CAC_GH_USERNAME }} \
+          -var=cac_password=${{ secrets.CAC_GH_TOKEN }} \
           -var=cac_url=${{ secrets.CAC_GH_URL }}
         working-directory: management_instance/tenants/europe/s3backend
         env:
