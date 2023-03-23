@@ -115,6 +115,18 @@ resource "octopusdeploy_variable" "amazon_web_services_account_variable" {
   value     = data.octopusdeploy_accounts.aws.accounts[0].id
 }
 
+resource "octopusdeploy_variable" "project_name_variable" {
+  owner_id  = octopusdeploy_project.project.id
+  type      = "String"
+  name      = "Project.Name"
+  value     = "Template Azure Web App"
+  prompt {
+    description = "The name of the new project"
+    is_required = true
+    label       = "Project Name"
+  }
+}
+
 resource "octopusdeploy_deployment_process" "deployment_process" {
   project_id = "${octopusdeploy_project.project.id}"
 
@@ -141,7 +153,7 @@ resource "octopusdeploy_deployment_process" "deployment_process" {
         "Octopus.Action.AwsAccount.Variable" = "AWS"
         "Octopus.Action.GoogleCloud.ImpersonateServiceAccount" = "False"
         "Octopus.Action.Terraform.RunAutomaticFileSubstitution" = "True"
-        "Octopus.Action.Terraform.TemplateDirectory" = "managed_instances/projects/azure_web_app_cac/s3backend"
+        "Octopus.Action.Terraform.TemplateDirectory" = "managed_instances/projects/azure_web_app_cac/localbackend"
         "Octopus.Action.Terraform.AllowPluginDownloads" = "True"
         "Octopus.Action.Terraform.AzureAccount" = "False"
         "Octopus.Action.GoogleCloud.UseVMServiceAccount" = "True"
@@ -149,8 +161,8 @@ resource "octopusdeploy_deployment_process" "deployment_process" {
         "Octopus.Action.Script.ScriptSource" = "Package"
         "Octopus.Action.Terraform.GoogleCloudAccount" = "False"
         "Octopus.Action.Package.DownloadOnTentacle" = "False"
-        "Octopus.Action.Terraform.AdditionalInitParams" = "-backend-config=\"key=managed_instance_cac_project_azure_web_app\" -backend-config=\"bucket=${var.bucket_name}\" -backend-config=\"region=${var.bucket_region}\""
-        "Octopus.Action.Terraform.AdditionalActionParams" = "-var=octopus_server=#{Tenant.Octopus.Server} -var=octopus_apikey=#{Tenant.Octopus.ApiKey} -var=octopus_space_id=#{Tenant.Octopus.SpaceId} -var=cac_url=#{Tenant.CaC.Url} -var=cac_password=#{Tenant.CaC.Password} -var=cac_username=#{Tenant.CaC.Username}"
+        "Octopus.Action.Terraform.AdditionalInitParams" = ""
+        "Octopus.Action.Terraform.AdditionalActionParams" = "-var=octopus_server=#{Tenant.Octopus.Server} -var=octopus_apikey=#{Tenant.Octopus.ApiKey} -var=octopus_space_id=#{Tenant.Octopus.SpaceId} -var=cac_url=#{Tenant.CaC.Url} -var=cac_password=#{Tenant.CaC.Password} -var=cac_username=#{Tenant.CaC.Username} -var=project_name=#{Project.Name}"
         "Octopus.Action.Terraform.Workspace" = "#{Octopus.Deployment.Tenant.Name | ToLower}"
       }
       environments                       = []
