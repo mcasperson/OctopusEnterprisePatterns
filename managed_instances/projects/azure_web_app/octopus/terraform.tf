@@ -224,7 +224,7 @@ resource "octopusdeploy_deployment_process" "deployment_process" {
       }
 
       environments          = []
-      excluded_environments = []
+      excluded_environments = [data.octopusdeploy_environments.security.environments[0].id]
       channels              = []
       tenant_tags           = []
 
