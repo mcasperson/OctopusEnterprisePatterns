@@ -3,7 +3,7 @@ const { defineConfig } = require('cypress')
 module.exports = defineConfig({
     e2e: {
         specPattern: "cypress/integration",
-        baseUrl: "https://europe-azure-web-app--cac--development-wa.azurewebsites.net/",
+        baseUrl: "https://example.org",
         reporter: "mochawesome",
         reporterOptions: {
             "charts": true,
