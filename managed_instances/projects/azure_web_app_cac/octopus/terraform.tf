@@ -135,7 +135,7 @@ resource "octopusdeploy_project" "project" {
   git_library_persistence_settings {
     git_credential_id  = octopusdeploy_git_credential.gitcredential.id
     url                = var.cac_url
-    base_path          = ".octopus/${lower(reaplce(var.project_name, " ", "_"))}"
+    base_path          = ".octopus/${lower(replace(var.project_name, " ", "_"))}"
     default_branch     = "main"
     protected_branches = []
   }
