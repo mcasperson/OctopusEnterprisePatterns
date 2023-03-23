@@ -41,6 +41,19 @@ variable "cac_password" {
   description = "The git password for the CaC credentials."
 }
 
+variable "octopus_space_id" {
+  type        = string
+  nullable    = false
+  sensitive   = false
+  description = "The ID of the Octopus space to populate."
+}
+
+data "octopusdeploy_spaces" "spaces" {
+  ids          = [var.octopus_space_id]
+  skip         = 0
+  take         = 1
+}
+
 data "octopusdeploy_lifecycles" "lifecycle_default_lifecycle" {
   ids          = null
   partial_name = "Default Lifecycle"
@@ -135,7 +148,7 @@ resource "octopusdeploy_project" "project" {
   git_library_persistence_settings {
     git_credential_id  = octopusdeploy_git_credential.gitcredential.id
     url                = var.cac_url
-    base_path          = ".octopus/${lower(replace(var.project_name, " ", "_"))}"
+    base_path          = ".octopus/${lower(replace(data.octopusdeploy_spaces.spaces.spaces[0].name, " ", "_"))}/${lower(replace(var.project_name, " ", "_"))}"
     default_branch     = "main"
     protected_branches = []
   }
