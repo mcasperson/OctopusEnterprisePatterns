@@ -78,7 +78,7 @@ data "octopusdeploy_worker_pools" "workerpool_hosted_ubuntu" {
 }
 
 resource "octopusdeploy_project" "project" {
-  name                                 = "Provision Managed Azure Web App"
+  name                                 = "Provision Managed Azure Web App (CaC)"
   auto_create_release                  = false
   default_guided_failure_mode          = "EnvironmentDefault"
   default_to_skip_if_already_installed = false
