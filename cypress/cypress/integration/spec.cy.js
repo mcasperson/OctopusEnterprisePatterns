@@ -1,6 +1,6 @@
 describe('Octopub', () => {
     it('Should display header', () => {
-    	cy.visit('/')
+    	cy.visit({url: '/', retryOnStatusCodeFailure: true})
         cy.get('#header').should('not.be.empty')
     })
 })
