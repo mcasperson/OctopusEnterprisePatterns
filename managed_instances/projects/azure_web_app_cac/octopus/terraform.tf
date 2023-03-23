@@ -189,58 +189,7 @@ resource "octopusdeploy_deployment_process" "deployment_process" {
         "Octopus.Action.Script.ScriptSource" = "Inline"
         "Octopus.Action.Script.Syntax"       = "Bash"
         "Octopus.Action.Azure.AccountId"     = data.octopusdeploy_accounts.azure.accounts[0].id
-        "Octopus.Action.Script.ScriptBody"   = <<EOT
-NOW=$(date +%s)
-CREATED=$${NOW}
-RESOURCE_NAME=##{Octopus.Space.Name | Replace "[^A-Za-z0-9]" "-" | ToLower}-##{Octopus.Project.Name | Replace "[^A-Za-z0-9]" "-" | ToLower}-##{Octopus.Environment.Name | Replace "[^A-Za-z0-9]" "-" | ToLower}
-
-# az tag list --resource-id /subscriptions/#{Octopus.Action.Azure.SubscriptionId}/resourcegroups/$${RESOURCE_NAME}rg
-
-# Test if the resource group exists
-EXISTING_RG=$(az group list --query "[?name=='$${RESOURCE_NAME}-rg']")
-LENGTH=$(echo $${EXISTING_RG} | jq '. | length')
-
-if [[ $LENGTH == "0" ]]
-then
-	echo "Creating new resource group"
-	az group create -l westus -n "$${RESOURCE_NAME}-rg" --tags LifeTimeInDays=7 Created=$${NOW}
-else
-	echo "Resource group already exists"
-fi
-
-EXISTING_SP=$(az appservice plan list --resource-group "$${RESOURCE_NAME}-rg")
-LENGTH=$(echo $${EXISTING_SP} | jq '. | length')
-if [[ $LENGTH == "0" ]]
-then
-	echo "Creating new service plan"
-	az appservice plan create \
-      --sku B1 \
-      --name "$${RESOURCE_NAME}-sp" \
-      --resource-group "$${RESOURCE_NAME}-rg" \
-      --is-linux
-else
-	echo "Service plan already exists"
-fi
-
-EXISTING_WA=$(az webapp list --resource-group "$${RESOURCE_NAME}-rg")
-LENGTH=$(echo $${EXISTING_WA} | jq '. | length')
-if [[ $LENGTH == "0" ]]
-then
-	echo "Creating new web app"
-	az webapp create \
-      --resource-group "$${RESOURCE_NAME}-rg" \
-      --plan "$${RESOURCE_NAME}-sp" \
-      --name "$${RESOURCE_NAME}-wa" \
-      --deployment-container-image-name nginx \
-      --tags \
-      	octopus-environment="##{Octopus.Environment.Name}" \
-        octopus-space="##{Octopus.Space.Name}" \
-        octopus-project="##{Octopus.Project.Name}" \
-        octopus-role="octopub"
-else
-	echo "Web App already exists"
-fi
-EOT
+        "Octopus.Action.Script.ScriptBody"   = "NOW=$(date +%s)\nCREATED=$${NOW}\nRESOURCE_NAME=##{Octopus.Space.Name | Replace \"[^A-Za-z0-9]\" \"-\" | ToLower}-##{Octopus.Project.Name | Replace \"[^A-Za-z0-9]\" \"-\" | ToLower}-##{Octopus.Environment.Name | Replace \"[^A-Za-z0-9]\" \"-\" | ToLower}\n\n# az tag list --resource-id /subscriptions/##{Octopus.Action.Azure.SubscriptionId}/resourcegroups/$${RESOURCE_NAME}rg\n\n# Test if the resource group exists\nEXISTING_RG=$(az group list --query \"[?name=='$${RESOURCE_NAME}-rg']\")\nLENGTH=$(echo $${EXISTING_RG} | jq '. | length')\n\nif [[ $LENGTH == \"0\" ]]\nthen\n\techo \"Creating new resource group\"\n\taz group create -l westus -n \"$${RESOURCE_NAME}-rg\" --tags LifeTimeInDays=7 Created=$${NOW}\nelse\n\techo \"Resource group already exists\"\nfi\n\nEXISTING_SP=$(az appservice plan list --resource-group \"$${RESOURCE_NAME}-rg\")\nLENGTH=$(echo $${EXISTING_SP} | jq '. | length')\nif [[ $LENGTH == \"0\" ]]\nthen\n\techo \"Creating new service plan\"\n\taz appservice plan create \\\n      --sku B1 \\\n      --name \"$${RESOURCE_NAME}-rg\" \\\n      --resource-group \"$${RESOURCE_NAME}-rg\" \\\n      --is-linux\nelse\n\techo \"Service plan already exists\"\nfi\n\nEXISTING_WA=$(az webapp list --resource-group \"$${RESOURCE_NAME}-rg\")\nLENGTH=$(echo $${EXISTING_WA} | jq '. | length')\nif [[ $LENGTH == \"0\" ]]\nthen\n\techo \"Creating new web app\"\n\taz webapp create \\\n      --resource-group \"$${RESOURCE_NAME}-rg\" \\\n      --plan \"$${RESOURCE_NAME}-sp\" \\\n      --name \"$${RESOURCE_NAME}-wa\" \\\n      --deployment-container-image-name nginx \\\n      --tags \\\n      \toctopus-environment=\"##{Octopus.Environment.Name}\" \\\n        octopus-space=\"##{Octopus.Space.Name}\" \\\n        octopus-project=\"##{Octopus.Project.Name}\" \\\n        octopus-role=\"octopub\"\nelse\n\techo \"Web App already exists\"\nfi\n\nHOST=$(az webapp list --resource-group \"$${RESOURCE_NAME}-rg\"  --query \"[].{hostName: defaultHostName}\" | jq -r '.[0].hostName')\nset_octopusvariable \"HostName\" $HOST\nwrite_highlight \"[http://$HOST](http://$HOST)\""
         "OctopusUseBundledTooling"           = "False"
       }
 
@@ -300,6 +249,52 @@ EOT
 
     properties   = {}
     target_roles = ["octopub"]
+  }
+  step {
+    condition           = "Success"
+    name                = "End-to-end Test with Cypress"
+    package_requirement = "LetOctopusDecide"
+    start_trigger       = "StartAfterPrevious"
+
+    action {
+      action_type                        = "Octopus.Script"
+      name                               = "End-to-end Test with Cypress"
+      condition                          = "Success"
+      run_on_server                      = true
+      is_disabled                        = false
+      can_be_used_for_project_versioning = true
+      is_required                        = false
+      worker_pool_id                     = "${data.octopusdeploy_worker_pools.workerpool_hosted_ubuntu.worker_pools[0].id}"
+      properties                         = {
+        "Octopus.Action.Script.ScriptBody"   = "cd octopub-cypress\n\nNO_COLOR=1 CYPRESS_BASE_URL=https://##{Octopus.Action[Create Web App].Output.HostName}/ cypress run 2\u003e\u00261\nRESULT=$?\nif [[ -f mochawesome.html ]]\nthen\n  inline-assets mochawesome.html selfcontained.html\n  new_octopusartifact \"$${PWD}/selfcontained.html\" \"selfcontained.html\"\nfi\nif [[ -d cypress/screenshots ]]\nthen\n  zip -r screenshots.zip cypress/screenshots\n  new_octopusartifact \"$${PWD}/screenshots.zip\" \"screenshots.zip\"\nfi\n\nif [[ -d cypress/videos ]]\nthen\n  zip -r videos.zip cypress/videos\n  new_octopusartifact \"$${PWD}/videos.zip\" \"videos.zip\"\nfi\n\nexit $${RESULT}"
+        "OctopusUseBundledTooling"           = "False"
+        "Octopus.Action.Script.ScriptSource" = "Inline"
+        "Octopus.Action.Script.Syntax"       = "Bash"
+      }
+
+      container {
+        feed_id = data.octopusdeploy_feeds.docker.feeds[0].id
+        image   = "octopussamples/cypress-included:12.8.1"
+      }
+
+      environments          = []
+      excluded_environments = []
+      channels              = []
+      tenant_tags           = []
+
+      package {
+        name                      = "octopub-cypress"
+        package_id                = "com.octopus:octopub-cypress"
+        acquisition_location      = "Server"
+        extract_during_deployment = false
+        feed_id                   = data.octopusdeploy_feeds.maven.feeds[0].id
+        properties                = { Extract = "True", Purpose = "", SelectionMode = "immediate" }
+      }
+      features = []
+    }
+
+    properties   = {}
+    target_roles = []
   }
   step {
     condition           = "Success"

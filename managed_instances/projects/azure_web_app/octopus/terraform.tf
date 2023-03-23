@@ -198,13 +198,13 @@ resource "octopusdeploy_deployment_process" "deployment_process" {
 
   step {
     condition           = "Success"
-    name                = "Run a Script"
+    name                = "End-to-end Test with Cypress"
     package_requirement = "LetOctopusDecide"
     start_trigger       = "StartAfterPrevious"
 
     action {
       action_type                        = "Octopus.Script"
-      name                               = "Run a Script"
+      name                               = "End-to-end Test with Cypress"
       condition                          = "Success"
       run_on_server                      = true
       is_disabled                        = false
