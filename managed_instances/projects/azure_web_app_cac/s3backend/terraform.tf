@@ -50,7 +50,7 @@ variable "project_name" {
   nullable    = false
   sensitive   = false
   description = "The name of the new project."
-  default     = "Azure Web App"
+  default     = "Azure Web App (CaC)"
 }
 
 variable "cac_username" {
