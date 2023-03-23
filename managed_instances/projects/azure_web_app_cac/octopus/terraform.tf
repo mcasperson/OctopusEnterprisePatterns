@@ -149,7 +149,7 @@ resource "octopusdeploy_project" "project" {
     git_credential_id  = octopusdeploy_git_credential.gitcredential.id
     url                = var.cac_url
     base_path          = ".octopus/${lower(replace(data.octopusdeploy_spaces.spaces.spaces[0].name, " ", "_"))}/${lower(replace(var.project_name, " ", "_"))}"
-    default_branch     = "main"
+    default_branch     = "octopus-vcs-conversion"
     protected_branches = []
   }
 }
