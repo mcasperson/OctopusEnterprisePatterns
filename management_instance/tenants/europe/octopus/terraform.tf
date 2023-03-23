@@ -60,6 +60,27 @@ variable "azure_tenant_id" {
   description = "The Azure tenant ID."
 }
 
+variable "cac_username" {
+  type        = string
+  nullable    = false
+  sensitive   = false
+  description = "The git username for the CaC credentials."
+}
+
+variable "cac_password" {
+  type        = string
+  nullable    = false
+  sensitive   = true
+  description = "The git password for the CaC credentials."
+}
+
+variable "cac_url" {
+  type        = string
+  nullable    = false
+  sensitive   = false
+  description = "The git url for the CaC project."
+}
+
 data "octopusdeploy_projects" "provision_hello_world" {
   partial_name           = "Provision Hello World"
   skip                   = 0
@@ -104,6 +125,12 @@ data "octopusdeploy_library_variable_sets" "docker_hub" {
 
 data "octopusdeploy_library_variable_sets" "azure" {
   partial_name = "Azure"
+  skip = 0
+  take = 1
+}
+
+data "octopusdeploy_library_variable_sets" "cac" {
+  partial_name = "Config As Code"
   skip = 0
   take = 1
 }
@@ -195,4 +222,25 @@ resource "octopusdeploy_tenant_common_variable" "azure_password" {
   template_id = tolist([for tmp in data.octopusdeploy_library_variable_sets.azure.library_variable_sets[0].template : tmp.id if tmp.name == "Tenant.Azure.Password"])[0]
   tenant_id = octopusdeploy_tenant.europe.id
   value = var.azure_password
+}
+
+resource "octopusdeploy_tenant_common_variable" "cac_url" {
+  library_variable_set_id = data.octopusdeploy_library_variable_sets.cac.library_variable_sets[0].id
+  template_id = tolist([for tmp in data.octopusdeploy_library_variable_sets.cac.library_variable_sets[0].template : tmp.id if tmp.name == "Tenant.CaC.Url"])[0]
+  tenant_id = octopusdeploy_tenant.europe.id
+  value = var.cac_url
+}
+
+resource "octopusdeploy_tenant_common_variable" "cac_username" {
+  library_variable_set_id = data.octopusdeploy_library_variable_sets.cac.library_variable_sets[0].id
+  template_id = tolist([for tmp in data.octopusdeploy_library_variable_sets.cac.library_variable_sets[0].template : tmp.id if tmp.name == "Tenant.CaC.Username"])[0]
+  tenant_id = octopusdeploy_tenant.europe.id
+  value = var.cac_username
+}
+
+resource "octopusdeploy_tenant_common_variable" "cac_password" {
+  library_variable_set_id = data.octopusdeploy_library_variable_sets.cac.library_variable_sets[0].id
+  template_id = tolist([for tmp in data.octopusdeploy_library_variable_sets.cac.library_variable_sets[0].template : tmp.id if tmp.name == "Tenant.CaC.Password"])[0]
+  tenant_id = octopusdeploy_tenant.europe.id
+  value = var.cac_password
 }
