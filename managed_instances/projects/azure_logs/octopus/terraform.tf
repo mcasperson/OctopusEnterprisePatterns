@@ -18,6 +18,12 @@ data "octopusdeploy_feeds" "docker" {
   take         = 1
 }
 
+data "octopusdeploy_accounts" "azure" {
+  partial_name = "Azure"
+  skip         = 0
+  take         = 1
+}
+
 resource "octopusdeploy_deployment_process" "deployment_process_project" {
   project_id = "${octopusdeploy_project.project.id}"
 
@@ -40,7 +46,7 @@ resource "octopusdeploy_deployment_process" "deployment_process_project" {
         "OctopusUseBundledTooling" = "False"
         "Octopus.Action.Script.ScriptSource" = "Inline"
         "Octopus.Action.Script.Syntax" = "Bash"
-        "Octopus.Action.Azure.AccountId" = "${octopusdeploy_azure_service_principal.account_azure.id}"
+        "Octopus.Action.Azure.AccountId" = data.octopusdeploy_accounts.azure.accounts[0].id
         "Octopus.Action.Script.ScriptBody" = "# Loop because of https://github.com/Azure/azure-cli/issues/23563\n# Loop comes from http://jeromebelleman.gitlab.io/posts/devops/until/\ntimeout 1m bash -c 'until az webapp log download --name #{Octopus.Action.Azure.WebAppName} --resource-group #{Octopus.Action.Azure.ResourceGroupName} 2\u003e /dev/null; do sleep 2; done'\nnew_octopusartifact $${PWD}/webapp_logs.zip webapp_logs.zip\n"
       }
 
