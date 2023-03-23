@@ -322,7 +322,7 @@ jobs:
       - name: Apply the America tenants module
         run: |
           terraform init \
-          -backend-config="key=tenants" \
+          -backend-config="key=tenants_america" \
           -backend-config="bucket=${{ secrets.BUCKET_NAME }}" \
           -backend-config="region=${{ secrets.BUCKET_REGION }}"
           
