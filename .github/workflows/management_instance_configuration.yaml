@@ -294,7 +294,7 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_KEY }}
 
       # Tenants
-      - name: Apply the tenants module
+      - name: Apply the Europe tenants module
         run: |
           terraform init \
           -backend-config="key=tenants" \
@@ -315,6 +315,31 @@ jobs:
           -var=cac_password=${{ secrets.CAC_GH_TOKEN }} \
           -var=cac_url=${{ secrets.CAC_GH_URL }}
         working-directory: management_instance/tenants/europe/s3backend
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_KEY }}
+
+      - name: Apply the America tenants module
+        run: |
+          terraform init \
+          -backend-config="key=tenants" \
+          -backend-config="bucket=${{ secrets.BUCKET_NAME }}" \
+          -backend-config="region=${{ secrets.BUCKET_REGION }}"
+          
+          terraform apply -auto-approve \
+          -var=octopus_server=${{ secrets.OCTOPUS_URL }} \
+          -var=octopus_apikey=${{ secrets.OCTOPUS_API_KEY }} \
+          -var=octopus_space_id=${{ secrets.OCTOPUS_SPACE }} \
+          -var=docker_username=${{ secrets.DOCKER_USERNAME }} \
+          -var=docker_password=${{ secrets.DOCKER_PASSWORD }} \
+          -var=azure_application_id=${{ secrets.AZURE_APPLICATION_ID }} \
+          -var=azure_subscription_id=${{ secrets.AZURE_SUBSCRIPTION_ID }} \
+          -var=azure_password=${{ secrets.AZURE_PASSWORD }} \
+          -var=azure_tenant_id=${{ secrets.AZURE_TENANT_ID }} \
+          -var=cac_username=${{ secrets.CAC_GH_USERNAME }} \
+          -var=cac_password=${{ secrets.CAC_GH_TOKEN }} \
+          -var=cac_url=${{ secrets.CAC_GH_URL }}
+        working-directory: management_instance/tenants/america/s3backend
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_KEY }}
