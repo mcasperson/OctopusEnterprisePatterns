@@ -78,6 +78,27 @@ variable "azure_tenant_id" {
   description = "The Azure tenant ID."
 }
 
+variable "cac_username" {
+  type        = string
+  nullable    = false
+  sensitive   = false
+  description = "The git username for the CaC credentials."
+}
+
+variable "cac_password" {
+  type        = string
+  nullable    = false
+  sensitive   = true
+  description = "The git password for the CaC credentials."
+}
+
+variable "cac_url" {
+  type        = string
+  nullable    = false
+  sensitive   = false
+  description = "The git url for the CaC project."
+}
+
 module "octopus" {
   source = "../octopus"
   octopus_server = var.octopus_server
@@ -88,4 +109,7 @@ module "octopus" {
   azure_subscription_id = var.azure_subscription_id
   azure_password = var.azure_password
   azure_tenant_id = var.azure_tenant_id
+  cac_username = var.cac_username
+  cac_password = var.cac_password
+  cac_url = var.cac_url
 }
