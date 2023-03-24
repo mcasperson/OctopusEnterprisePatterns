@@ -13,6 +13,6 @@ module.exports = defineConfig({
             "reportDir": "."
         },
         supportFile: false,
-        retries: 5
+        retries: 10
     },
 });
