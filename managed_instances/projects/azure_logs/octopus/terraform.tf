@@ -93,6 +93,13 @@ resource "octopusdeploy_project" "project" {
   }
 }
 
+resource "octopusdeploy_variable" "cloud_discovery" {
+  owner_id = octopusdeploy_project.project.id
+  type     = "AzureAccount"
+  name     = "Octopus.Azure.Account"
+  value    = data.octopusdeploy_accounts.azure.accounts[0].id
+}
+
 data "octopusdeploy_worker_pools" "workerpool_hosted_ubuntu" {
   name = "Hosted Ubuntu"
   ids  = null
