@@ -198,10 +198,7 @@ jobs:
             if [[ -n "${PROJECT_ID}" && "${PROJECT_ID}" != "null" ]]; then
               DEPLOYMENT_SETTINGS=$(curl --silent -H "X-Octopus-ApiKey: ${{ secrets.OCTOPUS_API_KEY }}" ${{ secrets.OCTOPUS_URL }}/api/${{ secrets.OCTOPUS_SPACE }}/projects/${PROJECT_ID}/DeploymentSettings)
               DEPLOYMENT_SETTINGS_BASIC_VERSIONING=$(echo ${DEPLOYMENT_SETTINGS} | jq '.VersioningStrategy.Template = "#{Octopus.Version.LastMajor}.#{Octopus.Version.LastMinor}.#{Octopus.Version.NextPatch}" | .VersioningStrategy.DonorPackageStepId = null | .VersioningStrategy.DonorPackage = null')
-              echo "Project ID: ${PROJECT_ID}"
-              echo "Project JSON: ${DEPLOYMENT_SETTINGS_BASIC_VERSIONING}"
               NEW_DEPLOYMENT_SETTINGS=$(curl --silent -X PUT -d "${DEPLOYMENT_SETTINGS_BASIC_VERSIONING}" -H "Content-Type: application/json" -H "X-Octopus-ApiKey: ${{ secrets.OCTOPUS_API_KEY }}" ${{ secrets.OCTOPUS_URL }}/api/${{ secrets.OCTOPUS_SPACE }}/projects/${PROJECT_ID}/DeploymentSettings)
-              echo ${NEW_DEPLOYMENT_SETTINGS}
             fi
           
             # Clear the steps
