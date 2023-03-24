@@ -193,9 +193,10 @@ jobs:
 
           for i in "${arr[@]}"
           do
+            # Reset the project versioning, as package based versioning prevents steps from being cleared
             PROJECT_ID=$(curl --silent -G --data-urlencode "name=$i" -H "X-Octopus-ApiKey: ${{ secrets.OCTOPUS_API_KEY }}" ${{ secrets.OCTOPUS_URL }}/api/${{ secrets.OCTOPUS_SPACE }}/projects | jq -r ".Items[0].Id")
             if [[ -n "$PROJECT_ID" && "$PROJECT_ID" != "null" ]]; then
-              DEPLOYMENT_SETTINGS=$(curl --silent -H "X-Octopus-ApiKey: ${{ secrets.OCTOPUS_API_KEY }}" ${{ secrets.OCTOPUS_URL }}/api/${{ secrets.OCTOPUS_SPACE }}/projects/${PROJECT_ID}/DeploymentSettings")
+              DEPLOYMENT_SETTINGS=$(curl --silent -H "X-Octopus-ApiKey: ${{ secrets.OCTOPUS_API_KEY }}" ${{ secrets.OCTOPUS_URL }}/api/${{ secrets.OCTOPUS_SPACE }}/projects/${PROJECT_ID}/DeploymentSettings)
               DEPLOYMENT_SETTINGS_BASIC_VERSIONING=$(echo $PROJECT_JSON | jq '.VersioningStrategy.Template = "#{Octopus.Version.LastMajor}.#{Octopus.Version.LastMinor}.#{Octopus.Version.NextPatch}" | .VersioningStrategy.DonorPackageStepId = null | .VersioningStrategy.DonorPackage = null')
               echo "Project ID: ${PROJECT_ID}"
               echo "Project JSON: ${DEPLOYMENT_SETTINGS_BASIC_VERSIONING}"
@@ -203,6 +204,7 @@ jobs:
               echo $NEW_PROJECT
             fi
           
+            # Clear the steps
             DEPLOYMENT_PROCESS_ID=$(curl --silent -G --data-urlencode "name=$i" -H "X-Octopus-ApiKey: ${{ secrets.OCTOPUS_API_KEY }}" ${{ secrets.OCTOPUS_URL }}/api/${{ secrets.OCTOPUS_SPACE }}/projects | jq -r ".Items[0].DeploymentProcessId")
             if [[ -n "$DEPLOYMENT_PROCESS_ID" && "$DEPLOYMENT_PROCESS_ID" != "null" ]]; then
               echo "Emptying project deploy process $DEPLOYMENT_PROCESS_ID for project $i"
