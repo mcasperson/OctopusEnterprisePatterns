@@ -194,12 +194,14 @@ jobs:
           for i in "${arr[@]}"
           do
             PROJECT_JSON=$(curl --silent -G --data-urlencode "name=$i" -H "X-Octopus-ApiKey: ${{ secrets.OCTOPUS_API_KEY }}" ${{ secrets.OCTOPUS_URL }}/api/${{ secrets.OCTOPUS_SPACE }}/projects | jq -r ".Items[0]")
-            PROJECT_ID=$(echo $PROJECT_JSON | jq -r ".Id")
-            PROJECT_JSON_BASIC_VERSIONING=$(echo $PROJECT_JSON | jq '.VersioningStrategy.Template = "#{Octopus.Version.LastMajor}.#{Octopus.Version.LastMinor}.#{Octopus.Version.NextPatch}" | .VersioningStrategy.DonorPackageStepId = null | .VersioningStrategy.DonorPackage = null')
-            echo "Project ID: $PROJECT_ID"
-            echo "Project JSON: $PROJECT_JSON_BASIC_VERSIONING"
-            NEW_PROJECT=$(curl --silent -X PUT -d "${PROJECT_JSON_BASIC_VERSIONING}" -H "Content-Type: application/json" -H "X-Octopus-ApiKey: ${{ secrets.OCTOPUS_API_KEY }}" ${{ secrets.OCTOPUS_URL }}/api/${{ secrets.OCTOPUS_SPACE }}/projects/${PROJECT_ID})
-            echo $NEW_PROJECT
+            if [[ -n "$PROJECT_JSON" && "$PROJECT_JSON" != "null" ]]; then
+              PROJECT_ID=$(echo $PROJECT_JSON | jq -r ".Id")
+              PROJECT_JSON_BASIC_VERSIONING=$(echo $PROJECT_JSON | jq '.VersioningStrategy.Template = "#{Octopus.Version.LastMajor}.#{Octopus.Version.LastMinor}.#{Octopus.Version.NextPatch}" | .VersioningStrategy.DonorPackageStepId = null | .VersioningStrategy.DonorPackage = null')
+              echo "Project ID: $PROJECT_ID"
+              echo "Project JSON: $PROJECT_JSON_BASIC_VERSIONING"
+              NEW_PROJECT=$(curl --silent -X PUT -d "${PROJECT_JSON_BASIC_VERSIONING}" -H "Content-Type: application/json" -H "X-Octopus-ApiKey: ${{ secrets.OCTOPUS_API_KEY }}" ${{ secrets.OCTOPUS_URL }}/api/${{ secrets.OCTOPUS_SPACE }}/projects/${PROJECT_ID})
+              echo $NEW_PROJECT
+            fi
           
             DEPLOYMENT_PROCESS_ID=$(curl --silent -G --data-urlencode "name=$i" -H "X-Octopus-ApiKey: ${{ secrets.OCTOPUS_API_KEY }}" ${{ secrets.OCTOPUS_URL }}/api/${{ secrets.OCTOPUS_SPACE }}/projects | jq -r ".Items[0].DeploymentProcessId")
             if [[ -n "$DEPLOYMENT_PROCESS_ID" && "$DEPLOYMENT_PROCESS_ID" != "null" ]]; then
