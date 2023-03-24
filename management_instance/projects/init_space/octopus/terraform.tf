@@ -61,6 +61,12 @@ data "octopusdeploy_library_variable_sets" "azure" {
   take = 1
 }
 
+data "octopusdeploy_library_variable_sets" "cac" {
+  partial_name = "Config As Code"
+  skip = 0
+  take = 1
+}
+
 
 data "octopusdeploy_accounts" "aws" {
   partial_name = "AWS Account"
@@ -90,6 +96,7 @@ resource "octopusdeploy_project" "project" {
     data.octopusdeploy_library_variable_sets.octopus_server.library_variable_sets[0].id,
     data.octopusdeploy_library_variable_sets.docker_hub.library_variable_sets[0].id,
     data.octopusdeploy_library_variable_sets.azure.library_variable_sets[0].id
+    data.octopusdeploy_library_variable_sets.cac.library_variable_sets[0].id
   ]
   tenanted_deployment_participation    = "Tenanted"
 
