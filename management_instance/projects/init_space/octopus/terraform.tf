@@ -105,6 +105,14 @@ resource "octopusdeploy_project" "project" {
     exclude_unhealthy_targets       = false
     skip_machine_behavior           = "None"
   }
+
+  versioning_strategy {
+    template              = ""
+
+    donor_package {
+      deployment_action = "Configure Azure Account"
+    }
+  }
 }
 
 resource "octopusdeploy_variable" "amazon_web_services_account_variable" {
