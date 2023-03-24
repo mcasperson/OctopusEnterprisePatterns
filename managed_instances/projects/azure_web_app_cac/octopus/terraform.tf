@@ -27,20 +27,6 @@ variable "cac_url" {
   description = "The git url for the CaC project."
 }
 
-variable "cac_username" {
-  type        = string
-  nullable    = false
-  sensitive   = false
-  description = "The git username for the CaC credentials."
-}
-
-variable "cac_password" {
-  type        = string
-  nullable    = false
-  sensitive   = true
-  description = "The git password for the CaC credentials."
-}
-
 variable "octopus_space_id" {
   type        = string
   nullable    = false
@@ -107,11 +93,10 @@ data "octopusdeploy_project_groups" "project_group" {
   take         = 1
 }
 
-resource "octopusdeploy_git_credential" "gitcredential" {
-  name     = "GitHub"
-  type     = "UsernamePassword"
-  username = var.cac_username
-  password = var.cac_password
+data "octopusdeploy_git_credentials" "gitcredential" {
+  name = "GitHub"
+  skip = 0
+  take = 1
 }
 
 resource "octopusdeploy_project_group" "project_group" {
@@ -146,7 +131,7 @@ resource "octopusdeploy_project" "project" {
   }
 
   git_library_persistence_settings {
-    git_credential_id  = octopusdeploy_git_credential.gitcredential.id
+    git_credential_id  = data.octopusdeploy_git_credentials.gitcredential.git_credentials[0].id
     url                = var.cac_url
     base_path          = ".octopus/${lower(replace(data.octopusdeploy_spaces.spaces.spaces[0].name, " ", "_"))}/${lower(replace(var.project_name, " ", "_"))}"
     default_branch     = "octopus-vcs-conversion"

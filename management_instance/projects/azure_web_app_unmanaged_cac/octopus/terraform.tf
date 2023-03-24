@@ -162,7 +162,7 @@ resource "octopusdeploy_deployment_process" "deployment_process" {
         "Octopus.Action.Terraform.GoogleCloudAccount" = "False"
         "Octopus.Action.Package.DownloadOnTentacle" = "False"
         "Octopus.Action.Terraform.AdditionalInitParams" = ""
-        "Octopus.Action.Terraform.AdditionalActionParams" = "-var=octopus_server=#{Tenant.Octopus.Server} -var=octopus_apikey=#{Tenant.Octopus.ApiKey} -var=octopus_space_id=#{Tenant.Octopus.SpaceId} -var=cac_url=#{Tenant.CaC.Url} -var=cac_password=#{Tenant.CaC.Password} -var=cac_username=#{Tenant.CaC.Username} \"-var=existing_project_group=Default Project Group\" \"-var=project_name=#{Project.Name}\""
+        "Octopus.Action.Terraform.AdditionalActionParams" = "-var=octopus_server=#{Tenant.Octopus.Server} -var=octopus_apikey=#{Tenant.Octopus.ApiKey} -var=octopus_space_id=#{Tenant.Octopus.SpaceId} -var=cac_url=#{Tenant.CaC.Url} \"-var=existing_project_group=Default Project Group\" \"-var=project_name=#{Project.Name}\""
         "Octopus.Action.Terraform.Workspace" = "#{Octopus.Deployment.Tenant.Name | ToLower}"
       }
       environments                       = []

@@ -37,35 +37,24 @@ variable "octopus_space_id" {
   description = "The ID of the Octopus space to populate."
 }
 
-variable "existing_project_group" {
+variable "cac_username" {
   type        = string
   nullable    = false
   sensitive   = false
-  description = "The name of the existing project group to place the project into."
-  default     = ""
+  description = "The git username for the CaC credentials."
 }
 
-variable "project_name" {
+variable "cac_password" {
   type        = string
   nullable    = false
-  sensitive   = false
-  description = "The name of the new project."
-  default     = "Azure Web App (CaC)"
+  sensitive   = true
+  description = "The git password for the CaC credentials."
 }
 
-variable "cac_url" {
-  type        = string
-  nullable    = false
-  sensitive   = false
-  description = "The git url for the CaC project."
-}
 
 module "octopus" {
   source                 = "../octopus"
-  existing_project_group = var.existing_project_group
-  project_name           = var.project_name
   cac_username           = var.cac_username
   cac_password           = var.cac_password
-  cac_url                = var.cac_url
   octopus_space_id       = var.octopus_space_id
 }

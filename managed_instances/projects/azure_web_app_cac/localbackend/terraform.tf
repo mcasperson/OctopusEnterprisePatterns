@@ -48,20 +48,6 @@ variable "project_name" {
   default     = "Azure Web App (CaC)"
 }
 
-variable "cac_username" {
-  type        = string
-  nullable    = false
-  sensitive   = false
-  description = "The git username for the CaC credentials."
-}
-
-variable "cac_password" {
-  type        = string
-  nullable    = false
-  sensitive   = true
-  description = "The git password for the CaC credentials."
-}
-
 variable "cac_url" {
   type        = string
   nullable    = false
@@ -73,8 +59,6 @@ module "octopus" {
   source                 = "../octopus"
   existing_project_group = var.existing_project_group
   project_name           = var.project_name
-  cac_username           = var.cac_username
-  cac_password           = var.cac_password
   cac_url                = var.cac_url
   octopus_space_id       = var.octopus_space_id
 }
