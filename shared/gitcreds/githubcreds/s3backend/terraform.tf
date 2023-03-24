@@ -56,5 +56,4 @@ module "octopus" {
   source                 = "../octopus"
   cac_username           = var.cac_username
   cac_password           = var.cac_password
-  octopus_space_id       = var.octopus_space_id
 }
