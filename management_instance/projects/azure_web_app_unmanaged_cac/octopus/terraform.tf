@@ -119,7 +119,7 @@ resource "octopusdeploy_variable" "project_name_variable" {
   owner_id  = octopusdeploy_project.project.id
   type      = "String"
   name      = "Project.Name"
-  value     = "Template Azure Web App"
+  value     = "Azure Web App (CaC)"
   prompt {
     description = "The name of the new project"
     is_required = true
