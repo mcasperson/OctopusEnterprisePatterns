@@ -81,12 +81,6 @@ variable "cac_url" {
   description = "The git url for the CaC project."
 }
 
-data "octopusdeploy_projects" "provision_hello_world" {
-  partial_name           = "Provision Hello World"
-  skip                   = 0
-  take                   = 1
-}
-
 data "octopusdeploy_projects" "provision_azure_web_app_cac" {
   partial_name           = "Provision Unmanaged Azure Web App (CaC)"
   skip                   = 0
@@ -145,11 +139,6 @@ resource "octopusdeploy_tenant" "europe" {
   name        = "Europe"
   description = "The Europe DevOps team"
   tenant_tags = ["region/eu", "type/managed_instance"]
-
-  project_environment {
-    environments = [data.octopusdeploy_environments.production.environments[0].id]
-    project_id   = data.octopusdeploy_projects.provision_hello_world.projects[0].id
-  }
 
   project_environment {
     environments = [data.octopusdeploy_environments.production.environments[0].id]
