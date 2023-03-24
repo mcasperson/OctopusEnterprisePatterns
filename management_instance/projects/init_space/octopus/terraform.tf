@@ -95,7 +95,7 @@ resource "octopusdeploy_project" "project" {
   included_library_variable_sets       = [
     data.octopusdeploy_library_variable_sets.octopus_server.library_variable_sets[0].id,
     data.octopusdeploy_library_variable_sets.docker_hub.library_variable_sets[0].id,
-    data.octopusdeploy_library_variable_sets.azure.library_variable_sets[0].id
+    data.octopusdeploy_library_variable_sets.azure.library_variable_sets[0].id,
     data.octopusdeploy_library_variable_sets.cac.library_variable_sets[0].id
   ]
   tenanted_deployment_participation    = "Tenanted"
