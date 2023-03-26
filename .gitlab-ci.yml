@@ -103,3 +103,78 @@ apply:
       -var=docker_username=$DOCKER_USERNAME \
       -var=docker_password=$DOCKER_PASSWORD
     # Library Variable Sets
+    - |
+      terraform \
+      -chdir=management_instance/variables/octopus_server/s3backend \
+      init \
+      -backend-config="key=docker_hub_variables" \
+      -backend-config="bucket=$BUCKET_NAME" \
+      -backend-config="region=$BUCKET_REGION"
+    - |
+      terraform \
+      -chdir=management_instance/variables/octopus_server/s3backend \
+      apply \
+      -auto-approve \
+      -var=octopus_server=$OCTOPUS_URL \
+      -var=octopus_apikey=$OCTOPUS_API_KEY \
+      -var=octopus_space_id=$OCTOPUS_SPACE
+    - |
+      terraform \
+      -chdir=management_instance/variables/docker/s3backend \
+      init \
+      -backend-config="key=octopus_docker_variables" \
+      -backend-config="bucket=$BUCKET_NAME" \
+      -backend-config="region=$BUCKET_REGION"
+    - |
+      terraform \
+      -chdir=management_instance/variables/docker/s3backend \
+      apply \
+      -auto-approve \
+      -var=octopus_server=$OCTOPUS_URL \
+      -var=octopus_apikey=$OCTOPUS_API_KEY \
+      -var=octopus_space_id=$OCTOPUS_SPACE
+    - |
+      terraform \
+      -chdir=management_instance/variables/azure/s3backend \
+      init \
+      -backend-config="key=octopus_azure_variables" \
+      -backend-config="bucket=$BUCKET_NAME" \
+      -backend-config="region=$BUCKET_REGION"
+    - |
+      terraform \
+      -chdir=management_instance/variables/azure/s3backend \
+      apply \
+      -auto-approve \
+      -var=octopus_server=$OCTOPUS_URL \
+      -var=octopus_apikey=$OCTOPUS_API_KEY \
+      -var=octopus_space_id=$OCTOPUS_SPACE
+    - |
+      terraform \
+      -chdir=management_instance/variables/config_as_code/s3backend \
+      init \
+      -backend-config="key=octopus_cac_variables" \
+      -backend-config="bucket=$BUCKET_NAME" \
+      -backend-config="region=$BUCKET_REGION"
+    - |
+      terraform \
+      -chdir=management_instance/variables/config_as_code/s3backend \
+      apply \
+      -auto-approve \
+      -var=octopus_server=$OCTOPUS_URL \
+      -var=octopus_apikey=$OCTOPUS_API_KEY \
+      -var=octopus_space_id=$OCTOPUS_SPACE
+    - |
+      terraform \
+      -chdir=management_instance/project_groups/azure_web_app/s3backend \
+      init \
+      -backend-config="key=octopus_azure_project_group" \
+      -backend-config="bucket=$BUCKET_NAME" \
+      -backend-config="region=$BUCKET_REGION"
+    - |
+      terraform \
+      -chdir=management_instance/project_groups/azure_web_app/s3backend \
+      apply \
+      -auto-approve \
+      -var=octopus_server=$OCTOPUS_URL \
+      -var=octopus_apikey=$OCTOPUS_API_KEY \
+      -var=octopus_space_id=$OCTOPUS_SPACE
