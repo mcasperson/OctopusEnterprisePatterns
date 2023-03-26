@@ -1,11 +1,12 @@
 stages:
   - apply
 image:
-  name: hashicorp/terraform:light
+  name: hashicorp/terraform
   entrypoint:
     - '/usr/bin/env'
     - 'PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin'
 before_script:
+  - apk add --update-cache bash
   - export AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
   - export AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
   - rm -rf .terraform
@@ -181,7 +182,7 @@ apply:
       -var=octopus_space_id=$OCTOPUS_SPACE
     # Projects
     - echo "Apply projects"
-    - bash -c ./bash/clear_projects.sh
+    - ./bash/clear_projects.sh
     - |
       terraform \
       -chdir=management_instance/projects/azure_logs/s3backend \
@@ -209,6 +210,23 @@ apply:
     - |
       terraform apply -auto-approve \
       -chdir=management_instance/projects/init_space/s3backend \
+      -var=octopus_server=$OCTOPUS_URL \
+      -var=octopus_apikey=$OCTOPUS_API_KEY \
+      -var=octopus_space_id=$OCTOPUS_SPACE \
+      -var=bucket_name=$BUCKET_NAME \
+      -var=bucket_region=$BUCKET_REGION
+    - |
+      terraform \
+      -chdir=management_instance/projects/azure_web_app_unmanaged_cac/s3backend \
+      init \
+      -backend-config="key=azure_web_app_unmanaged_cac" \
+      -backend-config="bucket=$BUCKET_NAME" \
+      -backend-config="region=$BUCKET_REGION"
+    - |
+      terraform \
+      -chdir=management_instance/projects/azure_web_app_unmanaged_cac/s3backend \
+      apply \
+      -auto-approve \
       -var=octopus_server=$OCTOPUS_URL \
       -var=octopus_apikey=$OCTOPUS_API_KEY \
       -var=octopus_space_id=$OCTOPUS_SPACE \
