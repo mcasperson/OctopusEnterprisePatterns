@@ -14,5 +14,35 @@ before_script:
 apply:
   stage: apply
   script:
-    - terraform -chdir=management_instance/tenants/tagsets/s3backend init -backend-config="key=tagsets" -backend-config="bucket=$BUCKET_NAME" -backend-config="region=$BUCKET_REGION"
-    - terraform -chdir=management_instance/tenants/tagsets/s3backend apply -auto-approve -var=octopus_server=$OCTOPUS_URL -var=octopus_apikey=$OCTOPUS_API_KEY -var=octopus_space_id=$OCTOPUS_SPACE
+    - |
+      terraform \
+      -chdir=management_instance/tenants/tagsets/s3backend \
+      init \
+      -backend-config="key=tagsets" \
+      -backend-config="bucket=$BUCKET_NAME" \
+      -backend-config="region=$BUCKET_REGION"
+    - |
+      terraform \
+      -chdir=management_instance/tenants/tagsets/s3backend \
+      apply \
+      -auto-approve \
+      -var=octopus_server=$OCTOPUS_URL \
+      -var=octopus_apikey=$OCTOPUS_API_KEY \
+      -var=octopus_space_id=$OCTOPUS_SPACE
+    - |
+      terraform \
+      -chdir=shared/accounts/aws/s3backend
+      init \
+      -backend-config="key=aws_account" \
+      -backend-config="bucket=$BUCKET_NAME" \
+      -backend-config="region=$BUCKET_REGION"
+    - |
+      terraform \
+      -chdir=shared/accounts/aws/s3backend \
+      apply \
+      -auto-approve \
+      -var=octopus_server=$OCTOPUS_URL \
+      -var=octopus_apikey=$OCTOPUS_API_KEY \
+      -var=octopus_space_id=$OCTOPUS_SPACE \
+      -var=aws_access_key=$AWS_ACCESS_KEY_ID \
+      -var=aws_secret_key=$AWS_SECRET_KEY
