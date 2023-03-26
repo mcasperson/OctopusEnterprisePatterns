@@ -283,7 +283,10 @@ apply:
       -backend-config="bucket=$BUCKET_NAME" \
       -backend-config="region=$BUCKET_REGION"
     - |
-      terraform apply -auto-approve \
+      terraform \
+      -chdir=management_instance/tenants/america/s3backend \
+      apply \
+      -auto-approve \
       -var=octopus_server=$OCTOPUS_URL \
       -var=octopus_apikey=$OCTOPUS_API_KEY \
       -var=octopus_space_id=$OCTOPUS_SPACE \
