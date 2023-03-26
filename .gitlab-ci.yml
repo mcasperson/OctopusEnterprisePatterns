@@ -14,6 +14,7 @@ before_script:
 apply:
   stage: apply
   script:
+    # Accounts
     - |
       terraform \
       -chdir=management_instance/tenants/tagsets/s3backend \
@@ -29,6 +30,7 @@ apply:
       -var=octopus_server=$OCTOPUS_URL \
       -var=octopus_apikey=$OCTOPUS_API_KEY \
       -var=octopus_space_id=$OCTOPUS_SPACE
+    # Environments
     - |
       terraform \
       -chdir=shared/accounts/aws/s3backend \
@@ -45,4 +47,4 @@ apply:
       -var=octopus_apikey=$OCTOPUS_API_KEY \
       -var=octopus_space_id=$OCTOPUS_SPACE \
       -var=aws_access_key=$AWS_ACCESS_KEY_ID \
-      -var=aws_secret_key=$AWS_SECRET_KEY
+      -var=aws_secret_key=$AWS_SECRET_ACCESS_KEY
