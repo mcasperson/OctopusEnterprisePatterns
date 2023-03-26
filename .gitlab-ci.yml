@@ -1,5 +1,6 @@
 stages:
   - apply
+  - octopus
 image:
   name: hashicorp/terraform
   entrypoint:
@@ -303,3 +304,8 @@ apply:
       -var=cac_username=$CAC_GH_USERNAME \
       -var=cac_password=$CAC_GH_TOKEN \
       -var=cac_url=$CAC_GH_URL
+octopus:
+  stage: octopus
+  image: octopusdeploy/octo
+  script:
+    - octo list-projects --server=$OCTOPUS_URL --apiKey=$OCTOPUS_API_KEY --space $OCTOPUS_SPACE
