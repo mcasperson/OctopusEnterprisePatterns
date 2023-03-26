@@ -208,8 +208,10 @@ apply:
       -backend-config="bucket=$BUCKET_NAME" \
       -backend-config="region=$BUCKET_REGION"
     - |
-      terraform apply -auto-approve \
+      terraform \
       -chdir=management_instance/projects/init_space/s3backend \
+      apply \
+      -auto-approve \      
       -var=octopus_server=$OCTOPUS_URL \
       -var=octopus_apikey=$OCTOPUS_API_KEY \
       -var=octopus_space_id=$OCTOPUS_SPACE \
@@ -232,3 +234,65 @@ apply:
       -var=octopus_space_id=$OCTOPUS_SPACE \
       -var=bucket_name=$BUCKET_NAME \
       -var=bucket_region=$BUCKET_REGION
+    - |
+      terraform \
+      -chdir=management_instance/projects/azure_web_app_unmanaged/s3backend \
+      init \
+      -backend-config="key=unmanaged_azure_web_app_project" \
+      -backend-config="bucket=$BUCKET_NAME" \
+      -backend-config="region=$BUCKET_REGION"
+    - |
+      terraform \
+      -chdir=management_instance/projects/azure_web_app_unmanaged/s3backend \
+      apply \
+      -auto-approve \
+      -var=octopus_server=$OCTOPUS_URL \
+      -var=octopus_apikey=$OCTOPUS_API_KEY \
+      -var=octopus_space_id=$OCTOPUS_SPACE \
+      -var=bucket_name=$BUCKET_NAME \
+      -var=bucket_region=$BUCKET_REGION
+    - |
+      terraform \
+      -chdir=management_instance/tenants/europe/s3backend \
+      init \
+      -backend-config="key=tenants" \
+      -backend-config="bucket=$BUCKET_NAME" \
+      -backend-config="region=$BUCKET_REGION"
+    - |
+      terraform \
+      -chdir=management_instance/tenants/europe/s3backend \
+      apply \
+      -auto-approve \
+      -var=octopus_server=$OCTOPUS_URL \
+      -var=octopus_apikey=$OCTOPUS_API_KEY \
+      -var=octopus_space_id=$OCTOPUS_SPACE \
+      -var=docker_username=$DOCKER_USERNAME \
+      -var=docker_password=$DOCKER_PASSWORD \
+      -var=azure_application_id=$AZURE_APPLICATION_ID \
+      -var=azure_subscription_id=$AZURE_SUBSCRIPTION_ID \
+      -var=azure_password=$AZURE_PASSWORD \
+      -var=azure_tenant_id=$AZURE_TENANT_ID \
+      -var=cac_username=$CAC_GH_USERNAME \
+      -var=cac_password=$CAC_GH_TOKEN \
+      -var=cac_url=$CAC_GH_URL
+    - |
+      terraform \
+      -chdir=management_instance/tenants/america/s3backend \
+      init \
+      -backend-config="key=tenants_america" \
+      -backend-config="bucket=$BUCKET_NAME" \
+      -backend-config="region=$BUCKET_REGION"
+    - |
+      terraform apply -auto-approve \
+      -var=octopus_server=$OCTOPUS_URL \
+      -var=octopus_apikey=$OCTOPUS_API_KEY \
+      -var=octopus_space_id=$OCTOPUS_SPACE \
+      -var=docker_username=$DOCKER_USERNAME \
+      -var=docker_password=$DOCKER_PASSWORD \
+      -var=azure_application_id=$AZURE_APPLICATION_ID \
+      -var=azure_subscription_id=$AZURE_SUBSCRIPTION_ID \
+      -var=azure_password=$AZURE_PASSWORD \
+      -var=azure_tenant_id=$AZURE_TENANT_ID \
+      -var=cac_username=$CAC_GH_USERNAME \
+      -var=cac_password=$CAC_GH_TOKEN \
+      -var=cac_url=$CAC_GH_URL
