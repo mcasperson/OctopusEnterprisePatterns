@@ -99,7 +99,7 @@ apply:
       -auto-approve \
       -var=octopus_server=$OCTOPUS_URL \
       -var=octopus_apikey=$OCTOPUS_API_KEY \
-      -var=octopus_space_id=$.OCTOPUS_SPACE \
+      -var=octopus_space_id=$OCTOPUS_SPACE \
       -var=docker_username=$DOCKER_USERNAME \
       -var=docker_password=$DOCKER_PASSWORD
     # Library Variable Sets
