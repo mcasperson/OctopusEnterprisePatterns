@@ -15,6 +15,7 @@ apply:
   stage: apply
   script:
     #TagSets
+    - echo "Apply Tag Sets"
     - |
       terraform \
       -chdir=management_instance/tenants/tagsets/s3backend \
@@ -31,6 +32,7 @@ apply:
       -var=octopus_apikey=$OCTOPUS_API_KEY \
       -var=octopus_space_id=$OCTOPUS_SPACE
     # Accounts
+    - echo "Apply Accounts"
     - |
       terraform \
       -chdir=shared/accounts/aws/s3backend \
@@ -49,6 +51,7 @@ apply:
       -var=aws_access_key=$AWS_ACCESS_KEY_ID \
       -var=aws_secret_key=$AWS_SECRET_ACCESS_KEY
     # Environments
+    - echo "Apply Environments"
     - |
       terraform \
       -chdir=management_instance/environments/production/s3backend \
@@ -65,6 +68,7 @@ apply:
       -var=octopus_apikey=$OCTOPUS_API_KEY \
       -var=octopus_space_id=$OCTOPUS_SPACE
     # Feeds
+    - echo "Apply Feeds"
     - |
       terraform \
       -chdir=shared/feeds/github/s3backend \
