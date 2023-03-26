@@ -200,6 +200,7 @@ apply:
       -var=octopus_space_id=$OCTOPUS_SPACE \
       -var=bucket_name=$BUCKET_NAME \
       -var=bucket_region=$BUCKET_REGION
+    - echo "Applying init_space project"
     - |
       terraform \
       -chdir=management_instance/projects/init_space/s3backend \
@@ -217,6 +218,7 @@ apply:
       -var=octopus_space_id=$OCTOPUS_SPACE \
       -var=bucket_name=$BUCKET_NAME \
       -var=bucket_region=$BUCKET_REGION
+    - echo "Applying azure_web_app_unmanaged_cac project"
     - |
       terraform \
       -chdir=management_instance/projects/azure_web_app_unmanaged_cac/s3backend \
@@ -251,6 +253,7 @@ apply:
       -var=octopus_space_id=$OCTOPUS_SPACE \
       -var=bucket_name=$BUCKET_NAME \
       -var=bucket_region=$BUCKET_REGION
+    # Tenants
     - |
       terraform \
       -chdir=management_instance/tenants/europe/s3backend \
