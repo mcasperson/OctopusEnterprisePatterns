@@ -200,14 +200,14 @@ apply:
       -var=octopus_space_id=$OCTOPUS_SPACE \
       -var=bucket_name=$BUCKET_NAME \
       -var=bucket_region=$BUCKET_REGION
-#    - echo "Applying init_space project"
-#    - |
-#      terraform \
-#      -chdir=management_instance/projects/init_space/s3backend \
-#      init \
-#      -backend-config="key=environments_project" \
-#      -backend-config="bucket=$BUCKET_NAME" \
-#      -backend-config="region=$BUCKET_REGION"
+    - echo "Applying init_space project"
+    - |
+      terraform \
+      -chdir=management_instance/projects/init_space/s3backend \
+      init \
+      -backend-config="key=environments_project" \
+      -backend-config="bucket=$BUCKET_NAME" \
+      -backend-config="region=$BUCKET_REGION"
 #    - |
 #      terraform \
 #      -chdir=management_instance/projects/init_space/s3backend \
@@ -236,6 +236,7 @@ apply:
       -var=octopus_space_id=$OCTOPUS_SPACE \
       -var=bucket_name=$BUCKET_NAME \
       -var=bucket_region=$BUCKET_REGION
+    - echo "Applying unmanaged_azure_web_app_project project"
     - |
       terraform \
       -chdir=management_instance/projects/azure_web_app_unmanaged/s3backend \
