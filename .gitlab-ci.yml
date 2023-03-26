@@ -33,14 +33,14 @@ apply:
     # Environments
     - |
       terraform \
-      -chdir=shared/accounts/aws/s3backend \
+      -chdir=management_instance/environments/production/s3backend \
       init \
       -backend-config="key=aws_account" \
       -backend-config="bucket=$BUCKET_NAME" \
       -backend-config="region=$BUCKET_REGION"
     - |
       terraform \
-      -chdir=shared/accounts/aws/s3backend \
+      -chdir=management_instance/environments/production/s3backend \
       apply \
       -auto-approve \
       -var=octopus_server=$OCTOPUS_URL \
