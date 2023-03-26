@@ -200,24 +200,24 @@ apply:
       -var=octopus_space_id=$OCTOPUS_SPACE \
       -var=bucket_name=$BUCKET_NAME \
       -var=bucket_region=$BUCKET_REGION
-    - echo "Applying init_space project"
-    - |
-      terraform \
-      -chdir=management_instance/projects/init_space/s3backend \
-      init \
-      -backend-config="key=environments_project" \
-      -backend-config="bucket=$BUCKET_NAME" \
-      -backend-config="region=$BUCKET_REGION"
-    - |
-      terraform \
-      -chdir=management_instance/projects/init_space/s3backend \
-      apply \
-      -auto-approve \      
-      -var=octopus_server=$OCTOPUS_URL \
-      -var=octopus_apikey=$OCTOPUS_API_KEY \
-      -var=octopus_space_id=$OCTOPUS_SPACE \
-      -var=bucket_name=$BUCKET_NAME \
-      -var=bucket_region=$BUCKET_REGION
+#    - echo "Applying init_space project"
+#    - |
+#      terraform \
+#      -chdir=management_instance/projects/init_space/s3backend \
+#      init \
+#      -backend-config="key=environments_project" \
+#      -backend-config="bucket=$BUCKET_NAME" \
+#      -backend-config="region=$BUCKET_REGION"
+#    - |
+#      terraform \
+#      -chdir=management_instance/projects/init_space/s3backend \
+#      apply \
+#      -auto-approve \
+#      -var=octopus_server=$OCTOPUS_URL \
+#      -var=octopus_apikey=$OCTOPUS_API_KEY \
+#      -var=octopus_space_id=$OCTOPUS_SPACE \
+#      -var=bucket_name=$BUCKET_NAME \
+#      -var=bucket_region=$BUCKET_REGION
     - echo "Applying azure_web_app_unmanaged_cac project"
     - |
       terraform \
