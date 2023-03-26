@@ -181,7 +181,7 @@ apply:
       -var=octopus_space_id=$OCTOPUS_SPACE
     # Projects
     - echo "Apply projects"
-    - ./bash/clear_projects.sh
+    - bash -c ./bash/clear_projects.sh
     - |
       terraform \
       -chdir=management_instance/projects/azure_logs/s3backend \
@@ -194,6 +194,21 @@ apply:
       -chdir=management_instance/projects/azure_logs/s3backend \
       apply \
       -auto-approve \
+      -var=octopus_server=$OCTOPUS_URL \
+      -var=octopus_apikey=$OCTOPUS_API_KEY \
+      -var=octopus_space_id=$OCTOPUS_SPACE \
+      -var=bucket_name=$BUCKET_NAME \
+      -var=bucket_region=$BUCKET_REGION
+    - |
+      terraform \
+      -chdir=management_instance/projects/init_space/s3backend \
+      init \
+      -backend-config="key=environments_project" \
+      -backend-config="bucket=$BUCKET_NAME" \
+      -backend-config="region=$BUCKET_REGION"
+    - |
+      terraform apply -auto-approve \
+      -chdir=management_instance/projects/init_space/s3backend \
       -var=octopus_server=$OCTOPUS_URL \
       -var=octopus_apikey=$OCTOPUS_API_KEY \
       -var=octopus_space_id=$OCTOPUS_SPACE \
