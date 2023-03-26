@@ -58,7 +58,7 @@ apply:
       -backend-config="region=$BUCKET_REGION"
     - |
       terraform \
-      -chdir -chdir=shared/feeds/github/s3backend \
+      -chdir=shared/feeds/github/s3backend \
       apply \
       -auto-approve \
       -var=octopus_server=$OCTOPUS_URL \
@@ -67,14 +67,14 @@ apply:
       -var=feed_github_password=$GH_TOKEN
     - |
       terraform \
-      -chmod=shared/feeds/dockerhub/s3backend \
+      -chdir=shared/feeds/dockerhub/s3backend \
       init \
       -backend-config="key=dockerhubfeeds" \
       -backend-config="bucket=$BUCKET_NAME" \
       -backend-config="region=$BUCKET_REGION"
     - |
       terraform \
-      -chmod=shared/feeds/dockerhub/s3backend \
+      -chdir=shared/feeds/dockerhub/s3backend \
       apply \
       -auto-approve \
       -var=octopus_server=$OCTOPUS_URL \
@@ -82,3 +82,4 @@ apply:
       -var=octopus_space_id=$.OCTOPUS_SPACE \
       -var=docker_username=$DOCKER_USERNAME \
       -var=docker_password=$DOCKER_PASSWORD
+    # Library Variable Sets
