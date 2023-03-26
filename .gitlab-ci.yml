@@ -14,6 +14,5 @@ before_script:
 apply:
   stage: apply
   script:
-    - ls -la management_instance/tenants/tagsets/s3backend
-    - terraform init -chdir=management_instance/tenants/tagsets/s3backend -backend-config="key=tagsets" -backend-config="bucket=$BUCKET_NAME" -backend-config="region=$BUCKET_REGION"
-    - terraform apply -chdir=management_instance/tenants/tagsets/s3backend -auto-approve -var=octopus_server=$OCTOPUS_URL -var=octopus_apikey=$OCTOPUS_API_KEY -var=octopus_space_id=$OCTOPUS_SPACE
+    - terraform -chdir=management_instance/tenants/tagsets/s3backend init -backend-config="key=tagsets" -backend-config="bucket=$BUCKET_NAME" -backend-config="region=$BUCKET_REGION"
+    - terraform -chdir=management_instance/tenants/tagsets/s3backend apply -auto-approve -var=octopus_server=$OCTOPUS_URL -var=octopus_apikey=$OCTOPUS_API_KEY -var=octopus_space_id=$OCTOPUS_SPACE
