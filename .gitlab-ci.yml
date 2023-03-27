@@ -1,5 +1,4 @@
 stages:
-  - apply:prepare
   - apply:tagsets
   - apply:accounts
   - apply:environments
@@ -13,15 +12,6 @@ image:
   entrypoint:
     - '/usr/bin/env'
     - 'PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin'
-prepare:
-  stage: apply:prepare
-  script:
-    - apk add --update-cache bash jq curl
-    - export AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
-    - export AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
-    - rm -rf .terraform
-    - terraform --version
-    - terraform init
 tagsets:
   stage: apply:tagsets
   script:
@@ -200,7 +190,7 @@ libraryvariablesets:
 projects:
   stage: apply:projects
   script:
-    - echo "Apply projects"
+    - apk add --update-cache bash jq curl
     - ./bash/clear_projects.sh
     - |
       terraform \
