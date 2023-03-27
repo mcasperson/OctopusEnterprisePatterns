@@ -6,7 +6,7 @@ image:
   entrypoint:
     - '/usr/bin/env'
     - 'PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin'
-apply:
+prepare:
   stage: apply
   script:
     - apk add --update-cache bash jq curl
@@ -15,7 +15,9 @@ apply:
     - rm -rf .terraform
     - terraform --version
     - terraform init
-    #TagSets
+tagsets:
+  stage: apply
+  script:
     - echo "Apply Tag Sets"
     - |
       terraform \
@@ -32,7 +34,9 @@ apply:
       -var=octopus_server=$OCTOPUS_URL \
       -var=octopus_apikey=$OCTOPUS_API_KEY \
       -var=octopus_space_id=$OCTOPUS_SPACE
-    # Accounts
+accounts:
+  stage: apply
+  script:
     - echo "Apply Accounts"
     - |
       terraform \
@@ -51,7 +55,9 @@ apply:
       -var=octopus_space_id=$OCTOPUS_SPACE \
       -var=aws_access_key=$AWS_ACCESS_KEY_ID \
       -var=aws_secret_key=$AWS_SECRET_ACCESS_KEY
-    # Environments
+environments:
+  stage: apply
+  script:
     - echo "Apply Environments"
     - |
       terraform \
@@ -68,7 +74,9 @@ apply:
       -var=octopus_server=$OCTOPUS_URL \
       -var=octopus_apikey=$OCTOPUS_API_KEY \
       -var=octopus_space_id=$OCTOPUS_SPACE
-    # Feeds
+feeds:
+  stage: apply
+  script:
     - echo "Apply Feeds"
     - |
       terraform \
@@ -103,7 +111,9 @@ apply:
       -var=octopus_space_id=$OCTOPUS_SPACE \
       -var=docker_username=$DOCKER_USERNAME \
       -var=docker_password=$DOCKER_PASSWORD
-    # Library Variable Sets
+libraryvariablesets:
+  stage: apply
+  script:
     - echo "Apply Library Variable Sets"
     - |
       terraform \
@@ -180,7 +190,9 @@ apply:
       -var=octopus_server=$OCTOPUS_URL \
       -var=octopus_apikey=$OCTOPUS_API_KEY \
       -var=octopus_space_id=$OCTOPUS_SPACE
-    # Projects
+projects:
+  stage: apply
+  script:
     - echo "Apply projects"
     - ./bash/clear_projects.sh
     - |
@@ -254,7 +266,9 @@ apply:
       -var=octopus_space_id=$OCTOPUS_SPACE \
       -var=bucket_name=$BUCKET_NAME \
       -var=bucket_region=$BUCKET_REGION
-    # Tenants
+tenants:
+  stage: apply
+  script:
     - |
       terraform \
       -chdir=management_instance/tenants/europe/s3backend \
