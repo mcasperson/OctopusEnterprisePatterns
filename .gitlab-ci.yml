@@ -15,7 +15,6 @@ image:
 tagsets:
   stage: apply:tagsets
   script:
-    - echo "Apply Tag Sets"
     - |
       terraform \
       -chdir=management_instance/tenants/tagsets/s3backend \
@@ -34,7 +33,6 @@ tagsets:
 accounts:
   stage: apply:accounts
   script:
-    - echo "Apply Accounts"
     - |
       terraform \
       -chdir=shared/accounts/aws/s3backend \
@@ -55,7 +53,6 @@ accounts:
 environments:
   stage: apply:environments
   script:
-    - echo "Apply Environments"
     - |
       terraform \
       -chdir=management_instance/environments/production/s3backend \
@@ -74,7 +71,6 @@ environments:
 feeds:
   stage: apply:feeds
   script:
-    - echo "Apply Feeds"
     - |
       terraform \
       -chdir=shared/feeds/github/s3backend \
@@ -111,7 +107,6 @@ feeds:
 libraryvariablesets:
   stage: apply:libraryvariablesets
   script:
-    - echo "Apply Library Variable Sets"
     - |
       terraform \
       -chdir=management_instance/variables/octopus_server/s3backend \
