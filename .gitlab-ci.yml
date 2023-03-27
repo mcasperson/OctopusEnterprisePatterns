@@ -306,6 +306,8 @@ apply:
       -var=cac_url=$CAC_GH_URL
 octopus:
   stage: octopus
-  image: octopusdeploy/octo
+  image:
+    name: octopusdeploy/octo
+    entrypoint: [""]
   script:
     - octo list-projects --server=$OCTOPUS_URL --apiKey=$OCTOPUS_API_KEY --space $OCTOPUS_SPACE
