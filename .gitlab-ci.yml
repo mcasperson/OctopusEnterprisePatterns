@@ -1,5 +1,12 @@
 stages:
-  - apply
+  - apply:prepare
+  - apply:tagsets
+  - apply:accounts
+  - apply:environments
+  - apply:feeds
+  - apply:libraryvariablesets
+  - apply:projects
+  - apply:tenants
   - octopus
 image:
   name: hashicorp/terraform
@@ -7,7 +14,7 @@ image:
     - '/usr/bin/env'
     - 'PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin'
 prepare:
-  stage: apply
+  stage: apply:prepare
   script:
     - apk add --update-cache bash jq curl
     - export AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
@@ -16,7 +23,7 @@ prepare:
     - terraform --version
     - terraform init
 tagsets:
-  stage: apply
+  stage: apply:tagsets
   script:
     - echo "Apply Tag Sets"
     - |
@@ -35,7 +42,7 @@ tagsets:
       -var=octopus_apikey=$OCTOPUS_API_KEY \
       -var=octopus_space_id=$OCTOPUS_SPACE
 accounts:
-  stage: apply
+  stage: apply:accounts
   script:
     - echo "Apply Accounts"
     - |
@@ -56,7 +63,7 @@ accounts:
       -var=aws_access_key=$AWS_ACCESS_KEY_ID \
       -var=aws_secret_key=$AWS_SECRET_ACCESS_KEY
 environments:
-  stage: apply
+  stage: apply:environments
   script:
     - echo "Apply Environments"
     - |
@@ -75,7 +82,7 @@ environments:
       -var=octopus_apikey=$OCTOPUS_API_KEY \
       -var=octopus_space_id=$OCTOPUS_SPACE
 feeds:
-  stage: apply
+  stage: apply:feeds
   script:
     - echo "Apply Feeds"
     - |
@@ -112,7 +119,7 @@ feeds:
       -var=docker_username=$DOCKER_USERNAME \
       -var=docker_password=$DOCKER_PASSWORD
 libraryvariablesets:
-  stage: apply
+  stage: apply:libraryvariablesets
   script:
     - echo "Apply Library Variable Sets"
     - |
@@ -191,7 +198,7 @@ libraryvariablesets:
       -var=octopus_apikey=$OCTOPUS_API_KEY \
       -var=octopus_space_id=$OCTOPUS_SPACE
 projects:
-  stage: apply
+  stage: apply:projects
   script:
     - echo "Apply projects"
     - ./bash/clear_projects.sh
@@ -267,7 +274,7 @@ projects:
       -var=bucket_name=$BUCKET_NAME \
       -var=bucket_region=$BUCKET_REGION
 tenants:
-  stage: apply
+  stage: apply:tenants
   script:
     - |
       terraform \
