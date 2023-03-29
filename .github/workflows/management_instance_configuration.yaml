@@ -48,7 +48,7 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_KEY }}
 
       # Accounts
-      - name: Apply the variable set module
+      - name: Apply the aws accounts module
         run: |
           terraform init \
           -backend-config="key=aws_account" \
@@ -66,8 +66,28 @@ jobs:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_KEY }}
 
+      - name: Apply the azure accounts module
+        run: |
+          terraform init \
+          -backend-config="key=azure_account" \
+          -backend-config="bucket=${{ secrets.BUCKET_NAME }}" \
+          -backend-config="region=${{ secrets.BUCKET_REGION }}"
+          
+          terraform apply -auto-approve \
+          -var=octopus_server=${{ secrets.OCTOPUS_URL }} \
+          -var=octopus_apikey=${{ secrets.OCTOPUS_API_KEY }} \
+          -var=octopus_space_id=${{ secrets.OCTOPUS_SPACE }} \
+          -var=azure_application_id=${{ secrets.AZURE_APPLICATION_ID }} \
+          -var=azure_subscription_id=${{ secrets.AZURE_SUBSCRIPTION_ID }} \
+          -var=azure_password=${{ secrets.AZURE_PASSWORD }} \
+          -var=azure_tenant_id=${{ secrets.AZURE_TENANT_ID }} \
+        working-directory: shared/accounts/azure/s3backend
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_KEY }}
+
       # Environments
-      - name: Apply the managed instance environments module
+      - name: Apply the managed instance reference environments module
         run: |
           terraform init \
           -backend-config="key=managedinstanceenvironments" \
@@ -83,7 +103,7 @@ jobs:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_KEY }}
 
-      - name: Apply the management instances environments module
+      - name: Apply the managed instances deployment environments module
         run: |
           terraform init \
           -backend-config="key=managementinstanceenvironments" \
