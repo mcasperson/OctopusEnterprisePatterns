@@ -285,6 +285,24 @@ jobs:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_KEY }}
 
+      - name: Apply the managed CaC azure web app project module
+        run: |
+          terraform init \
+          -backend-config="key=azure_web_app_cac_template" \
+          -backend-config="bucket=${{ secrets.BUCKET_NAME }}" \
+          -backend-config="region=${{ secrets.BUCKET_REGION }}"
+          
+          terraform apply -auto-approve \
+          -var=octopus_server=${{ secrets.OCTOPUS_URL }} \
+          -var=octopus_apikey=${{ secrets.OCTOPUS_API_KEY }} \
+          -var=octopus_space_id=${{ secrets.OCTOPUS_SPACE }} \
+          -var=bucket_name=${{ secrets.BUCKET_NAME }} \
+          -var=bucket_region=${{ secrets.BUCKET_REGION }}
+        working-directory: management_instance/projects/azure_web_app_cac_template/s3backend
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_KEY }}
+
       - name: Apply the unmanaged azure web app project module
         run: |
           terraform init \
