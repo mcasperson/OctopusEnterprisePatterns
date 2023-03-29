@@ -37,7 +37,7 @@ variable "existing_project_group" {
   nullable    = false
   sensitive   = false
   description = "The name of the existing project group to place the project into."
-  default     = ""
+  default     = "Azure Web App"
 }
 
 variable "project_name" {
