@@ -9,7 +9,7 @@ variable "existing_project_group" {
   nullable    = false
   sensitive   = false
   description = "The name of the existing project group to place the project into."
-  default     = ""
+  default     = "Azure Web App"
 }
 
 variable "project_name" {
@@ -17,14 +17,7 @@ variable "project_name" {
   nullable    = false
   sensitive   = false
   description = "The name of the new project."
-  default     = "Azure Web App (CaC)"
-}
-
-variable "cac_url" {
-  type        = string
-  nullable    = false
-  sensitive   = false
-  description = "The git url for the CaC project."
+  default     = "Azure Web App (CaC Template)"
 }
 
 variable "octopus_space_id" {
@@ -101,7 +94,7 @@ data "octopusdeploy_git_credentials" "gitcredential" {
 
 resource "octopusdeploy_project_group" "project_group" {
   count = var.existing_project_group == "" ? 1 : 0
-  name  = "Azure Web App (CaC)"
+  name  = "Azure Web App"
 }
 
 resource "octopusdeploy_project" "project" {
@@ -132,7 +125,7 @@ resource "octopusdeploy_project" "project" {
 
   git_library_persistence_settings {
     git_credential_id  = data.octopusdeploy_git_credentials.gitcredential.git_credentials[0].id
-    url                = var.cac_url
+    url                = "https://github.com/mcasperson/OctopusEnterprisePatternsAzureWebAppCaCTemplate.git"
     base_path          = ".octopus/azure-web-app"
     default_branch     = "octopus-vcs-conversion"
     protected_branches = []

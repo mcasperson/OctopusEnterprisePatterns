@@ -11,6 +11,25 @@ jobs:
           fetch-depth: '0'
       - uses: hashicorp/setup-terraform@v2
 
+      # GitCreds
+      - name: Apply the git creds module
+        run: |
+          terraform init \
+          -backend-config="key=gitcreds" \
+          -backend-config="bucket=${{ secrets.BUCKET_NAME }}" \
+          -backend-config="region=${{ secrets.BUCKET_REGION }}"
+
+          terraform apply -auto-approve \
+          -var=octopus_server=${{ secrets.OCTOPUS_URL }} \
+          -var=octopus_apikey=${{ secrets.OCTOPUS_API_KEY }} \
+          -var=octopus_space_id=${{ secrets.OCTOPUS_SPACE }} \
+          -var=cac_username=${{ secrets.CAC_GH_USERNAME }} \
+          -var=cac_password=${{ secrets.CAC_GH_TOKEN }}
+        working-directory: shared/gitcreds/githubcreds/s3backend
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_KEY }}
+
       # Tagsets
       - name: Apply the tagset module
         run: |
