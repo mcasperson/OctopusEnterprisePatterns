@@ -165,6 +165,7 @@ resource "octopusdeploy_tenant_common_variable" "octopus_server" {
   template_id = tolist([for tmp in data.octopusdeploy_library_variable_sets.octopus_server.library_variable_sets[0].template : tmp.id if tmp.name == "Tenant.Octopus.Server"])[0]
   tenant_id = octopusdeploy_tenant.america.id
   value = var.octopus_server
+  depends_on = [octopusdeploy_tenant.america]
 }
 
 resource "octopusdeploy_tenant_common_variable" "octopus_server_api" {
@@ -172,6 +173,7 @@ resource "octopusdeploy_tenant_common_variable" "octopus_server_api" {
   template_id = tolist([for tmp in data.octopusdeploy_library_variable_sets.octopus_server.library_variable_sets[0].template : tmp.id if tmp.name == "Tenant.Octopus.ApiKey"])[0]
   tenant_id = octopusdeploy_tenant.america.id
   value = var.octopus_apikey
+  depends_on = [octopusdeploy_tenant.america]
 }
 
 resource "octopusdeploy_tenant_common_variable" "octopus_server_space_id" {
@@ -179,6 +181,7 @@ resource "octopusdeploy_tenant_common_variable" "octopus_server_space_id" {
   template_id = tolist([for tmp in data.octopusdeploy_library_variable_sets.octopus_server.library_variable_sets[0].template : tmp.id if tmp.name == "Tenant.Octopus.SpaceId"])[0]
   tenant_id = octopusdeploy_tenant.america.id
   value = "Spaces-1650"
+  depends_on = [octopusdeploy_tenant.america]
 }
 
 resource "octopusdeploy_tenant_common_variable" "docker_username" {
@@ -186,6 +189,7 @@ resource "octopusdeploy_tenant_common_variable" "docker_username" {
   template_id = tolist([for tmp in data.octopusdeploy_library_variable_sets.docker_hub.library_variable_sets[0].template : tmp.id if tmp.name == "Tenant.Docker.Username"])[0]
   tenant_id = octopusdeploy_tenant.america.id
   value = var.docker_username
+  depends_on = [octopusdeploy_tenant.america]
 }
 
 resource "octopusdeploy_tenant_common_variable" "docker_password" {
@@ -193,6 +197,7 @@ resource "octopusdeploy_tenant_common_variable" "docker_password" {
   template_id = tolist([for tmp in data.octopusdeploy_library_variable_sets.docker_hub.library_variable_sets[0].template : tmp.id if tmp.name == "Tenant.Docker.Password"])[0]
   tenant_id = octopusdeploy_tenant.america.id
   value = var.docker_password
+  depends_on = [octopusdeploy_tenant.america]
 }
 
 resource "octopusdeploy_tenant_common_variable" "azure_application_id" {
@@ -200,6 +205,7 @@ resource "octopusdeploy_tenant_common_variable" "azure_application_id" {
   template_id = tolist([for tmp in data.octopusdeploy_library_variable_sets.azure.library_variable_sets[0].template : tmp.id if tmp.name == "Tenant.Azure.ApplicationId"])[0]
   tenant_id = octopusdeploy_tenant.america.id
   value = var.azure_application_id
+  depends_on = [octopusdeploy_tenant.america]
 }
 
 resource "octopusdeploy_tenant_common_variable" "azure_subscription_id" {
@@ -207,6 +213,7 @@ resource "octopusdeploy_tenant_common_variable" "azure_subscription_id" {
   template_id = tolist([for tmp in data.octopusdeploy_library_variable_sets.azure.library_variable_sets[0].template : tmp.id if tmp.name == "Tenant.Azure.SubscriptionId"])[0]
   tenant_id = octopusdeploy_tenant.america.id
   value = var.azure_subscription_id
+  depends_on = [octopusdeploy_tenant.america]
 }
 
 resource "octopusdeploy_tenant_common_variable" "azure_tenant_id" {
@@ -214,6 +221,7 @@ resource "octopusdeploy_tenant_common_variable" "azure_tenant_id" {
   template_id = tolist([for tmp in data.octopusdeploy_library_variable_sets.azure.library_variable_sets[0].template : tmp.id if tmp.name == "Tenant.Azure.TenantId"])[0]
   tenant_id = octopusdeploy_tenant.america.id
   value = var.azure_tenant_id
+  depends_on = [octopusdeploy_tenant.america]
 }
 
 resource "octopusdeploy_tenant_common_variable" "azure_password" {
@@ -221,6 +229,7 @@ resource "octopusdeploy_tenant_common_variable" "azure_password" {
   template_id = tolist([for tmp in data.octopusdeploy_library_variable_sets.azure.library_variable_sets[0].template : tmp.id if tmp.name == "Tenant.Azure.Password"])[0]
   tenant_id = octopusdeploy_tenant.america.id
   value = var.azure_password
+  depends_on = [octopusdeploy_tenant.america]
 }
 
 resource "octopusdeploy_tenant_common_variable" "cac_url" {
@@ -228,6 +237,7 @@ resource "octopusdeploy_tenant_common_variable" "cac_url" {
   template_id = tolist([for tmp in data.octopusdeploy_library_variable_sets.cac.library_variable_sets[0].template : tmp.id if tmp.name == "Tenant.CaC.Url"])[0]
   tenant_id = octopusdeploy_tenant.america.id
   value = var.cac_url
+  depends_on = [octopusdeploy_tenant.america]
 }
 
 resource "octopusdeploy_tenant_common_variable" "cac_username" {
@@ -235,6 +245,7 @@ resource "octopusdeploy_tenant_common_variable" "cac_username" {
   template_id = tolist([for tmp in data.octopusdeploy_library_variable_sets.cac.library_variable_sets[0].template : tmp.id if tmp.name == "Tenant.CaC.Username"])[0]
   tenant_id = octopusdeploy_tenant.america.id
   value = var.cac_username
+  depends_on = [octopusdeploy_tenant.america]
 }
 
 resource "octopusdeploy_tenant_common_variable" "cac_password" {
@@ -242,4 +253,5 @@ resource "octopusdeploy_tenant_common_variable" "cac_password" {
   template_id = tolist([for tmp in data.octopusdeploy_library_variable_sets.cac.library_variable_sets[0].template : tmp.id if tmp.name == "Tenant.CaC.Password"])[0]
   tenant_id = octopusdeploy_tenant.america.id
   value = var.cac_password
+  depends_on = [octopusdeploy_tenant.america]
 }
