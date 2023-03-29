@@ -67,10 +67,10 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_KEY }}
 
       # Environments
-      - name: Apply the environments module
+      - name: Apply the managed instance environments module
         run: |
           terraform init \
-          -backend-config="key=environments" \
+          -backend-config="key=managedinstanceenvironments" \
           -backend-config="bucket=${{ secrets.BUCKET_NAME }}" \
           -backend-config="region=${{ secrets.BUCKET_REGION }}"
           
@@ -78,7 +78,23 @@ jobs:
           -var=octopus_server=${{ secrets.OCTOPUS_URL }} \
           -var=octopus_apikey=${{ secrets.OCTOPUS_API_KEY }} \
           -var=octopus_space_id=${{ secrets.OCTOPUS_SPACE }}
-        working-directory: management_instance/environments/production/s3backend
+        working-directory: shared/environments/dev_test_prod/s3backend
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_KEY }}
+
+      - name: Apply the management instances environments module
+        run: |
+          terraform init \
+          -backend-config="key=managementinstanceenvironments" \
+          -backend-config="bucket=${{ secrets.BUCKET_NAME }}" \
+          -backend-config="region=${{ secrets.BUCKET_REGION }}"
+          
+          terraform apply -auto-approve \
+          -var=octopus_server=${{ secrets.OCTOPUS_URL }} \
+          -var=octopus_apikey=${{ secrets.OCTOPUS_API_KEY }} \
+          -var=octopus_space_id=${{ secrets.OCTOPUS_SPACE }}
+        working-directory: management_instance/environments/managed_instance/s3backend
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_KEY }}
