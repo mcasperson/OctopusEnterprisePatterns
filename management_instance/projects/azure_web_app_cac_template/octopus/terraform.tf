@@ -42,7 +42,7 @@ data "octopusdeploy_lifecycles" "lifecycle_default_lifecycle" {
 
 data "octopusdeploy_lifecycles" "lifecycle_devsecops" {
   ids          = null
-  partial_name = "DevSecOps"
+  partial_name = "Default Lifecycle"
   skip         = 0
   take         = 1
 }
