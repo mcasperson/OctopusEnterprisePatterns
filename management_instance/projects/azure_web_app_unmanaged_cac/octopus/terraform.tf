@@ -132,6 +132,46 @@ resource "octopusdeploy_deployment_process" "deployment_process" {
 
   step {
     condition           = "Success"
+    name                = "Run a Script"
+    package_requirement = "LetOctopusDecide"
+    start_trigger       = "StartAfterPrevious"
+
+    action {
+      action_type                        = "Octopus.Script"
+      name                               = "Run a Script"
+      condition                          = "Success"
+      run_on_server                      = true
+      is_disabled                        = false
+      can_be_used_for_project_versioning = true
+      is_required                        = false
+      worker_pool_id                     = "${data.octopusdeploy_worker_pools.workerpool_hosted_ubuntu.worker_pools[0].id}"
+      properties                         = {
+        "Octopus.Action.Script.ScriptSource" = "Inline"
+        "Octopus.Action.Script.Syntax" = "Bash"
+        "Octopus.Action.Script.ScriptBody" = "cd gh/gh_2.25.1_linux_amd64/bin\ncat \u003c\u003c\u003c #{Tenant.CaC.Password} | ./gh auth login --with-token\n./gh repo fork \\\n\t--clone=false \\\n    --fork-name=#{Project.Name | ToLower | Replace \" \" \"-\"}\n    "
+      }
+      environments                       = []
+      excluded_environments              = []
+      channels                           = []
+      tenant_tags                        = []
+
+      package {
+        name                      = "gh"
+        package_id                = "gh"
+        acquisition_location      = "Server"
+        extract_during_deployment = false
+        feed_id                   = "${data.octopusdeploy_feeds.built_in_feed.feeds[0].id}"
+        properties                = { Extract = "True", Purpose = "", SelectionMode = "immediate" }
+      }
+      features = []
+    }
+
+    properties   = {}
+    target_roles = []
+  }
+
+  step {
+    condition           = "Success"
     name                = "Deploy Octopus Resources"
     package_requirement = "LetOctopusDecide"
     start_trigger       = "StartAfterPrevious"

@@ -33,9 +33,9 @@ data "octopusdeploy_spaces" "spaces" {
   take         = 1
 }
 
-data "octopusdeploy_lifecycles" "lifecycle_default_lifecycle" {
+data "octopusdeploy_lifecycles" "lifecycle" {
   ids          = null
-  partial_name = "Default Lifecycle"
+  partial_name = "Managed Instance"
   skip         = 0
   take         = 1
 }
@@ -105,7 +105,7 @@ resource "octopusdeploy_project" "project" {
   discrete_channel_release             = false
   is_disabled                          = false
   is_version_controlled                = true
-  lifecycle_id                         = "${data.octopusdeploy_lifecycles.lifecycle_default_lifecycle.lifecycles[0].id}"
+  lifecycle_id                         = "${data.octopusdeploy_lifecycles.lifecycle.lifecycles[0].id}"
   project_group_id                     = var.existing_project_group == "" ? octopusdeploy_project_group.project_group[0].id : data.octopusdeploy_project_groups.project_group.project_groups[0].id
   included_library_variable_sets       = []
   tenanted_deployment_participation    = "Untenanted"
@@ -183,6 +183,7 @@ resource "octopusdeploy_deployment_process" "deployment_process" {
     action {
       action_type                        = "Octopus.AzureAppService"
       name                               = "Deploy Web App"
+      notes                              = "Deploys the Azure Web App from a Docker image."
       condition                          = "Success"
       run_on_server                      = true
       is_disabled                        = false
