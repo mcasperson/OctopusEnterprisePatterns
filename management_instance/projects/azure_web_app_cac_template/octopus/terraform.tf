@@ -40,13 +40,6 @@ data "octopusdeploy_lifecycles" "lifecycle_default_lifecycle" {
   take         = 1
 }
 
-data "octopusdeploy_lifecycles" "lifecycle_devsecops" {
-  ids          = null
-  partial_name = "Default Lifecycle"
-  skip         = 0
-  take         = 1
-}
-
 data "octopusdeploy_accounts" "azure" {
   partial_name = "Azure"
   skip         = 0
@@ -112,7 +105,7 @@ resource "octopusdeploy_project" "project" {
   discrete_channel_release             = false
   is_disabled                          = true
   is_version_controlled                = true
-  lifecycle_id                         = "${data.octopusdeploy_lifecycles.lifecycle_devsecops.lifecycles[0].id}"
+  lifecycle_id                         = "${data.octopusdeploy_lifecycles.lifecycle_default_lifecycle.lifecycles[0].id}"
   project_group_id                     = var.existing_project_group == "" ? octopusdeploy_project_group.project_group[0].id : data.octopusdeploy_project_groups.project_group.project_groups[0].id
   included_library_variable_sets       = []
   tenanted_deployment_participation    = "Untenanted"
