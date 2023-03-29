@@ -35,7 +35,7 @@ data "octopusdeploy_spaces" "spaces" {
 
 data "octopusdeploy_lifecycles" "lifecycle" {
   ids          = null
-  partial_name = "Managed Instance"
+  partial_name = "DevSecOps"
   skip         = 0
   take         = 1
 }
