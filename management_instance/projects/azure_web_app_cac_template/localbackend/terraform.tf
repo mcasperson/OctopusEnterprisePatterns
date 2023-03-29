@@ -48,13 +48,6 @@ variable "project_name" {
   default     = "Azure Web App (CaC)"
 }
 
-variable "cac_url" {
-  type        = string
-  nullable    = false
-  sensitive   = false
-  description = "The git url for the CaC project."
-}
-
 module "octopus" {
   source                 = "../octopus"
   existing_project_group = var.existing_project_group

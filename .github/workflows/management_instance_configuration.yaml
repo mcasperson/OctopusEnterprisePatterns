@@ -208,7 +208,7 @@ jobs:
       # deletes project releases.
       - name: Delete existing projects
         run: |
-          declare -a arr=("Initialise Space" "Provision Unmanaged Azure Web App" "Provision Unmanaged Azure Web App (CaC)" "Provision Azure Logs")
+          declare -a arr=("Initialise Space" "Provision Unmanaged Azure Web App" "Provision Unmanaged Azure Web App (CaC)" "Provision Azure Logs" "Azure Web App (CaC Template)")
 
           for i in "${arr[@]}"
           do
@@ -267,10 +267,10 @@ jobs:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_KEY }}
 
-      - name: Apply the managed CaC azure web app project module
+      - name: Apply the managed CaC azure web app template project module
         run: |
           terraform init \
-          -backend-config="key=azure_web_app_unmanaged_cac" \
+          -backend-config="key=azure_web_app_unmanaged_cac_template" \
           -backend-config="bucket=${{ secrets.BUCKET_NAME }}" \
           -backend-config="region=${{ secrets.BUCKET_REGION }}"
           

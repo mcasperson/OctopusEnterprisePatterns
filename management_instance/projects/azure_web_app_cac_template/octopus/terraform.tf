@@ -110,7 +110,7 @@ resource "octopusdeploy_project" "project" {
   default_guided_failure_mode          = "EnvironmentDefault"
   default_to_skip_if_already_installed = false
   discrete_channel_release             = false
-  is_disabled                          = false
+  is_disabled                          = true
   is_version_controlled                = true
   lifecycle_id                         = "${data.octopusdeploy_lifecycles.lifecycle_devsecops.lifecycles[0].id}"
   project_group_id                     = var.existing_project_group == "" ? octopusdeploy_project_group.project_group[0].id : data.octopusdeploy_project_groups.project_group.project_groups[0].id
@@ -140,12 +140,6 @@ resource "octopusdeploy_variable" "cloud_discovery" {
 }
 
 resource "octopusdeploy_deployment_process" "deployment_process" {
-  lifecycle {
-    ignore_changes = [
-      step,
-    ]
-  }
-
   project_id = "${octopusdeploy_project.project.id}"
 
   step {
