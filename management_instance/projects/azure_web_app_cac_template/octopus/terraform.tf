@@ -98,12 +98,12 @@ resource "octopusdeploy_project" "project" {
   }
 
   name                                 = var.project_name
-  description                          = "A project that is created by Terraform but then able to be edited."
+  description                          = "A template project used to populate a Git repo to be forked by individual tenants."
   auto_create_release                  = false
   default_guided_failure_mode          = "EnvironmentDefault"
   default_to_skip_if_already_installed = false
   discrete_channel_release             = false
-  is_disabled                          = true
+  is_disabled                          = false
   is_version_controlled                = true
   lifecycle_id                         = "${data.octopusdeploy_lifecycles.lifecycle_default_lifecycle.lifecycles[0].id}"
   project_group_id                     = var.existing_project_group == "" ? octopusdeploy_project_group.project_group[0].id : data.octopusdeploy_project_groups.project_group.project_groups[0].id
