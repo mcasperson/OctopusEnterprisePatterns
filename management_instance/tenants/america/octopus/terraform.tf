@@ -105,12 +105,11 @@ data "octopusdeploy_projects" "initialise_space" {
   take                   = 1
 }
 
-data "octopusdeploy_environments" "production" {
-  partial_name = "Production"
+data "octopusdeploy_environments" "environment" {
+  partial_name = "Managed Instances"
   skip         = 0
   take         = 1
 }
-
 data "octopusdeploy_library_variable_sets" "octopus_server" {
   partial_name = "Octopus Server"
   skip = 0
@@ -141,22 +140,22 @@ resource "octopusdeploy_tenant" "america" {
   tenant_tags = ["region/us", "type/managed_instance"]
 
   project_environment {
-    environments = [data.octopusdeploy_environments.production.environments[0].id]
+    environments = [data.octopusdeploy_environments.environment.environments[0].id]
     project_id   = data.octopusdeploy_projects.initialise_space.projects[0].id
   }
 
   project_environment {
-    environments = [data.octopusdeploy_environments.production.environments[0].id]
+    environments = [data.octopusdeploy_environments.environment.environments[0].id]
     project_id   = data.octopusdeploy_projects.provision_unmanaged_azure_web_app.projects[0].id
   }
 
   project_environment {
-    environments = [data.octopusdeploy_environments.production.environments[0].id]
+    environments = [data.octopusdeploy_environments.environment.environments[0].id]
     project_id   = data.octopusdeploy_projects.provision_azure_web_app_cac.projects[0].id
   }
 
   project_environment {
-    environments = [data.octopusdeploy_environments.production.environments[0].id]
+    environments = [data.octopusdeploy_environments.environment.environments[0].id]
     project_id   = data.octopusdeploy_projects.provision_azure_logs.projects[0].id
   }
 }
