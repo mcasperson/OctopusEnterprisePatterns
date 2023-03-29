@@ -52,6 +52,5 @@ module "octopus" {
   source                 = "../octopus"
   existing_project_group = var.existing_project_group
   project_name           = var.project_name
-  cac_url                = var.cac_url
   octopus_space_id       = var.octopus_space_id
 }
