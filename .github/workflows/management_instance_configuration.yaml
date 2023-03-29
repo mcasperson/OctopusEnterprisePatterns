@@ -267,10 +267,10 @@ jobs:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_KEY }}
 
-      - name: Apply the managed CaC azure web app template project module
+      - name: Apply the managed CaC azure web app project module
         run: |
           terraform init \
-          -backend-config="key=azure_web_app_unmanaged_cac_template" \
+          -backend-config="key=azure_web_app_unmanaged_cac" \
           -backend-config="bucket=${{ secrets.BUCKET_NAME }}" \
           -backend-config="region=${{ secrets.BUCKET_REGION }}"
           
@@ -285,7 +285,7 @@ jobs:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_KEY }}
 
-      - name: Apply the managed CaC azure web app project module
+      - name: Apply the managed CaC azure web app template project module
         run: |
           terraform init \
           -backend-config="key=azure_web_app_cac_template" \
