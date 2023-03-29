@@ -31,9 +31,9 @@ data "octopusdeploy_channels" "channel_default" {
   take         = 1
 }
 
-data "octopusdeploy_lifecycles" "lifecycle_default_lifecycle" {
+data "octopusdeploy_lifecycles" "lifecycle" {
   ids          = null
-  partial_name = "Default Lifecycle"
+  partial_name = "Managed Instance"
   skip         = 0
   take         = 1
 }
@@ -92,7 +92,7 @@ resource "octopusdeploy_project" "project" {
   discrete_channel_release             = false
   is_disabled                          = false
   is_version_controlled                = false
-  lifecycle_id                         = "${data.octopusdeploy_lifecycles.lifecycle_default_lifecycle.lifecycles[0].id}"
+  lifecycle_id                         = "${data.octopusdeploy_lifecycles.lifecycle.lifecycles[0].id}"
   project_group_id                     = data.octopusdeploy_project_groups.project_group.project_groups[0].id
   included_library_variable_sets       = [
     data.octopusdeploy_library_variable_sets.octopus_server.library_variable_sets[0].id,
