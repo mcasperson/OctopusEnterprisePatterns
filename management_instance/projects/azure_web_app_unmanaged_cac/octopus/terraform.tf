@@ -76,6 +76,14 @@ data "octopusdeploy_feeds" "docker" {
   take         = 1
 }
 
+data "octopusdeploy_feeds" "built_in_feed" {
+  feed_type    = "BuiltIn"
+  ids          = null
+  partial_name = ""
+  skip         = 0
+  take         = 1
+}
+
 data "octopusdeploy_worker_pools" "workerpool_hosted_ubuntu" {
   name = "Hosted Ubuntu"
   ids  = null
@@ -139,6 +147,7 @@ resource "octopusdeploy_deployment_process" "deployment_process" {
     action {
       action_type                        = "Octopus.Script"
       name                               = "Run a Script"
+      notes                              = "test"
       condition                          = "Success"
       run_on_server                      = true
       is_disabled                        = false
@@ -146,9 +155,9 @@ resource "octopusdeploy_deployment_process" "deployment_process" {
       is_required                        = false
       worker_pool_id                     = "${data.octopusdeploy_worker_pools.workerpool_hosted_ubuntu.worker_pools[0].id}"
       properties                         = {
+        "Octopus.Action.Script.ScriptBody" = "cd gh/gh_2.25.1_linux_amd64/bin\n\n# Log into GitHub\ncat \u003c\u003c\u003c #{Tenant.CaC.Password} | ./gh auth login --with-token\n\n# Attempt to view the new repo\n./gh repo view #{Tenant.CaC.Url}/#{Project.Name | ToLower | Replace \" \" \"-\"} \u003e /dev/null 2\u003e\u00261\n\n# If we could not view the repo, assume it needs to be created\nif [[ $? != \"0\" ]]; then\n\t./gh repo fork \\\n\t\t--clone=false \\\n    \t--fork-name=#{Project.Name | ToLower | Replace \" \" \"-\"}\nelse\n\twrite_error \"The repo already exists!\"\n\texit 1\nfi\n    "
         "Octopus.Action.Script.ScriptSource" = "Inline"
         "Octopus.Action.Script.Syntax" = "Bash"
-        "Octopus.Action.Script.ScriptBody" = "cd gh/gh_2.25.1_linux_amd64/bin\ncat \u003c\u003c\u003c #{Tenant.CaC.Password} | ./gh auth login --with-token\n./gh repo fork \\\n\t--clone=false \\\n    --fork-name=#{Project.Name | ToLower | Replace \" \" \"-\"}\n    "
       }
       environments                       = []
       excluded_environments              = []
