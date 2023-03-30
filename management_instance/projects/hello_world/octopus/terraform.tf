@@ -155,7 +155,7 @@ resource "octopusdeploy_deployment_process" "deployment_process_project_provisio
         "Octopus.Action.Aws.Region" = "ap-southeast-2"
         "Octopus.Action.AwsAccount.Variable" = "AWS"
         "Octopus.Action.GoogleCloud.ImpersonateServiceAccount" = "False"
-        "Octopus.Action.Terraform.RunAutomaticFileSubstitution" = "True"
+        "Octopus.Action.Terraform.RunAutomaticFileSubstitution" = "False"
         "Octopus.Action.Terraform.TemplateDirectory" = "managed_instances/projects/hello_world/s3backend"
         "Octopus.Action.Terraform.AllowPluginDownloads" = "True"
         "Octopus.Action.Terraform.AzureAccount" = "False"
