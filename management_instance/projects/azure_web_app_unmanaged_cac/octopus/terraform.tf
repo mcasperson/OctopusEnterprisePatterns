@@ -155,9 +155,9 @@ resource "octopusdeploy_deployment_process" "deployment_process" {
       is_required                        = false
       worker_pool_id                     = "${data.octopusdeploy_worker_pools.workerpool_hosted_ubuntu.worker_pools[0].id}"
       properties                         = {
-        "Octopus.Action.Script.ScriptBody" = "cd gh/gh_2.25.1_linux_amd64/bin\n\n# Log into GitHub\ncat \u003c\u003c\u003c #{Tenant.CaC.Password} | ./gh auth login --with-token\n\n# Attempt to view the new repo\n./gh repo view #{Tenant.CaC.Url}/#{Project.Name | ToLower | Replace \" \" \"-\"} \u003e /dev/null 2\u003e\u00261\n\n# If we could not view the repo, assume it needs to be created\nif [[ $? != \"0\" ]]; then\n\t./gh repo fork \\\n\t\t--clone=false \\\n    \t--fork-name=#{Project.Name | ToLower | Replace \" \" \"-\"}\nelse\n\twrite_error \"The repo already exists!\"\n\texit 1\nfi\n    "
-        "Octopus.Action.Script.ScriptSource" = "Inline"
         "Octopus.Action.Script.Syntax" = "Bash"
+        "Octopus.Action.Script.ScriptBody" = "NEW_REPO=\"#{Octopus.Deployment.Tenant.Name | ToLower}-#{Project.Name | ToLower | Replace \"[^a-zA-Z0-9]\" \"-\"}\"\n\ncd gh/gh_2.25.1_linux_amd64/bin\n\n# Fix executable flag\nchmod +x gh\n\n# Log into GitHub\ncat \u003c\u003c\u003c #{Tenant.CaC.Password} | ./gh auth login --with-token\n\n# Attempt to view the new repo\n./gh repo view $NEW_REPO \u003e /dev/null 2\u003e\u00261\n\n# If we could not view the repo, assume it needs to be created\nif [[ $? != \"0\" ]]; then\n\techo \"##octopus[stdout-verbose]\"\n\tREPO=URL=$(./gh repo create $NEW_REPO --public --clone)\n    cd $NEW_REPO\n\tgit remote add upstream https://github.com/mcasperson/OctopusEnterprisePatternsAzureWebAppCaCTemplate.git\n    git fetch --all\n    git reset --hard upstream/main\n    git push origin main\n    echo \"##octopus[stdout-default]\"\nelse\n\twrite_error \"The repo already exists!\"\n\texit 1\nfi\n    "
+        "Octopus.Action.Script.ScriptSource" = "Inline"
       }
       environments                       = []
       excluded_environments              = []
