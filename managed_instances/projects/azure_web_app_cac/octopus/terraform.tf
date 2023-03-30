@@ -48,6 +48,12 @@ data "octopusdeploy_lifecycles" "lifecycle_devsecops" {
   take         = 1
 }
 
+data "octopusdeploy_git_credentials" "gitcredential" {
+  name = "GitHub"
+  skip = 0
+  take = 1
+}
+
 data "octopusdeploy_project_groups" "project_group" {
   partial_name = var.existing_project_group
   skip         = 0
