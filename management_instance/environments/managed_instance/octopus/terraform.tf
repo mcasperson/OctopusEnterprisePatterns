@@ -9,7 +9,7 @@ resource "octopusdeploy_environment" "environment_managed_instances" {
   description                  = ""
   allow_dynamic_infrastructure = true
   use_guided_failure           = false
-  sort_order                   = 2
+  sort_order                   = 5
 
   jira_extension_settings {
     environment_type = "unmapped"
