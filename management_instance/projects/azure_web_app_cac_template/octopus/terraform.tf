@@ -135,6 +135,12 @@ resource "octopusdeploy_variable" "cloud_discovery" {
 resource "octopusdeploy_deployment_process" "deployment_process" {
   project_id = "${octopusdeploy_project.project.id}"
 
+  lifecycle {
+    ignore_changes = [
+      step,
+    ]
+  }
+
   step {
     condition           = "Success"
     name                = "Create Web App"
