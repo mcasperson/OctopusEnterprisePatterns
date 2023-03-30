@@ -19,7 +19,7 @@ jobs:
           -backend-config="bucket=${{ secrets.BUCKET_NAME }}" \
           -backend-config="region=${{ secrets.BUCKET_REGION }}"
 
-          terraform apply -auto-approve \
+          terraform apply -auto-approve -input=false  \
           -var=octopus_server=${{ secrets.OCTOPUS_URL }} \
           -var=octopus_apikey=${{ secrets.OCTOPUS_API_KEY }} \
           -var=octopus_space_id=${{ secrets.OCTOPUS_SPACE }} \
@@ -38,7 +38,7 @@ jobs:
           -backend-config="bucket=${{ secrets.BUCKET_NAME }}" \
           -backend-config="region=${{ secrets.BUCKET_REGION }}"
           
-          terraform apply -auto-approve \
+          terraform apply -auto-approve -input=false  \
           -var=octopus_server=${{ secrets.OCTOPUS_URL }} \
           -var=octopus_apikey=${{ secrets.OCTOPUS_API_KEY }} \
           -var=octopus_space_id=${{ secrets.OCTOPUS_SPACE }}
@@ -55,7 +55,7 @@ jobs:
           -backend-config="bucket=${{ secrets.BUCKET_NAME }}" \
           -backend-config="region=${{ secrets.BUCKET_REGION }}"
           
-          terraform apply -auto-approve \
+          terraform apply -auto-approve -input=false  \
           -var=octopus_server=${{ secrets.OCTOPUS_URL }} \
           -var=octopus_apikey=${{ secrets.OCTOPUS_API_KEY }} \
           -var=octopus_space_id=${{ secrets.OCTOPUS_SPACE }} \
@@ -73,7 +73,7 @@ jobs:
           -backend-config="bucket=${{ secrets.BUCKET_NAME }}" \
           -backend-config="region=${{ secrets.BUCKET_REGION }}"
           
-          terraform apply -auto-approve \
+          terraform apply -auto-approve -input=false  \
           -var=octopus_server=${{ secrets.OCTOPUS_URL }} \
           -var=octopus_apikey=${{ secrets.OCTOPUS_API_KEY }} \
           -var=octopus_space_id=${{ secrets.OCTOPUS_SPACE }} \
@@ -94,7 +94,7 @@ jobs:
           -backend-config="bucket=${{ secrets.BUCKET_NAME }}" \
           -backend-config="region=${{ secrets.BUCKET_REGION }}"
           
-          terraform apply -auto-approve \
+          terraform apply -auto-approve -input=false  \
           -var=octopus_server=${{ secrets.OCTOPUS_URL }} \
           -var=octopus_apikey=${{ secrets.OCTOPUS_API_KEY }} \
           -var=octopus_space_id=${{ secrets.OCTOPUS_SPACE }}
@@ -110,7 +110,7 @@ jobs:
           -backend-config="bucket=${{ secrets.BUCKET_NAME }}" \
           -backend-config="region=${{ secrets.BUCKET_REGION }}"
           
-          terraform apply -auto-approve \
+          terraform apply -auto-approve -input=false  \
           -var=octopus_server=${{ secrets.OCTOPUS_URL }} \
           -var=octopus_apikey=${{ secrets.OCTOPUS_API_KEY }} \
           -var=octopus_space_id=${{ secrets.OCTOPUS_SPACE }}
@@ -127,7 +127,7 @@ jobs:
           -backend-config="bucket=${{ secrets.BUCKET_NAME }}" \
           -backend-config="region=${{ secrets.BUCKET_REGION }}"
           
-          terraform apply -auto-approve \
+          terraform apply -auto-approve -input=false  \
           -var=octopus_server=${{ secrets.OCTOPUS_URL }} \
           -var=octopus_apikey=${{ secrets.OCTOPUS_API_KEY }} \
           -var=octopus_space_id=${{ secrets.OCTOPUS_SPACE }} \
@@ -144,7 +144,7 @@ jobs:
           -backend-config="bucket=${{ secrets.BUCKET_NAME }}" \
           -backend-config="region=${{ secrets.BUCKET_REGION }}"
           
-          terraform apply -auto-approve \
+          terraform apply -auto-approve -input=false  \
           -var=octopus_server=${{ secrets.OCTOPUS_URL }} \
           -var=octopus_apikey=${{ secrets.OCTOPUS_API_KEY }} \
           -var=octopus_space_id=${{ secrets.OCTOPUS_SPACE }} \
@@ -162,7 +162,7 @@ jobs:
           -backend-config="bucket=${{ secrets.BUCKET_NAME }}" \
           -backend-config="region=${{ secrets.BUCKET_REGION }}"
           
-          terraform apply -auto-approve \
+          terraform apply -auto-approve -input=false  \
           -var=octopus_server=${{ secrets.OCTOPUS_URL }} \
           -var=octopus_apikey=${{ secrets.OCTOPUS_API_KEY }} \
           -var=octopus_space_id=${{ secrets.OCTOPUS_SPACE }}
@@ -179,7 +179,7 @@ jobs:
           -backend-config="bucket=${{ secrets.BUCKET_NAME }}" \
           -backend-config="region=${{ secrets.BUCKET_REGION }}"
           
-          terraform apply -auto-approve \
+          terraform apply -auto-approve -input=false  \
           -var=octopus_server=${{ secrets.OCTOPUS_URL }} \
           -var=octopus_apikey=${{ secrets.OCTOPUS_API_KEY }} \
           -var=octopus_space_id=${{ secrets.OCTOPUS_SPACE }}
@@ -195,7 +195,7 @@ jobs:
           -backend-config="bucket=${{ secrets.BUCKET_NAME }}" \
           -backend-config="region=${{ secrets.BUCKET_REGION }}"
           
-          terraform apply -auto-approve \
+          terraform apply -auto-approve -input=false  \
           -var=octopus_server=${{ secrets.OCTOPUS_URL }} \
           -var=octopus_apikey=${{ secrets.OCTOPUS_API_KEY }} \
           -var=octopus_space_id=${{ secrets.OCTOPUS_SPACE }}
@@ -211,7 +211,7 @@ jobs:
           -backend-config="bucket=${{ secrets.BUCKET_NAME }}" \
           -backend-config="region=${{ secrets.BUCKET_REGION }}"
           
-          terraform apply -auto-approve \
+          terraform apply -auto-approve -input=false  \
           -var=octopus_server=${{ secrets.OCTOPUS_URL }} \
           -var=octopus_apikey=${{ secrets.OCTOPUS_API_KEY }} \
           -var=octopus_space_id=${{ secrets.OCTOPUS_SPACE }}
@@ -227,7 +227,7 @@ jobs:
           -backend-config="bucket=${{ secrets.BUCKET_NAME }}" \
           -backend-config="region=${{ secrets.BUCKET_REGION }}"
           
-          terraform apply -auto-approve \
+          terraform apply -auto-approve -input=false  \
           -var=octopus_server=${{ secrets.OCTOPUS_URL }} \
           -var=octopus_apikey=${{ secrets.OCTOPUS_API_KEY }} \
           -var=octopus_space_id=${{ secrets.OCTOPUS_SPACE }}
@@ -243,7 +243,7 @@ jobs:
           -backend-config="bucket=${{ secrets.BUCKET_NAME }}" \
           -backend-config="region=${{ secrets.BUCKET_REGION }}"
           
-          terraform apply -auto-approve \
+          terraform apply -auto-approve -input=false  \
           -var=octopus_server=${{ secrets.OCTOPUS_URL }} \
           -var=octopus_apikey=${{ secrets.OCTOPUS_API_KEY }} \
           -var=octopus_space_id=${{ secrets.OCTOPUS_SPACE }}
@@ -260,7 +260,7 @@ jobs:
       # deletes project releases.
       - name: Delete existing projects
         run: |
-          declare -a arr=("Initialise Space" "Provision Unmanaged Azure Web App" "Provision Unmanaged Azure Web App (CaC)" "Provision Azure Logs")
+          declare -a arr=("Initialise Space" "Provision Unmanaged Azure Web App" "Provision Unmanaged Azure Web App (CaC)" "Provision Azure Logs" "Azure Web App (Merge Changes)")
 
           for i in "${arr[@]}"
           do
@@ -290,7 +290,7 @@ jobs:
           -backend-config="bucket=${{ secrets.BUCKET_NAME }}" \
           -backend-config="region=${{ secrets.BUCKET_REGION }}"
           
-          terraform apply -auto-approve \
+          terraform apply -auto-approve -input=false  \
           -var=octopus_server=${{ secrets.OCTOPUS_URL }} \
           -var=octopus_apikey=${{ secrets.OCTOPUS_API_KEY }} \
           -var=octopus_space_id=${{ secrets.OCTOPUS_SPACE }} \
@@ -308,7 +308,7 @@ jobs:
           -backend-config="bucket=${{ secrets.BUCKET_NAME }}" \
           -backend-config="region=${{ secrets.BUCKET_REGION }}"
           
-          terraform apply -auto-approve \
+          terraform apply -auto-approve -input=false  \
           -var=octopus_server=${{ secrets.OCTOPUS_URL }} \
           -var=octopus_apikey=${{ secrets.OCTOPUS_API_KEY }} \
           -var=octopus_space_id=${{ secrets.OCTOPUS_SPACE }} \
@@ -326,7 +326,7 @@ jobs:
           -backend-config="bucket=${{ secrets.BUCKET_NAME }}" \
           -backend-config="region=${{ secrets.BUCKET_REGION }}"
           
-          terraform apply -auto-approve \
+          terraform apply -auto-approve -input=false  \
           -var=octopus_server=${{ secrets.OCTOPUS_URL }} \
           -var=octopus_apikey=${{ secrets.OCTOPUS_API_KEY }} \
           -var=octopus_space_id=${{ secrets.OCTOPUS_SPACE }} \
@@ -344,7 +344,7 @@ jobs:
           -backend-config="bucket=${{ secrets.BUCKET_NAME }}" \
           -backend-config="region=${{ secrets.BUCKET_REGION }}"
           
-          terraform apply -auto-approve \
+          terraform apply -auto-approve -input=false  \
           -var=octopus_server=${{ secrets.OCTOPUS_URL }} \
           -var=octopus_apikey=${{ secrets.OCTOPUS_API_KEY }} \
           -var=octopus_space_id=${{ secrets.OCTOPUS_SPACE }}
@@ -360,7 +360,7 @@ jobs:
           -backend-config="bucket=${{ secrets.BUCKET_NAME }}" \
           -backend-config="region=${{ secrets.BUCKET_REGION }}"
           
-          terraform apply -auto-approve \
+          terraform apply -auto-approve -input=false  \
           -var=octopus_server=${{ secrets.OCTOPUS_URL }} \
           -var=octopus_apikey=${{ secrets.OCTOPUS_API_KEY }} \
           -var=octopus_space_id=${{ secrets.OCTOPUS_SPACE }} \
@@ -378,7 +378,7 @@ jobs:
           -backend-config="bucket=${{ secrets.BUCKET_NAME }}" \
           -backend-config="region=${{ secrets.BUCKET_REGION }}"
           
-          terraform apply -auto-approve \
+          terraform apply -auto-approve -input=false  \
           -var=octopus_server=${{ secrets.OCTOPUS_URL }} \
           -var=octopus_apikey=${{ secrets.OCTOPUS_API_KEY }} \
           -var=octopus_space_id=${{ secrets.OCTOPUS_SPACE }}
@@ -396,7 +396,7 @@ jobs:
           -backend-config="bucket=${{ secrets.BUCKET_NAME }}" \
           -backend-config="region=${{ secrets.BUCKET_REGION }}"
           
-          terraform apply -auto-approve \
+          terraform apply -auto-approve -input=false  \
           -var=octopus_server=${{ secrets.OCTOPUS_URL }} \
           -var=octopus_apikey=${{ secrets.OCTOPUS_API_KEY }} \
           -var=octopus_space_id=${{ secrets.OCTOPUS_SPACE }} \
@@ -421,7 +421,7 @@ jobs:
           -backend-config="bucket=${{ secrets.BUCKET_NAME }}" \
           -backend-config="region=${{ secrets.BUCKET_REGION }}"
           
-          terraform apply -auto-approve \
+          terraform apply -auto-approve -input=false  \
           -var=octopus_server=${{ secrets.OCTOPUS_URL }} \
           -var=octopus_apikey=${{ secrets.OCTOPUS_API_KEY }} \
           -var=octopus_space_id=${{ secrets.OCTOPUS_SPACE }} \

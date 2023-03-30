@@ -26,7 +26,7 @@ tagsets:
       terraform \
       -chdir=management_instance/tenants/tagsets/s3backend \
       apply \
-      -auto-approve \
+      -auto-approve -input=false  \
       -var=octopus_server=$OCTOPUS_URL \
       -var=octopus_apikey=$OCTOPUS_API_KEY \
       -var=octopus_space_id=$OCTOPUS_SPACE
@@ -44,7 +44,7 @@ accounts:
       terraform \
       -chdir=shared/accounts/aws/s3backend \
       apply \
-      -auto-approve \
+      -auto-approve -input=false  \
       -var=octopus_server=$OCTOPUS_URL \
       -var=octopus_apikey=$OCTOPUS_API_KEY \
       -var=octopus_space_id=$OCTOPUS_SPACE \
@@ -64,7 +64,7 @@ environments:
       terraform \
       -chdir=management_instance/environments/production/s3backend \
       apply \
-      -auto-approve \
+      -auto-approve -input=false  \
       -var=octopus_server=$OCTOPUS_URL \
       -var=octopus_apikey=$OCTOPUS_API_KEY \
       -var=octopus_space_id=$OCTOPUS_SPACE
@@ -82,7 +82,7 @@ feeds:
       terraform \
       -chdir=shared/feeds/github/s3backend \
       apply \
-      -auto-approve \
+      -auto-approve -input=false  \
       -var=octopus_server=$OCTOPUS_URL \
       -var=octopus_apikey=$OCTOPUS_API_KEY \
       -var=octopus_space_id=$OCTOPUS_SPACE \
@@ -98,7 +98,7 @@ feeds:
       terraform \
       -chdir=shared/feeds/dockerhub/s3backend \
       apply \
-      -auto-approve \
+      -auto-approve -input=false  \
       -var=octopus_server=$OCTOPUS_URL \
       -var=octopus_apikey=$OCTOPUS_API_KEY \
       -var=octopus_space_id=$OCTOPUS_SPACE \
@@ -118,7 +118,7 @@ libraryvariablesets:
       terraform \
       -chdir=management_instance/variables/octopus_server/s3backend \
       apply \
-      -auto-approve \
+      -auto-approve -input=false  \
       -var=octopus_server=$OCTOPUS_URL \
       -var=octopus_apikey=$OCTOPUS_API_KEY \
       -var=octopus_space_id=$OCTOPUS_SPACE
@@ -133,7 +133,7 @@ libraryvariablesets:
       terraform \
       -chdir=management_instance/variables/docker/s3backend \
       apply \
-      -auto-approve \
+      -auto-approve -input=false  \
       -var=octopus_server=$OCTOPUS_URL \
       -var=octopus_apikey=$OCTOPUS_API_KEY \
       -var=octopus_space_id=$OCTOPUS_SPACE
@@ -148,7 +148,7 @@ libraryvariablesets:
       terraform \
       -chdir=management_instance/variables/azure/s3backend \
       apply \
-      -auto-approve \
+      -auto-approve -input=false  \
       -var=octopus_server=$OCTOPUS_URL \
       -var=octopus_apikey=$OCTOPUS_API_KEY \
       -var=octopus_space_id=$OCTOPUS_SPACE
@@ -163,7 +163,7 @@ libraryvariablesets:
       terraform \
       -chdir=management_instance/variables/config_as_code/s3backend \
       apply \
-      -auto-approve \
+      -auto-approve -input=false  \
       -var=octopus_server=$OCTOPUS_URL \
       -var=octopus_apikey=$OCTOPUS_API_KEY \
       -var=octopus_space_id=$OCTOPUS_SPACE
@@ -178,7 +178,7 @@ libraryvariablesets:
       terraform \
       -chdir=management_instance/project_groups/azure_web_app/s3backend \
       apply \
-      -auto-approve \
+      -auto-approve -input=false  \
       -var=octopus_server=$OCTOPUS_URL \
       -var=octopus_apikey=$OCTOPUS_API_KEY \
       -var=octopus_space_id=$OCTOPUS_SPACE
@@ -198,7 +198,7 @@ projects:
       terraform \
       -chdir=management_instance/projects/azure_logs/s3backend \
       apply \
-      -auto-approve \
+      -auto-approve -input=false  \
       -var=octopus_server=$OCTOPUS_URL \
       -var=octopus_apikey=$OCTOPUS_API_KEY \
       -var=octopus_space_id=$OCTOPUS_SPACE \
@@ -216,7 +216,7 @@ projects:
       terraform \
       -chdir=management_instance/projects/init_space/s3backend \
       apply \
-      -auto-approve \
+      -auto-approve -input=false  \
       -var=octopus_server=$OCTOPUS_URL \
       -var=octopus_apikey=$OCTOPUS_API_KEY \
       -var=octopus_space_id=$OCTOPUS_SPACE \
@@ -234,7 +234,7 @@ projects:
       terraform \
       -chdir=management_instance/projects/azure_web_app_unmanaged_cac/s3backend \
       apply \
-      -auto-approve \
+      -auto-approve -input=false  \
       -var=octopus_server=$OCTOPUS_URL \
       -var=octopus_apikey=$OCTOPUS_API_KEY \
       -var=octopus_space_id=$OCTOPUS_SPACE \
@@ -252,7 +252,7 @@ projects:
       terraform \
       -chdir=management_instance/projects/azure_web_app_unmanaged/s3backend \
       apply \
-      -auto-approve \
+      -auto-approve -input=false  \
       -var=octopus_server=$OCTOPUS_URL \
       -var=octopus_apikey=$OCTOPUS_API_KEY \
       -var=octopus_space_id=$OCTOPUS_SPACE \
@@ -272,7 +272,7 @@ tenants:
       terraform \
       -chdir=management_instance/tenants/europe/s3backend \
       apply \
-      -auto-approve \
+      -auto-approve -input=false  \
       -var=octopus_server=$OCTOPUS_URL \
       -var=octopus_apikey=$OCTOPUS_API_KEY \
       -var=octopus_space_id=$OCTOPUS_SPACE \
@@ -296,7 +296,7 @@ tenants:
       terraform \
       -chdir=management_instance/tenants/america/s3backend \
       apply \
-      -auto-approve \
+      -auto-approve -input=false  \
       -var=octopus_server=$OCTOPUS_URL \
       -var=octopus_apikey=$OCTOPUS_API_KEY \
       -var=octopus_space_id=$OCTOPUS_SPACE \
