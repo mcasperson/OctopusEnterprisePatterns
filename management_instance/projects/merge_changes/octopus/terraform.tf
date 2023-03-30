@@ -92,13 +92,13 @@ resource "octopusdeploy_deployment_process" "deployment_process" {
 
   step {
     condition           = "Success"
-    name                = "Run a Script"
+    name                = "Merge Deployment Process"
     package_requirement = "LetOctopusDecide"
     start_trigger       = "StartAfterPrevious"
 
     action {
       action_type                        = "Octopus.Script"
-      name                               = "Run a Script"
+      name                               = "Merge Deployment Process"
       condition                          = "Success"
       run_on_server                      = true
       is_disabled                        = false
