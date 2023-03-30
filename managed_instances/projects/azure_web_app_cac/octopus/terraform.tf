@@ -113,14 +113,14 @@ resource "octopusdeploy_project" "project" {
 
   name                                 = var.project_name
   description                          = <<EOT
-    This project is based on a template created by the management space. To merge changes from the template into this project, use the following commands:
-    * `git clone ${var.cac_url}`
-    * `cd ${element(split("/", var.cac_url), length(split("/", var.cac_url)) - 1)}`
-    * `git remote add upstream https://github.com/mcasperson/OctopusEnterprisePatternsAzureWebAppCaCTemplate.git`
-    * `git fetch --all`
-    * `git checkout -b upstream-octopus-vcs-conversion upstream/octopus-vcs-conversion`
-    * `git checkout -b octopus-vcs-conversion origin/octopus-vcs-conversion`
-    * `git merge upstream-octopus-vcs-conversion`
+This project is based on a template created by the management space. To merge changes from the template into this project, use the following commands:
+* `git clone ${var.cac_url}`
+* `cd ${regex_replace(element(split("/", var.cac_url), length(split("/", var.cac_url)) - 1), "\\.git$", "")}`
+* `git remote add upstream https://github.com/mcasperson/OctopusEnterprisePatternsAzureWebAppCaCTemplate.git`
+* `git fetch --all`
+* `git checkout -b upstream-octopus-vcs-conversion upstream/octopus-vcs-conversion`
+* `git checkout -b octopus-vcs-conversion origin/octopus-vcs-conversion`
+* `git merge upstream-octopus-vcs-conversion`
     EOT
   auto_create_release                  = false
   default_guided_failure_mode          = "EnvironmentDefault"
