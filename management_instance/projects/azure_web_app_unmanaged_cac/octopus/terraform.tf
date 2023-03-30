@@ -140,14 +140,14 @@ resource "octopusdeploy_deployment_process" "deployment_process" {
 
   step {
     condition           = "Success"
-    name                = "Run a Script"
+    name                = "Fork the Template Repo"
     package_requirement = "LetOctopusDecide"
     start_trigger       = "StartAfterPrevious"
 
     action {
       action_type                        = "Octopus.Script"
-      name                               = "Run a Script"
-      notes                              = "test"
+      name                               = "Fork the Template Repo"
+      notes                              = "This script \"forks\" the template repo to create the repo that the new project will save its CaC code in."
       condition                          = "Success"
       run_on_server                      = true
       is_disabled                        = false
@@ -155,7 +155,7 @@ resource "octopusdeploy_deployment_process" "deployment_process" {
       is_required                        = false
       worker_pool_id                     = "${data.octopusdeploy_worker_pools.workerpool_hosted_ubuntu.worker_pools[0].id}"
       properties                         = {
-        "Octopus.Action.Script.ScriptBody" = "# All of this is to essentially fork a repo within the same organisation\n\nNEW_REPO=\"#{Octopus.Deployment.Tenant.Name | ToLower}-#{Project.Name | ToLower | Replace \"[^a-zA-Z0-9]\" \"-\"}\"\nBRANCH=octopus-vcs-conversion\n\ncd gh/gh_2.25.1_linux_amd64/bin\n\n# Fix executable flag\nchmod +x gh\n\n# Log into GitHub\ncat \u003c\u003c\u003c #{Tenant.CaC.Password} | ./gh auth login --with-token\n\n# Use the github cli as the credential helper\n./gh auth setup-git\n\n# Attempt to view the new repo\n./gh repo view $NEW_REPO \u003e /dev/null 2\u003e\u00261\n\necho \"##octopus[stdout-verbose]\"\n\nif [[ $? != \"0\" ]]; then \n    # If we could not view the repo, assume it needs to be created.\n    REPO_URL=$(./gh repo create $NEW_REPO --public --clone --add-readme)\nelse\n\t# Otherwise clone it.\n\tgit clone #{Tenant.CaC.Url}/$NEW_REPO 2\u003e\u00261\nfi\n\n# Enter the repo.\ncd $NEW_REPO\n\n# Link the template repo as a new remote.\ngit remote add upstream https://github.com/mcasperson/OctopusEnterprisePatternsAzureWebAppCaCTemplate.git 2\u003e\u00261\n\n# Fetch all the code from the upstream remots.\ngit fetch --all 2\u003e\u00261\n\n# Create a new branch representing the forked main branch.\ngit checkout -b $BRANCH 2\u003e\u00261\n\n# Hard reset it to the template main branch.\ngit reset --hard upstream/$BRANCH 2\u003e\u00261\n\n# Push the changes.\ngit push origin $BRANCH 2\u003e\u00261\n\necho \"##octopus[stdout-default]\""
+        "Octopus.Action.Script.ScriptBody" = "# All of this is to essentially fork a repo within the same organisation\n\nNEW_REPO=\"#{Octopus.Deployment.Tenant.Name | ToLower}-#{Project.Name | ToLower | Replace \"[^a-zA-Z0-9]\" \"-\"}\"\nTEMPLATE_REPO=https://github.com/mcasperson/OctopusEnterprisePatternsAzureWebAppCaCTemplate.git\nBRANCH=octopus-vcs-conversion\n\ncd gh/gh_2.25.1_linux_amd64/bin\n\n# Fix executable flag\nchmod +x gh\n\n# Log into GitHub\ncat \u003c\u003c\u003c #{Tenant.CaC.Password} | ./gh auth login --with-token\n\n# Use the github cli as the credential helper\n./gh auth setup-git\n\n# Attempt to view the template repo\n./gh repo view $NEW_REPO \u003e /dev/null 2\u003e\u00261\n\nif [[ $? != \"0\" ]]; then \n\twrite_error \"Could not find the template repo at $TEMPLATE_REPO\"\n    exit 1\nfi\n\n# Attempt to view the new repo\n./gh repo view $NEW_REPO \u003e /dev/null 2\u003e\u00261\n\necho \"##octopus[stdout-verbose]\"\n\nif [[ $? != \"0\" ]]; then \n    # If we could not view the repo, assume it needs to be created.\n    REPO_URL=$(./gh repo create $NEW_REPO --public --clone --add-readme)\nelse\n\t# Otherwise clone it.\n\tgit clone #{Tenant.CaC.Url}/$NEW_REPO 2\u003e\u00261\nfi\n\n# Enter the repo.\ncd $NEW_REPO\n\n# Link the template repo as a new remote.\ngit remote add upstream $TEMPLATE_REPO 2\u003e\u00261\n\n# Fetch all the code from the upstream remots.\ngit fetch --all 2\u003e\u00261\n\n# Create a new branch representing the forked main branch.\ngit checkout -b $BRANCH 2\u003e\u00261\n\n# Hard reset it to the template main branch.\ngit reset --hard upstream/$BRANCH 2\u003e\u00261\n\n# Push the changes.\ngit push origin $BRANCH 2\u003e\u00261\n\necho \"##octopus[stdout-default]\""
         "Octopus.Action.Script.ScriptSource" = "Inline"
         "Octopus.Action.Script.Syntax" = "Bash"
       }
