@@ -87,7 +87,7 @@ data "octopusdeploy_git_credentials" "gitcredential" {
 
 resource "octopusdeploy_project_group" "project_group" {
   count = var.existing_project_group == "" ? 1 : 0
-  name  = "Azure Web App"
+  name  = "Project Templates"
 }
 
 resource "octopusdeploy_project" "project" {

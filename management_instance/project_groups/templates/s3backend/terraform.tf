@@ -1,4 +1,9 @@
 terraform {
+  backend "s3" {
+  }
+}
+
+terraform {
   required_providers {
     octopusdeploy = { source = "OctopusDeployLabs/octopusdeploy", version = "0.11.1" }
   }
@@ -9,7 +14,6 @@ provider "octopusdeploy" {
   api_key  = "${var.octopus_apikey}"
   space_id = "${var.octopus_space_id}"
 }
-
 
 variable "octopus_server" {
   type        = string
@@ -32,25 +36,6 @@ variable "octopus_space_id" {
   description = "The ID of the Octopus space to populate."
 }
 
-variable "existing_project_group" {
-  type        = string
-  nullable    = false
-  sensitive   = false
-  description = "The name of the existing project group to place the project into."
-  default     = "Project Templates"
-}
-
-variable "project_name" {
-  type        = string
-  nullable    = false
-  sensitive   = false
-  description = "The name of the new project."
-  default     = "Azure Web App (CaC Template)"
-}
-
 module "octopus" {
-  source                 = "../octopus"
-  existing_project_group = var.existing_project_group
-  project_name           = var.project_name
-  octopus_space_id       = var.octopus_space_id
+  source = "../octopus"
 }

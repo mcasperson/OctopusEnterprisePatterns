@@ -236,6 +236,7 @@ jobs:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_KEY }}
 
+      # Apply project groups
       - name: Apply the azure project group
         run: |
           terraform init \
@@ -248,6 +249,22 @@ jobs:
           -var=octopus_apikey=${{ secrets.OCTOPUS_API_KEY }} \
           -var=octopus_space_id=${{ secrets.OCTOPUS_SPACE }}
         working-directory: management_instance/project_groups/azure_web_app/s3backend
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_KEY }}
+
+      - name: Apply the templates project group
+        run: |
+          terraform init \
+          -backend-config="key=octopus_template_project_group" \
+          -backend-config="bucket=${{ secrets.BUCKET_NAME }}" \
+          -backend-config="region=${{ secrets.BUCKET_REGION }}"
+          
+          terraform apply -auto-approve -input=false  \
+          -var=octopus_server=${{ secrets.OCTOPUS_URL }} \
+          -var=octopus_apikey=${{ secrets.OCTOPUS_API_KEY }} \
+          -var=octopus_space_id=${{ secrets.OCTOPUS_SPACE }}
+        working-directory: management_instance/project_groups/templates/s3backend
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_KEY }}
