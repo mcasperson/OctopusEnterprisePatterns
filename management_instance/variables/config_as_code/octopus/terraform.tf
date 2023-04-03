@@ -16,6 +16,14 @@ resource "octopusdeploy_library_variable_set" "octopus_library_variable_set" {
     }
   }
 
+    template {
+      name = "Tenant.CaC.Org"
+      label = "The Git organization"
+      display_settings = {
+        "Octopus.ControlType": "SingleLineText"
+      }
+    }
+
   template {
     name = "Tenant.CaC.Password"
     label = "The Git Password"

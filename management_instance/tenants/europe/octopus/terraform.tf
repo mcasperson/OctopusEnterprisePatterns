@@ -241,6 +241,14 @@ resource "octopusdeploy_tenant_common_variable" "cac_url" {
   depends_on = [octopusdeploy_tenant.europe]
 }
 
+resource "octopusdeploy_tenant_common_variable" "cac_url" {
+  library_variable_set_id = data.octopusdeploy_library_variable_sets.cac.library_variable_sets[0].id
+  template_id = tolist([for tmp in data.octopusdeploy_library_variable_sets.cac.library_variable_sets[0].template : tmp.id if tmp.name == "Tenant.CaC.Org"])[0]
+  tenant_id = octopusdeploy_tenant.europe.id
+  value = "mcasperson"
+  depends_on = [octopusdeploy_tenant.europe]
+}
+
 resource "octopusdeploy_tenant_common_variable" "cac_username" {
   library_variable_set_id = data.octopusdeploy_library_variable_sets.cac.library_variable_sets[0].id
   template_id = tolist([for tmp in data.octopusdeploy_library_variable_sets.cac.library_variable_sets[0].template : tmp.id if tmp.name == "Tenant.CaC.Username"])[0]
