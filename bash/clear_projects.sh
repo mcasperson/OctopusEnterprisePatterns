@@ -1,5 +1,5 @@
 #!/bin/bash
-declare -a arr=("Initialise Space" "Provision Unmanaged Azure Web App" "Provision Unmanaged Azure Web App (CaC)" "Provision Azure Logs")
+declare -a arr=("Initialise Space" "Provision Azure Web App" "Provision Azure Web App (CaC)" "Provision Azure Logs")
 
 for i in "${arr[@]}"
 do

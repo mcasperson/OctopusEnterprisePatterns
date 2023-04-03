@@ -82,7 +82,7 @@ variable "cac_url" {
 }
 
 data "octopusdeploy_projects" "provision_azure_web_app_cac" {
-  partial_name           = "Provision Unmanaged Azure Web App (CaC)"
+  partial_name           = "Provision Azure Web App (CaC)"
   skip                   = 0
   take                   = 1
 }
@@ -94,7 +94,7 @@ data "octopusdeploy_projects" "provision_azure_web_app_merge_cac" {
 }
 
 data "octopusdeploy_projects" "provision_unmanaged_azure_web_app" {
-  partial_name           = "Provision Unmanaged Azure Web App"
+  partial_name           = "Provision Azure Web App"
   skip                   = 0
   take                   = 1
 }
