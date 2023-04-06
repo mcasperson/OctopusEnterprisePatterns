@@ -19,6 +19,7 @@ env:
   TF_VAR_docker_password: ${{ secrets.DOCKER_PASSWORD }}
   TF_VAR_bucket_name: ${{ secrets.BUCKET_NAME }}
   TF_VAR_bucket_region: ${{ secrets.BUCKET_REGION }}
+  TF_VAR_feed_github_password: ${{ secrets.GH_TOKEN }}
 jobs:
   build:
     runs-on: ubuntu-latest
