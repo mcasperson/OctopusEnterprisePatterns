@@ -2,6 +2,23 @@ name: Configure Management Instance
 'on':
   workflow_dispatch: {}
   push: {}
+env:
+  TF_VAR_octopus_server: ${{ secrets.OCTOPUS_URL }}
+  TF_VAR_octopus_apikey: ${{ secrets.OCTOPUS_API_KEY }}
+  TF_VAR_octopus_space_id: ${{ secrets.OCTOPUS_SPACE }}
+  TF_VAR_cac_username: ${{ secrets.CAC_GH_USERNAME }}
+  TF_VAR_cac_password: ${{ secrets.CAC_GH_TOKEN }}
+  TF_VAR_cac_url: ${{ secrets.CAC_GH_URL }}
+  TF_VAR_aws_access_key: ${{ secrets.AWS_ACCESS_KEY }}
+  TF_VAR_aws_secret_key: ${{ secrets.AWS_SECRET_KEY }}
+  TF_VAR_azure_application_id: ${{ secrets.AZURE_APPLICATION_ID }}
+  TF_VAR_azure_subscription_id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+  TF_VAR_azure_password: ${{ secrets.AZURE_PASSWORD }}
+  TF_VAR_azure_tenant_id: ${{ secrets.AZURE_TENANT_ID }}
+  TF_VAR_docker_username: ${{ secrets.DOCKER_USERNAME }}
+  TF_VAR_docker_password: ${{ secrets.DOCKER_PASSWORD }}
+  TF_VAR_bucket_name: ${{ secrets.BUCKET_NAME }}
+  TF_VAR_bucket_region: ${{ secrets.BUCKET_REGION }}
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -19,12 +36,7 @@ jobs:
           -backend-config="bucket=${{ secrets.BUCKET_NAME }}" \
           -backend-config="region=${{ secrets.BUCKET_REGION }}"
 
-          terraform apply -auto-approve -input=false  \
-          -var=octopus_server=${{ secrets.OCTOPUS_URL }} \
-          -var=octopus_apikey=${{ secrets.OCTOPUS_API_KEY }} \
-          -var=octopus_space_id=${{ secrets.OCTOPUS_SPACE }} \
-          -var=cac_username=${{ secrets.CAC_GH_USERNAME }} \
-          -var=cac_password=${{ secrets.CAC_GH_TOKEN }}
+          terraform apply -auto-approve -input=false
         working-directory: shared/gitcreds/githubcreds/s3backend
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY }}
@@ -38,10 +50,7 @@ jobs:
           -backend-config="bucket=${{ secrets.BUCKET_NAME }}" \
           -backend-config="region=${{ secrets.BUCKET_REGION }}"
           
-          terraform apply -auto-approve -input=false  \
-          -var=octopus_server=${{ secrets.OCTOPUS_URL }} \
-          -var=octopus_apikey=${{ secrets.OCTOPUS_API_KEY }} \
-          -var=octopus_space_id=${{ secrets.OCTOPUS_SPACE }}
+          terraform apply -auto-approve -input=false
         working-directory: management_instance/tenants/tagsets/s3backend
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY }}
@@ -55,12 +64,7 @@ jobs:
           -backend-config="bucket=${{ secrets.BUCKET_NAME }}" \
           -backend-config="region=${{ secrets.BUCKET_REGION }}"
           
-          terraform apply -auto-approve -input=false  \
-          -var=octopus_server=${{ secrets.OCTOPUS_URL }} \
-          -var=octopus_apikey=${{ secrets.OCTOPUS_API_KEY }} \
-          -var=octopus_space_id=${{ secrets.OCTOPUS_SPACE }} \
-          -var=aws_access_key=${{ secrets.AWS_ACCESS_KEY }} \
-          -var=aws_secret_key=${{ secrets.AWS_SECRET_KEY }}
+          terraform apply -auto-approve -input=false
         working-directory: shared/accounts/aws/s3backend
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY }}
@@ -73,14 +77,7 @@ jobs:
           -backend-config="bucket=${{ secrets.BUCKET_NAME }}" \
           -backend-config="region=${{ secrets.BUCKET_REGION }}"
           
-          terraform apply -auto-approve -input=false  \
-          -var=octopus_server=${{ secrets.OCTOPUS_URL }} \
-          -var=octopus_apikey=${{ secrets.OCTOPUS_API_KEY }} \
-          -var=octopus_space_id=${{ secrets.OCTOPUS_SPACE }} \
-          -var=azure_application_id=${{ secrets.AZURE_APPLICATION_ID }} \
-          -var=azure_subscription_id=${{ secrets.AZURE_SUBSCRIPTION_ID }} \
-          -var=azure_password=${{ secrets.AZURE_PASSWORD }} \
-          -var=azure_tenant_id=${{ secrets.AZURE_TENANT_ID }} \
+          terraform apply -auto-approve -input=false
         working-directory: shared/accounts/azure/s3backend
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY }}
@@ -94,10 +91,7 @@ jobs:
           -backend-config="bucket=${{ secrets.BUCKET_NAME }}" \
           -backend-config="region=${{ secrets.BUCKET_REGION }}"
           
-          terraform apply -auto-approve -input=false  \
-          -var=octopus_server=${{ secrets.OCTOPUS_URL }} \
-          -var=octopus_apikey=${{ secrets.OCTOPUS_API_KEY }} \
-          -var=octopus_space_id=${{ secrets.OCTOPUS_SPACE }}
+          terraform apply -auto-approve -input=false
         working-directory: shared/environments/dev_test_prod/s3backend
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY }}
@@ -110,10 +104,7 @@ jobs:
           -backend-config="bucket=${{ secrets.BUCKET_NAME }}" \
           -backend-config="region=${{ secrets.BUCKET_REGION }}"
           
-          terraform apply -auto-approve -input=false  \
-          -var=octopus_server=${{ secrets.OCTOPUS_URL }} \
-          -var=octopus_apikey=${{ secrets.OCTOPUS_API_KEY }} \
-          -var=octopus_space_id=${{ secrets.OCTOPUS_SPACE }}
+          terraform apply -auto-approve -input=false
         working-directory: management_instance/environments/managed_instance/s3backend
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY }}
@@ -127,11 +118,7 @@ jobs:
           -backend-config="bucket=${{ secrets.BUCKET_NAME }}" \
           -backend-config="region=${{ secrets.BUCKET_REGION }}"
           
-          terraform apply -auto-approve -input=false  \
-          -var=octopus_server=${{ secrets.OCTOPUS_URL }} \
-          -var=octopus_apikey=${{ secrets.OCTOPUS_API_KEY }} \
-          -var=octopus_space_id=${{ secrets.OCTOPUS_SPACE }} \
-          -var=feed_github_password=${{ secrets.GH_TOKEN }}
+          terraform apply -auto-approve -input=false
         working-directory: shared/feeds/github/s3backend
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY }}
@@ -144,12 +131,7 @@ jobs:
           -backend-config="bucket=${{ secrets.BUCKET_NAME }}" \
           -backend-config="region=${{ secrets.BUCKET_REGION }}"
           
-          terraform apply -auto-approve -input=false  \
-          -var=octopus_server=${{ secrets.OCTOPUS_URL }} \
-          -var=octopus_apikey=${{ secrets.OCTOPUS_API_KEY }} \
-          -var=octopus_space_id=${{ secrets.OCTOPUS_SPACE }} \
-          -var=docker_username=${{ secrets.DOCKER_USERNAME }} \
-          -var=docker_password=${{ secrets.DOCKER_PASSWORD }}
+          terraform apply -auto-approve -input=false
         working-directory: shared/feeds/dockerhub/s3backend
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY }}
@@ -162,10 +144,7 @@ jobs:
           -backend-config="bucket=${{ secrets.BUCKET_NAME }}" \
           -backend-config="region=${{ secrets.BUCKET_REGION }}"
           
-          terraform apply -auto-approve -input=false  \
-          -var=octopus_server=${{ secrets.OCTOPUS_URL }} \
-          -var=octopus_apikey=${{ secrets.OCTOPUS_API_KEY }} \
-          -var=octopus_space_id=${{ secrets.OCTOPUS_SPACE }}
+          terraform apply -auto-approve -input=false
         working-directory: shared/feeds/maven/s3backend
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY }}
@@ -179,10 +158,7 @@ jobs:
           -backend-config="bucket=${{ secrets.BUCKET_NAME }}" \
           -backend-config="region=${{ secrets.BUCKET_REGION }}"
           
-          terraform apply -auto-approve -input=false  \
-          -var=octopus_server=${{ secrets.OCTOPUS_URL }} \
-          -var=octopus_apikey=${{ secrets.OCTOPUS_API_KEY }} \
-          -var=octopus_space_id=${{ secrets.OCTOPUS_SPACE }}
+          terraform apply -auto-approve -input=false
         working-directory: management_instance/variables/octopus_server/s3backend
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY }}
@@ -195,10 +171,7 @@ jobs:
           -backend-config="bucket=${{ secrets.BUCKET_NAME }}" \
           -backend-config="region=${{ secrets.BUCKET_REGION }}"
           
-          terraform apply -auto-approve -input=false  \
-          -var=octopus_server=${{ secrets.OCTOPUS_URL }} \
-          -var=octopus_apikey=${{ secrets.OCTOPUS_API_KEY }} \
-          -var=octopus_space_id=${{ secrets.OCTOPUS_SPACE }}
+          terraform apply -auto-approve -input=false
         working-directory: management_instance/variables/docker/s3backend
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY }}
@@ -211,10 +184,7 @@ jobs:
           -backend-config="bucket=${{ secrets.BUCKET_NAME }}" \
           -backend-config="region=${{ secrets.BUCKET_REGION }}"
           
-          terraform apply -auto-approve -input=false  \
-          -var=octopus_server=${{ secrets.OCTOPUS_URL }} \
-          -var=octopus_apikey=${{ secrets.OCTOPUS_API_KEY }} \
-          -var=octopus_space_id=${{ secrets.OCTOPUS_SPACE }}
+          terraform apply -auto-approve -input=false
         working-directory: management_instance/variables/azure/s3backend
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY }}
@@ -227,10 +197,7 @@ jobs:
           -backend-config="bucket=${{ secrets.BUCKET_NAME }}" \
           -backend-config="region=${{ secrets.BUCKET_REGION }}"
           
-          terraform apply -auto-approve -input=false  \
-          -var=octopus_server=${{ secrets.OCTOPUS_URL }} \
-          -var=octopus_apikey=${{ secrets.OCTOPUS_API_KEY }} \
-          -var=octopus_space_id=${{ secrets.OCTOPUS_SPACE }}
+          terraform apply -auto-approve -input=false
         working-directory: management_instance/variables/config_as_code/s3backend
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY }}
@@ -244,10 +211,7 @@ jobs:
           -backend-config="bucket=${{ secrets.BUCKET_NAME }}" \
           -backend-config="region=${{ secrets.BUCKET_REGION }}"
           
-          terraform apply -auto-approve -input=false  \
-          -var=octopus_server=${{ secrets.OCTOPUS_URL }} \
-          -var=octopus_apikey=${{ secrets.OCTOPUS_API_KEY }} \
-          -var=octopus_space_id=${{ secrets.OCTOPUS_SPACE }}
+          terraform apply -auto-approve -input=false
         working-directory: management_instance/project_groups/azure_web_app/s3backend
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY }}
@@ -260,10 +224,7 @@ jobs:
           -backend-config="bucket=${{ secrets.BUCKET_NAME }}" \
           -backend-config="region=${{ secrets.BUCKET_REGION }}"
           
-          terraform apply -auto-approve -input=false  \
-          -var=octopus_server=${{ secrets.OCTOPUS_URL }} \
-          -var=octopus_apikey=${{ secrets.OCTOPUS_API_KEY }} \
-          -var=octopus_space_id=${{ secrets.OCTOPUS_SPACE }}
+          terraform apply -auto-approve -input=false
         working-directory: management_instance/project_groups/templates/s3backend
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY }}
@@ -307,12 +268,7 @@ jobs:
           -backend-config="bucket=${{ secrets.BUCKET_NAME }}" \
           -backend-config="region=${{ secrets.BUCKET_REGION }}"
           
-          terraform apply -auto-approve -input=false  \
-          -var=octopus_server=${{ secrets.OCTOPUS_URL }} \
-          -var=octopus_apikey=${{ secrets.OCTOPUS_API_KEY }} \
-          -var=octopus_space_id=${{ secrets.OCTOPUS_SPACE }} \
-          -var=bucket_name=${{ secrets.BUCKET_NAME }} \
-          -var=bucket_region=${{ secrets.BUCKET_REGION }}
+          terraform apply -auto-approve -input=false
         working-directory: management_instance/projects/init_space/s3backend
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY }}
@@ -325,12 +281,7 @@ jobs:
           -backend-config="bucket=${{ secrets.BUCKET_NAME }}" \
           -backend-config="region=${{ secrets.BUCKET_REGION }}"
           
-          terraform apply -auto-approve -input=false  \
-          -var=octopus_server=${{ secrets.OCTOPUS_URL }} \
-          -var=octopus_apikey=${{ secrets.OCTOPUS_API_KEY }} \
-          -var=octopus_space_id=${{ secrets.OCTOPUS_SPACE }} \
-          -var=bucket_name=${{ secrets.BUCKET_NAME }} \
-          -var=bucket_region=${{ secrets.BUCKET_REGION }}
+          terraform apply -auto-approve -input=false
         working-directory: management_instance/projects/azure_web_app_unmanaged_cac/s3backend
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY }}
@@ -343,10 +294,7 @@ jobs:
           -backend-config="bucket=${{ secrets.BUCKET_NAME }}" \
           -backend-config="region=${{ secrets.BUCKET_REGION }}"
           
-          terraform apply -auto-approve -input=false  \
-          -var=octopus_server=${{ secrets.OCTOPUS_URL }} \
-          -var=octopus_apikey=${{ secrets.OCTOPUS_API_KEY }} \
-          -var=octopus_space_id=${{ secrets.OCTOPUS_SPACE }}
+          terraform apply -auto-approve -input=false
         working-directory: management_instance/projects/azure_web_app_cac_template/s3backend
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY }}
@@ -359,12 +307,7 @@ jobs:
           -backend-config="bucket=${{ secrets.BUCKET_NAME }}" \
           -backend-config="region=${{ secrets.BUCKET_REGION }}"
           
-          terraform apply -auto-approve -input=false  \
-          -var=octopus_server=${{ secrets.OCTOPUS_URL }} \
-          -var=octopus_apikey=${{ secrets.OCTOPUS_API_KEY }} \
-          -var=octopus_space_id=${{ secrets.OCTOPUS_SPACE }} \
-          -var=bucket_name=${{ secrets.BUCKET_NAME }} \
-          -var=bucket_region=${{ secrets.BUCKET_REGION }}
+          terraform apply -auto-approve -input=false
         working-directory: management_instance/projects/azure_web_app_unmanaged/s3backend
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY }}
@@ -377,10 +320,7 @@ jobs:
           -backend-config="bucket=${{ secrets.BUCKET_NAME }}" \
           -backend-config="region=${{ secrets.BUCKET_REGION }}"
           
-          terraform apply -auto-approve -input=false  \
-          -var=octopus_server=${{ secrets.OCTOPUS_URL }} \
-          -var=octopus_apikey=${{ secrets.OCTOPUS_API_KEY }} \
-          -var=octopus_space_id=${{ secrets.OCTOPUS_SPACE }}
+          terraform apply -auto-approve -input=false
         working-directory: management_instance/projects/merge_changes/s3backend
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY }}
@@ -395,19 +335,7 @@ jobs:
           -backend-config="bucket=${{ secrets.BUCKET_NAME }}" \
           -backend-config="region=${{ secrets.BUCKET_REGION }}"
           
-          terraform apply -auto-approve -input=false  \
-          -var=octopus_server=${{ secrets.OCTOPUS_URL }} \
-          -var=octopus_apikey=${{ secrets.OCTOPUS_API_KEY }} \
-          -var=octopus_space_id=${{ secrets.OCTOPUS_SPACE }} \
-          -var=docker_username=${{ secrets.DOCKER_USERNAME }} \
-          -var=docker_password=${{ secrets.DOCKER_PASSWORD }} \
-          -var=azure_application_id=${{ secrets.AZURE_APPLICATION_ID }} \
-          -var=azure_subscription_id=${{ secrets.AZURE_SUBSCRIPTION_ID }} \
-          -var=azure_password=${{ secrets.AZURE_PASSWORD }} \
-          -var=azure_tenant_id=${{ secrets.AZURE_TENANT_ID }} \
-          -var=cac_username=${{ secrets.CAC_GH_USERNAME }} \
-          -var=cac_password=${{ secrets.CAC_GH_TOKEN }} \
-          -var=cac_url=${{ secrets.CAC_GH_URL }}
+          terraform apply -auto-approve -input=false
         working-directory: management_instance/tenants/europe/s3backend
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY }}
@@ -420,19 +348,7 @@ jobs:
           -backend-config="bucket=${{ secrets.BUCKET_NAME }}" \
           -backend-config="region=${{ secrets.BUCKET_REGION }}"
           
-          terraform apply -auto-approve -input=false  \
-          -var=octopus_server=${{ secrets.OCTOPUS_URL }} \
-          -var=octopus_apikey=${{ secrets.OCTOPUS_API_KEY }} \
-          -var=octopus_space_id=${{ secrets.OCTOPUS_SPACE }} \
-          -var=docker_username=${{ secrets.DOCKER_USERNAME }} \
-          -var=docker_password=${{ secrets.DOCKER_PASSWORD }} \
-          -var=azure_application_id=${{ secrets.AZURE_APPLICATION_ID }} \
-          -var=azure_subscription_id=${{ secrets.AZURE_SUBSCRIPTION_ID }} \
-          -var=azure_password=${{ secrets.AZURE_PASSWORD }} \
-          -var=azure_tenant_id=${{ secrets.AZURE_TENANT_ID }} \
-          -var=cac_username=${{ secrets.CAC_GH_USERNAME }} \
-          -var=cac_password=${{ secrets.CAC_GH_TOKEN }} \
-          -var=cac_url=${{ secrets.CAC_GH_URL }}
+          terraform apply -auto-approve -input=false
         working-directory: management_instance/tenants/america/s3backend
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY }}
