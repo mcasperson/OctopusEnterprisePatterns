@@ -141,6 +141,7 @@ resource "octopusdeploy_deployment_process" "deployment_process" {
         fi
         popd
 
+        # Merge the template changes
         git clone #{Tenant.CaC.Url}/#{Tenant.CaC.Org}/$${NEW_REPO}.git 2>&1
         cd $${NEW_REPO}
         git remote add upstream $TEMPLATE_REPO 2>&1
