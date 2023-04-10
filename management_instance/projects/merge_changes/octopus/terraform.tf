@@ -108,7 +108,62 @@ resource "octopusdeploy_deployment_process" "deployment_process" {
       properties                         = {
         "Octopus.Action.Script.ScriptSource" = "Inline"
         "Octopus.Action.Script.Syntax" = "Bash"
-        "Octopus.Action.Script.ScriptBody" = "NEW_REPO=\"#{Octopus.Deployment.Tenant.Name | ToLower}-#{Project.Name | ToLower | Replace \"[^a-zA-Z0-9]\" \"-\"}\"\nTEMPLATE_REPO=https://github.com/mcasperson/OctopusEnterprisePatternsAzureWebAppCaCTemplate.git\nBRANCH=octopus-vcs-conversion\n\ncd gh/gh_2.25.1_linux_amd64/bin\n\n# Fix executable flag\nchmod +x gh\n\n# Log into GitHub\ncat \u003c\u003c\u003c #{Tenant.CaC.Password} | ./gh auth login --with-token\n\n# Use the github cli as the credential helper\n./gh auth setup-git\n\n# Replace these with some sensible values\ngit config --global user.email \"octopus@octopus.com\" 2\u003e\u00261\ngit config --global user.name \"Octopus Server\" 2\u003e\u00261\n\ngit clone #{Tenant.CaC.Url}/#{Tenant.CaC.Org}/$${NEW_REPO}.git 2\u003e\u00261\ncd $${NEW_REPO}\ngit remote add upstream $TEMPLATE_REPO 2\u003e\u00261\ngit fetch --all 2\u003e\u00261\ngit checkout -b upstream-$BRANCH upstream/$BRANCH 2\u003e\u00261\ngit checkout -b $BRANCH origin/$BRANCH 2\u003e\u00261\ngit merge --no-commit upstream-$BRANCH 2\u003e\u00261\n\nif [[ $? == \"0\" ]]; then\n\tgit merge upstream-$BRANCH 2\u003e\u00261\n    \n    # Test that a merge is being performed\n    git merge HEAD \u0026\u003e /dev/null\n    if [[ $? -ne 0 ]]; then\n      GIT_EDITOR=/bin/true git merge --continue 2\u003e\u00261\n      git push origin 2\u003e\u00261\n    fi\nelse\n\t\u003e\u00262 echo \"Template repo branch could not be automatically merged into project branch. This merge will need to be resolved manually.\"\n    exit 1\nfi"
+        "Octopus.Action.Script.ScriptBody" = <<EOT
+        NEW_REPO="#{Octopus.Deployment.Tenant.Name | ToLower}-#{Project.Name | ToLower | Replace "[^a-zA-Z0-9]" "-"}"
+        TEMPLATE_REPO=https://github.com/mcasperson/OctopusEnterprisePatternsAzureWebAppCaCTemplate.git
+        PROJECT_DIR=.octopus/azure-web-app
+        BRANCH=octopus-vcs-conversion
+
+        cd gh/gh_2.25.1_linux_amd64/bin
+
+        # Fix executable flag
+        chmod +x gh
+
+        # Log into GitHub
+        cat <<< #{Tenant.CaC.Password} | ./gh auth login --with-token
+
+        # Use the github cli as the credential helper
+        ./gh auth setup-git
+
+        # Replace these with some sensible values
+        git config --global user.email "octopus@octopus.com" 2>&1
+        git config --global user.name "Octopus Server" 2>&1
+
+        # Clone the template repo to test for a step template reference
+        mkdir template
+        pushd template
+        git clone ${TEMPLATE_REPO} ./
+        git checkout -b $BRANCH origin/$BRANCH 2>&1
+        cd "$${PROJECT_DIR}"
+        grep -Fxq "ActionTemplates" deployment_process.ocl
+        if [[ $? != "0" ]]; then
+          >&2 echo "Template repo references a step template. Step templates can not be merged across spaces or instances."
+          exit 1
+        fi
+        popd
+
+        git clone #{Tenant.CaC.Url}/#{Tenant.CaC.Org}/$${NEW_REPO}.git 2>&1
+        cd $${NEW_REPO}
+        git remote add upstream $TEMPLATE_REPO 2>&1
+        git fetch --all 2>&1
+        git checkout -b upstream-$BRANCH upstream/$BRANCH 2>&1
+        git checkout -b $BRANCH origin/$BRANCH 2>&1
+        git merge --no-commit upstream-$BRANCH 2>&1
+
+        if [[ $? == "0" ]]; then
+            git merge upstream-$BRANCH 2>&1
+
+            # Test that a merge is being performed
+            git merge HEAD &> /dev/null
+            if [[ $? -ne 0 ]]; then
+              GIT_EDITOR=/bin/true git merge --continue 2>&1
+              git push origin 2>&1
+            fi
+        else
+            >&2 echo "Template repo branch could not be automatically merged into project branch. This merge will need to be resolved manually."
+            exit 1
+        fi
+        EOT
         "OctopusUseBundledTooling" = "False"
       }
 
