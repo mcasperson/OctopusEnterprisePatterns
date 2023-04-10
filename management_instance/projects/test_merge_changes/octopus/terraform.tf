@@ -202,11 +202,11 @@ resource "octopusdeploy_deployment_process" "deployment_process" {
             echo "##octopus[stdout-default]"
 
             if [[ $${UP_TO_DATE} == "0" ]]; then
-              echo "\"$${PROJECT_NAME}\" in \"$${SPACE}\" is up to date with the upstream template"
+              echo "\"$${PROJECT_NAME}\" in \"$${SPACE}\" is up to date with the upstream template."
             elif [[ $${MERGE_RESULT} != "0" ]]; then
-                echo "\"$${PROJECT_NAME}\" in \"$${SPACE}\" has a merge conflict with the changes in the upstream template"
+                echo "\"$${PROJECT_NAME}\" in \"$${SPACE}\" has a merge conflict with the changes in the upstream template."
             else
-                echo "\"$${PROJECT_NAME}\" in \"$${SPACE}\" can be merged with the changes int the upstream template"
+                echo "\"$${PROJECT_NAME}\" in \"$${SPACE}\" can be merged with the changes int the upstream template."
             fi
         done
         EOT
