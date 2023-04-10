@@ -110,7 +110,7 @@ resource "octopusdeploy_project" "project" {
   discrete_channel_release             = false
   is_disabled                          = false
   is_version_controlled                = false
-  lifecycle_id                         = "${data.octopusdeploy_lifecycles.lifecycle.lifecycles[0].id}"
+  lifecycle_id                         = data.octopusdeploy_lifecycles.lifecycle.lifecycles[0].id
   project_group_id                     = data.octopusdeploy_project_groups.project_group.project_groups[0].id
   included_library_variable_sets       = [
     data.octopusdeploy_library_variable_sets.octopus_server.library_variable_sets[0].id,
@@ -163,7 +163,7 @@ resource "octopusdeploy_deployment_process" "deployment_process" {
       is_disabled                        = false
       can_be_used_for_project_versioning = true
       is_required                        = false
-      worker_pool_id                     = "${data.octopusdeploy_worker_pools.workerpool_hosted_ubuntu.worker_pools[0].id}"
+      worker_pool_id                     = data.octopusdeploy_worker_pools.workerpool_hosted_ubuntu.worker_pools[0].id
       properties                         = {
         "Octopus.Action.Script.ScriptBody"   = templatefile("forkrepo.sh", {
           cac_url = local.cac_url,
@@ -185,7 +185,7 @@ resource "octopusdeploy_deployment_process" "deployment_process" {
         package_id                = "gh"
         acquisition_location      = "Server"
         extract_during_deployment = false
-        feed_id                   = "${data.octopusdeploy_feeds.built_in_feed.feeds[0].id}"
+        feed_id                   = data.octopusdeploy_feeds.built_in_feed.feeds[0].id
         properties                = { Extract = "True", Purpose = "", SelectionMode = "immediate" }
       }
       features = []
@@ -209,7 +209,7 @@ resource "octopusdeploy_deployment_process" "deployment_process" {
       is_disabled                        = false
       can_be_used_for_project_versioning = true
       is_required                        = false
-      worker_pool_id                     = "${data.octopusdeploy_worker_pools.workerpool_hosted_ubuntu.worker_pools[0].id}"
+      worker_pool_id                     = data.octopusdeploy_worker_pools.workerpool_hosted_ubuntu.worker_pools[0].id
       properties                         = {
         "Octopus.Action.Terraform.ManagedAccount" : "AWS",
         "Octopus.Action.AwsAccount.UseInstanceRole"             = "False"
