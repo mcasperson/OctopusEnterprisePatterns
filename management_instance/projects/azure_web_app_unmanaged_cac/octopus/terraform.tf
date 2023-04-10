@@ -9,6 +9,9 @@ locals {
   new_repo      = "#{Octopus.Deployment.Tenant.Name | ToLower}-#{Project.Name | ToLower | Replace \"[^a-zA-Z0-9]\" \"-\"}"
   git_url       = "#{Tenant.CaC.Url}/#{Tenant.CaC.Org}/${local.new_repo}.git"
   template_repo = "OctopusEnterprisePatternsAzureWebAppCaCTemplate"
+  cac_url       = "#{Tenant.CaC.Url}"
+  cac_org       = "#{Tenant.CaC.Org}"
+  cac_password  = "#{Tenant.CaC.Password}"
 }
 
 variable "bucket_name" {
@@ -162,7 +165,85 @@ resource "octopusdeploy_deployment_process" "deployment_process" {
       is_required                        = false
       worker_pool_id                     = "${data.octopusdeploy_worker_pools.workerpool_hosted_ubuntu.worker_pools[0].id}"
       properties                         = {
-        "Octopus.Action.Script.ScriptBody"   = "# All of this is to essentially fork a repo within the same organisation\n\nNEW_REPO=\"${local.new_repo}\"\nTEMPLATE_REPO=\"${local.template_repo}\"\nBRANCH=octopus-vcs-conversion\n\ncd gh/gh_2.25.1_linux_amd64/bin\n\n# Fix executable flag\nchmod +x gh\n\n# Log into GitHub\ncat \u003c\u003c\u003c #{Tenant.CaC.Password} | ./gh auth login --with-token\n\n# Use the github cli as the credential helper\n./gh auth setup-git\n\n# Attempt to view the template repo\n./gh repo view #{Tenant.CaC.Org}/$${TEMPLATE_REPO} \u003e /dev/null 2\u003e\u00261\n\nif [[ $? != \"0\" ]]; then \n\t\u003e\u00262 echo \"Could not find the template repo at #{Tenant.CaC.Org}/$${TEMPLATE_REPO}\"\n    exit 1\nfi\n\necho \"##octopus[stdout-verbose]\"\n\n# Attempt to view the new repo\n./gh repo view #{Tenant.CaC.Org}/$${NEW_REPO} \u003e /dev/null 2\u003e\u00261\n\nif [[ $? != \"0\" ]]; then \n    # If we could not view the repo, assume it needs to be created.\n    REPO_URL=$(./gh repo create #{Tenant.CaC.Org}/$${NEW_REPO} --public --clone --add-readme)\n    echo $${REPO_URL}\nelse\n\t# Otherwise clone it.\n\tgit clone https://github.com/#{Tenant.CaC.Org}/$${NEW_REPO}.git 2\u003e\u00261\nfi\n\n# Enter the repo.\ncd $NEW_REPO\n\n# Link the template repo as a new remote.\ngit remote add upstream https://github.com/#{Tenant.CaC.Org}/$${TEMPLATE_REPO}.git 2\u003e\u00261\n\n# Fetch all the code from the upstream remots.\ngit fetch --all 2\u003e\u00261\n\n# Test to see if the remote branch already exists.\ngit show-branch remotes/origin/$${BRANCH} 2\u003e\u00261\n\nif [ $? == \"0\" ]; then\n  # Checkout the remote branch.\n  git checkout -b $${BRANCH} origin/$${BRANCH} 2\u003e\u00261\n\n  # If the .octopus directory exists, assume this repo has already been prepared.\n  if [ -d \".octopus\" ]; then\n      echo \"##octopus[stdout-default]\"\n      echo \"The repo has already been forked.\"\n      exit 0\n  fi\nfi\n\n# Create a new branch representing the forked main branch.\ngit checkout -b $${BRANCH} 2\u003e\u00261\n\n# Hard reset it to the template main branch.\ngit reset --hard upstream/$${BRANCH} 2\u003e\u00261\n\n# Push the changes.\ngit push origin $${BRANCH} 2\u003e\u00261\n\necho \"##octopus[stdout-default]\"\necho \"Repo was forked from #{Tenant.CaC.Url}/#{Tenant.CaC.Org}/$${TEMPLATE_REPO} to #{Tenant.CaC.Url}/#{Tenant.CaC.Org}/$${NEW_REPO}\""
+        "Octopus.Action.Script.ScriptBody"   = <<EOT
+        # All of this is to essentially fork a repo within the same organisation
+
+        CAC_URL=${local.cac_url}
+        CAC_ORG=${local.cac_org}
+        CAC_PASSWORD=${local.cac_password}
+        NEW_REPO="${local.new_repo}"
+        TEMPLATE_REPO="${local.template_repo}"
+        BRANCH=octopus-vcs-conversion
+
+        cd gh/gh_2.25.1_linux_amd64/bin
+
+        # Fix executable flag
+        chmod +x gh
+
+        # Log into GitHub
+        cat <<< $${CAC_PASSWORD} | ./gh auth login --with-token
+
+        # Use the github cli as the credential helper
+        ./gh auth setup-git
+
+        # Attempt to view the template repo
+        ./gh repo view $${CAC_ORG}/$${TEMPLATE_REPO} > /dev/null 2>&1
+
+        if [[ $? != "0" ]]; then
+            >&2 echo "Could not find the template repo at $${CAC_ORG}/$${TEMPLATE_REPO}"
+            exit 1
+        fi
+
+        echo "##octopus[stdout-verbose]"
+
+        # Attempt to view the new repo
+        ./gh repo view $${CAC_ORG}/$${NEW_REPO} > /dev/null 2>&1
+
+        if [[ $? != "0" ]]; then
+            # If we could not view the repo, assume it needs to be created.
+            REPO_URL=$(./gh repo create $${CAC_ORG}/$${NEW_REPO} --public --clone --add-readme)
+            echo $${REPO_URL}
+        else
+            # Otherwise clone it.
+            git clone $${CAC_URL}/$${CAC_ORG}/$${NEW_REPO}.git 2>&1
+        fi
+
+        # Enter the repo.
+        cd $NEW_REPO
+
+        # Link the template repo as a new remote.
+        git remote add upstream $${CAC_URL}/$${CAC_ORG}/$${TEMPLATE_REPO}.git 2>&1
+
+        # Fetch all the code from the upstream remots.
+        git fetch --all 2>&1
+
+        # Test to see if the remote branch already exists.
+        git show-branch remotes/origin/$${BRANCH} 2>&1
+
+        if [ $? == "0" ]; then
+          # Checkout the remote branch.
+          git checkout -b $${BRANCH} origin/$${BRANCH} 2>&1
+
+          # If the .octopus directory exists, assume this repo has already been prepared.
+          if [ -d ".octopus" ]; then
+              echo "##octopus[stdout-default]"
+              echo "The repo has already been forked."
+              exit 0
+          fi
+        fi
+
+        # Create a new branch representing the forked main branch.
+        git checkout -b $${BRANCH} 2>&1
+
+        # Hard reset it to the template main branch.
+        git reset --hard upstream/$${BRANCH} 2>&1
+
+        # Push the changes.
+        git push origin $${BRANCH} 2>&1
+
+        echo "##octopus[stdout-default]"
+        echo "Repo was forked from $${CAC_URL}/$${CAC_ORG}/$${TEMPLATE_REPO} to $${CAC_URL}/$${CAC_ORG}/$${NEW_REPO}"
+        EOT
         "Octopus.Action.Script.ScriptSource" = "Inline"
         "Octopus.Action.Script.Syntax"       = "Bash"
       }
