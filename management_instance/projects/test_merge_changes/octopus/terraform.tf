@@ -151,46 +151,61 @@ resource "octopusdeploy_deployment_process" "deployment_process" {
                 continue
             fi
 
-            terraform workspace select $i
+            terraform workspace select $${i}
 
             URL=$(terraform output -raw cac_url)
 
             if [[ $? != "0" ]]; then
-                echo "Could not find the state variable 'cac_url' in workspace $i. Skipping this workspace."
+                echo "Could not find the state variable 'cac_url' in workspace $${i}. Skipping this workspace."
                 continue
             fi
 
             SPACE=$(terraform output -raw space_name)
 
             if [[ $? != "0" ]]; then
-                echo "Could not find the state variable 'space_name' in workspace $i. Skipping this workspace."
+                echo "Could not find the state variable 'space_name' in workspace $${i}. Skipping this workspace."
                 continue
             fi
 
-            PROJECTNAME=$(terraform output -raw project_name)
+            PROJECT_NAME=$(terraform output -raw project_name)
 
             if [[ $? != "0" ]]; then
-                echo "Could not find the state variable 'project_name' in workspace $i. Skipping this workspace."
+                echo "Could not find the state variable 'project_name' in workspace $${i}. Skipping this workspace."
                 continue
             fi
 
             mkdir $i
             pushd $i
+
             git clone $URL ./ 2>&1
-            git remote add upstream $TEMPLATE_REPO 2>&1
+            git remote add upstream $${TEMPLATE_REPO} 2>&1
             git fetch --all 2>&1
-            git checkout -b upstream-$BRANCH upstream/$BRANCH 2>&1
+            git checkout -b upstream-$${BRANCH} upstream/$${BRANCH} 2>&1
             git checkout -b $BRANCH origin/$BRANCH 2>&1
-            git merge --no-commit upstream-$BRANCH 2>&1
-            RESULT=$?
+
+            # Test if the template branch needs to be merged into the project branch
+            MERGE_BASE=$(git merge-base $${BRANCH} upstream-$${BRANCH})
+            MERGE_SOURCE_CURRENT_COMMIT=$(git rev-parse upstream-$BRANCH)
+            if [[ $${MERGE_BASE} = $${MERGE_SOURCE_CURRENT_COMMIT} ]]
+            then
+              UP_TO_DATE=0
+            else
+              UP_TO_DATE=1
+            fi
+
+            git merge --no-commit upstream-$${BRANCH} 2>&1
+            MERGE_RESULT=$?
+
             popd
 
             echo "##octopus[stdout-default]"
 
-            if [[ $RESULT != "0" ]]; then
-                echo "$PROJECTNAME in $SPACE has a merge conflict with the upstream template"
+            if [[ $${UP_TO_DATE} == "0" ]]; then
+              echo "\"PROJECT_NAME\" in \"$SPACE\" is up to date with the upstream template"
+            elif [[ MERGE_RESULT != "0" ]]; then
+                echo "\"PROJECT_NAME\" in \"$SPACE\" has a merge conflict with the changes in the upstream template"
             else
-                echo "$PROJECTNAME in $SPACE can be merged with the upstream template"
+                echo "\"PROJECT_NAME\" in \"$SPACE\" can be merged with the changes int the upstream template"
             fi
         done
         EOT
