@@ -185,7 +185,7 @@ resource "octopusdeploy_deployment_process" "deployment_process" {
 
             # Test if the template branch needs to be merged into the project branch
             MERGE_BASE=$(git merge-base $${BRANCH} upstream-$${BRANCH})
-            MERGE_SOURCE_CURRENT_COMMIT=$(git rev-parse upstream-$BRANCH)
+            MERGE_SOURCE_CURRENT_COMMIT=$(git rev-parse upstream-$${BRANCH})
             if [[ $${MERGE_BASE} = $${MERGE_SOURCE_CURRENT_COMMIT} ]]
             then
               UP_TO_DATE=0
@@ -193,6 +193,7 @@ resource "octopusdeploy_deployment_process" "deployment_process" {
               UP_TO_DATE=1
             fi
 
+            # Test the results of a merge with the upstream branch
             git merge --no-commit upstream-$${BRANCH} 2>&1
             MERGE_RESULT=$?
 
@@ -201,11 +202,11 @@ resource "octopusdeploy_deployment_process" "deployment_process" {
             echo "##octopus[stdout-default]"
 
             if [[ $${UP_TO_DATE} == "0" ]]; then
-              echo "\"PROJECT_NAME\" in \"$SPACE\" is up to date with the upstream template"
+              echo "\"$${PROJECT_NAME}\" in \"$${SPACE}\" is up to date with the upstream template"
             elif [[ $${MERGE_RESULT} != "0" ]]; then
-                echo "\"PROJECT_NAME\" in \"$SPACE\" has a merge conflict with the changes in the upstream template"
+                echo "\"$${PROJECT_NAME}\" in \"$${SPACE}\" has a merge conflict with the changes in the upstream template"
             else
-                echo "\"PROJECT_NAME\" in \"$SPACE\" can be merged with the changes int the upstream template"
+                echo "\"$${PROJECT_NAME}\" in \"$${SPACE}\" can be merged with the changes int the upstream template"
             fi
         done
         EOT
