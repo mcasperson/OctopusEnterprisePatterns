@@ -4,6 +4,13 @@ terraform {
   }
 }
 
+locals {
+  workspace     = "#{Octopus.Deployment.Tenant.Name | ToLower | Replace \"[^a-zA-Z0-9]\" \"-\"}-#{Project.Name | ToLower | Replace \"[^a-zA-Z0-9]\" \"-\"}"
+  new_repo      = "#{Octopus.Deployment.Tenant.Name | ToLower}-#{Project.Name | ToLower | Replace \"[^a-zA-Z0-9]\" \"-\"}"
+  git_url       = "#{Tenant.CaC.Url}/#{Tenant.CaC.Org}/${local.new_repo}.git"
+  template_repo = "OctopusEnterprisePatternsAzureWebAppCaCTemplate"
+}
+
 variable "bucket_name" {
   type        = string
   nullable    = false
@@ -47,20 +54,20 @@ data "octopusdeploy_feeds" "github" {
 
 data "octopusdeploy_library_variable_sets" "octopus_server" {
   partial_name = "Octopus Server"
-  skip = 0
-  take = 1
+  skip         = 0
+  take         = 1
 }
 
 data "octopusdeploy_library_variable_sets" "docker_hub" {
   partial_name = "DockerHub"
-  skip = 0
-  take = 1
+  skip         = 0
+  take         = 1
 }
 
 data "octopusdeploy_library_variable_sets" "cac" {
   partial_name = "Config As Code"
-  skip = 0
-  take = 1
+  skip         = 0
+  take         = 1
 }
 
 data "octopusdeploy_accounts" "aws" {
@@ -107,7 +114,7 @@ resource "octopusdeploy_project" "project" {
     data.octopusdeploy_library_variable_sets.docker_hub.library_variable_sets[0].id,
     data.octopusdeploy_library_variable_sets.cac.library_variable_sets[0].id
   ]
-  tenanted_deployment_participation    = "Tenanted"
+  tenanted_deployment_participation = "Tenanted"
 
   connectivity_policy {
     allow_deployments_to_no_targets = true
@@ -117,17 +124,17 @@ resource "octopusdeploy_project" "project" {
 }
 
 resource "octopusdeploy_variable" "amazon_web_services_account_variable" {
-  owner_id  = octopusdeploy_project.project.id
-  type      = "AmazonWebServicesAccount"
-  name      = "AWS"
-  value     = data.octopusdeploy_accounts.aws.accounts[0].id
+  owner_id = octopusdeploy_project.project.id
+  type     = "AmazonWebServicesAccount"
+  name     = "AWS"
+  value    = data.octopusdeploy_accounts.aws.accounts[0].id
 }
 
 resource "octopusdeploy_variable" "project_name_variable" {
-  owner_id  = octopusdeploy_project.project.id
-  type      = "String"
-  name      = "Project.Name"
-  value     = "Azure Web App (CaC)"
+  owner_id = octopusdeploy_project.project.id
+  type     = "String"
+  name     = "Project.Name"
+  value    = "Azure Web App (CaC)"
   prompt {
     description = "The name of the new project"
     is_required = true
@@ -155,14 +162,14 @@ resource "octopusdeploy_deployment_process" "deployment_process" {
       is_required                        = false
       worker_pool_id                     = "${data.octopusdeploy_worker_pools.workerpool_hosted_ubuntu.worker_pools[0].id}"
       properties                         = {
-        "Octopus.Action.Script.ScriptBody" = "# All of this is to essentially fork a repo within the same organisation\n\nNEW_REPO=\"#{Octopus.Deployment.Tenant.Name | ToLower}-#{Project.Name | ToLower | Replace \"[^a-zA-Z0-9]\" \"-\"}\"\nTEMPLATE_REPO=\"OctopusEnterprisePatternsAzureWebAppCaCTemplate\"\nBRANCH=octopus-vcs-conversion\n\ncd gh/gh_2.25.1_linux_amd64/bin\n\n# Fix executable flag\nchmod +x gh\n\n# Log into GitHub\ncat \u003c\u003c\u003c #{Tenant.CaC.Password} | ./gh auth login --with-token\n\n# Use the github cli as the credential helper\n./gh auth setup-git\n\n# Attempt to view the template repo\n./gh repo view #{Tenant.CaC.Org}/$${TEMPLATE_REPO} \u003e /dev/null 2\u003e\u00261\n\nif [[ $? != \"0\" ]]; then \n\t\u003e\u00262 echo \"Could not find the template repo at #{Tenant.CaC.Org}/$${TEMPLATE_REPO}\"\n    exit 1\nfi\n\necho \"##octopus[stdout-verbose]\"\n\n# Attempt to view the new repo\n./gh repo view #{Tenant.CaC.Org}/$${NEW_REPO} \u003e /dev/null 2\u003e\u00261\n\nif [[ $? != \"0\" ]]; then \n    # If we could not view the repo, assume it needs to be created.\n    REPO_URL=$(./gh repo create #{Tenant.CaC.Org}/$${NEW_REPO} --public --clone --add-readme)\n    echo $${REPO_URL}\nelse\n\t# Otherwise clone it.\n\tgit clone https://github.com/#{Tenant.CaC.Org}/$${NEW_REPO}.git 2\u003e\u00261\nfi\n\n# Enter the repo.\ncd $NEW_REPO\n\n# Link the template repo as a new remote.\ngit remote add upstream https://github.com/#{Tenant.CaC.Org}/$${TEMPLATE_REPO}.git 2\u003e\u00261\n\n# Fetch all the code from the upstream remots.\ngit fetch --all 2\u003e\u00261\n\n# Test to see if the remote branch already exists.\ngit show-branch remotes/origin/$${BRANCH} 2\u003e\u00261\n\nif [ $? == \"0\" ]; then\n  # Checkout the remote branch.\n  git checkout -b $${BRANCH} origin/$${BRANCH} 2\u003e\u00261\n\n  # If the .octopus directory exists, assume this repo has already been prepared.\n  if [ -d \".octopus\" ]; then\n      echo \"##octopus[stdout-default]\"\n      echo \"The repo has already been forked.\"\n      exit 0\n  fi\nfi\n\n# Create a new branch representing the forked main branch.\ngit checkout -b $${BRANCH} 2\u003e\u00261\n\n# Hard reset it to the template main branch.\ngit reset --hard upstream/$${BRANCH} 2\u003e\u00261\n\n# Push the changes.\ngit push origin $${BRANCH} 2\u003e\u00261\n\necho \"##octopus[stdout-default]\"\necho \"Repo was forked from https://github.com/#{Tenant.CaC.Org}/$${TEMPLATE_REPO} to https://github.com/#{Tenant.CaC.Org}/$${NEW_REPO}\""
+        "Octopus.Action.Script.ScriptBody"   = "# All of this is to essentially fork a repo within the same organisation\n\nNEW_REPO=\"${local.new_repo}\"\nTEMPLATE_REPO=\"${local.template_repo}\"\nBRANCH=octopus-vcs-conversion\n\ncd gh/gh_2.25.1_linux_amd64/bin\n\n# Fix executable flag\nchmod +x gh\n\n# Log into GitHub\ncat \u003c\u003c\u003c #{Tenant.CaC.Password} | ./gh auth login --with-token\n\n# Use the github cli as the credential helper\n./gh auth setup-git\n\n# Attempt to view the template repo\n./gh repo view #{Tenant.CaC.Org}/$${TEMPLATE_REPO} \u003e /dev/null 2\u003e\u00261\n\nif [[ $? != \"0\" ]]; then \n\t\u003e\u00262 echo \"Could not find the template repo at #{Tenant.CaC.Org}/$${TEMPLATE_REPO}\"\n    exit 1\nfi\n\necho \"##octopus[stdout-verbose]\"\n\n# Attempt to view the new repo\n./gh repo view #{Tenant.CaC.Org}/$${NEW_REPO} \u003e /dev/null 2\u003e\u00261\n\nif [[ $? != \"0\" ]]; then \n    # If we could not view the repo, assume it needs to be created.\n    REPO_URL=$(./gh repo create #{Tenant.CaC.Org}/$${NEW_REPO} --public --clone --add-readme)\n    echo $${REPO_URL}\nelse\n\t# Otherwise clone it.\n\tgit clone https://github.com/#{Tenant.CaC.Org}/$${NEW_REPO}.git 2\u003e\u00261\nfi\n\n# Enter the repo.\ncd $NEW_REPO\n\n# Link the template repo as a new remote.\ngit remote add upstream https://github.com/#{Tenant.CaC.Org}/$${TEMPLATE_REPO}.git 2\u003e\u00261\n\n# Fetch all the code from the upstream remots.\ngit fetch --all 2\u003e\u00261\n\n# Test to see if the remote branch already exists.\ngit show-branch remotes/origin/$${BRANCH} 2\u003e\u00261\n\nif [ $? == \"0\" ]; then\n  # Checkout the remote branch.\n  git checkout -b $${BRANCH} origin/$${BRANCH} 2\u003e\u00261\n\n  # If the .octopus directory exists, assume this repo has already been prepared.\n  if [ -d \".octopus\" ]; then\n      echo \"##octopus[stdout-default]\"\n      echo \"The repo has already been forked.\"\n      exit 0\n  fi\nfi\n\n# Create a new branch representing the forked main branch.\ngit checkout -b $${BRANCH} 2\u003e\u00261\n\n# Hard reset it to the template main branch.\ngit reset --hard upstream/$${BRANCH} 2\u003e\u00261\n\n# Push the changes.\ngit push origin $${BRANCH} 2\u003e\u00261\n\necho \"##octopus[stdout-default]\"\necho \"Repo was forked from https://github.com/#{Tenant.CaC.Org}/$${TEMPLATE_REPO} to https://github.com/#{Tenant.CaC.Org}/$${NEW_REPO}\""
         "Octopus.Action.Script.ScriptSource" = "Inline"
-        "Octopus.Action.Script.Syntax" = "Bash"
+        "Octopus.Action.Script.Syntax"       = "Bash"
       }
-      environments                       = []
-      excluded_environments              = []
-      channels                           = []
-      tenant_tags                        = []
+      environments          = []
+      excluded_environments = []
+      channels              = []
+      tenant_tags           = []
 
       package {
         name                      = "gh"
@@ -195,29 +202,29 @@ resource "octopusdeploy_deployment_process" "deployment_process" {
       is_required                        = false
       worker_pool_id                     = "${data.octopusdeploy_worker_pools.workerpool_hosted_ubuntu.worker_pools[0].id}"
       properties                         = {
-        "Octopus.Action.Terraform.ManagedAccount": "AWS",
-        "Octopus.Action.AwsAccount.UseInstanceRole" = "False"
-        "Octopus.Action.Aws.AssumeRole" = "False"
-        "Octopus.Action.Aws.Region" = "ap-southeast-2"
-        "Octopus.Action.AwsAccount.Variable" = "AWS"
-        "Octopus.Action.GoogleCloud.ImpersonateServiceAccount" = "False"
+        "Octopus.Action.Terraform.ManagedAccount" : "AWS",
+        "Octopus.Action.AwsAccount.UseInstanceRole"             = "False"
+        "Octopus.Action.Aws.AssumeRole"                         = "False"
+        "Octopus.Action.Aws.Region"                             = "ap-southeast-2"
+        "Octopus.Action.AwsAccount.Variable"                    = "AWS"
+        "Octopus.Action.GoogleCloud.ImpersonateServiceAccount"  = "False"
         "Octopus.Action.Terraform.RunAutomaticFileSubstitution" = "False"
-        "Octopus.Action.Terraform.TemplateDirectory" = "managed_instances/projects/azure_web_app_cac/s3backend"
-        "Octopus.Action.Terraform.AllowPluginDownloads" = "True"
-        "Octopus.Action.Terraform.AzureAccount" = "False"
-        "Octopus.Action.GoogleCloud.UseVMServiceAccount" = "True"
-        "Octopus.Action.Terraform.PlanJsonOutput" = "False"
-        "Octopus.Action.Script.ScriptSource" = "Package"
-        "Octopus.Action.Terraform.GoogleCloudAccount" = "False"
-        "Octopus.Action.Package.DownloadOnTentacle" = "False"
-        "Octopus.Action.Terraform.AdditionalInitParams" = "-backend-config=\"key=managed_instance_project_azure_web_app_cac\" -backend-config=\"bucket=${var.bucket_name}\" -backend-config=\"region=${var.bucket_region}\""
-        "Octopus.Action.Terraform.AdditionalActionParams" = "-var=octopus_server=#{Tenant.Octopus.Server} -var=octopus_apikey=#{Tenant.Octopus.ApiKey} -var=octopus_space_id=#{Tenant.Octopus.SpaceId} -var=cac_url=#{Tenant.CaC.Url}/#{Tenant.CaC.Org}/#{Octopus.Deployment.Tenant.Name | ToLower}-#{Project.Name | ToLower | Replace \"[^a-zA-Z0-9]\" \"-\"}.git \"-var=existing_project_group=Default Project Group\" \"-var=project_name=#{Project.Name}\""
-        "Octopus.Action.Terraform.Workspace" = "#{Octopus.Deployment.Tenant.Name | ToLower | Replace \"[^a-zA-Z0-9]\" \"-\"}-#{Project.Name | ToLower | Replace \"[^a-zA-Z0-9]\" \"-\"}"
+        "Octopus.Action.Terraform.TemplateDirectory"            = "managed_instances/projects/azure_web_app_cac/s3backend"
+        "Octopus.Action.Terraform.AllowPluginDownloads"         = "True"
+        "Octopus.Action.Terraform.AzureAccount"                 = "False"
+        "Octopus.Action.GoogleCloud.UseVMServiceAccount"        = "True"
+        "Octopus.Action.Terraform.PlanJsonOutput"               = "False"
+        "Octopus.Action.Script.ScriptSource"                    = "Package"
+        "Octopus.Action.Terraform.GoogleCloudAccount"           = "False"
+        "Octopus.Action.Package.DownloadOnTentacle"             = "False"
+        "Octopus.Action.Terraform.AdditionalInitParams"         = "-backend-config=\"key=managed_instance_project_azure_web_app_cac\" -backend-config=\"bucket=${var.bucket_name}\" -backend-config=\"region=${var.bucket_region}\""
+        "Octopus.Action.Terraform.AdditionalActionParams"       = "-var=octopus_server=#{Tenant.Octopus.Server} -var=octopus_apikey=#{Tenant.Octopus.ApiKey} -var=octopus_space_id=#{Tenant.Octopus.SpaceId} -var=cac_url=${local.git_url}.git \"-var=existing_project_group=Default Project Group\" \"-var=project_name=#{Project.Name}\""
+        "Octopus.Action.Terraform.Workspace"                    = local.workspace
       }
-      environments                       = []
-      excluded_environments              = []
-      channels                           = []
-      tenant_tags                        = []
+      environments          = []
+      excluded_environments = []
+      channels              = []
+      tenant_tags           = []
 
       primary_package {
         package_id           = "mcasperson/OctopusEnterprisePatterns"

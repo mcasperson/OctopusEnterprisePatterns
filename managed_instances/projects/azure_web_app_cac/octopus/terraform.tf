@@ -4,6 +4,10 @@ terraform {
   }
 }
 
+output cac_url {
+  value = var.cac_url
+}
+
 variable "existing_project_group" {
   type        = string
   nullable    = false
