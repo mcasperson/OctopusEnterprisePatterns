@@ -67,3 +67,15 @@ module "octopus" {
   cac_url                = var.cac_url
   octopus_space_id       = var.octopus_space_id
 }
+
+output cac_url {
+  value = module.octopus.cac_url
+}
+
+output project_name {
+  value = module.octopus.project_name
+}
+
+output space_name {
+  value = module.octopus.space_name
+}
