@@ -126,6 +126,7 @@ resource "octopusdeploy_deployment_process" "deployment_process" {
         "Octopus.Action.Script.ScriptSource"        = "Inline"
         "Octopus.Action.Script.Syntax"              = "Bash"
         "Octopus.Action.Script.ScriptBody"          = <<EOT
+        EXIT_CODE=0
         TEMPLATE_REPO=https://github.com/mcasperson/OctopusEnterprisePatternsAzureWebAppCaCTemplate.git
         BRANCH=octopus-vcs-conversion
 
@@ -204,11 +205,13 @@ resource "octopusdeploy_deployment_process" "deployment_process" {
             if [[ $${UP_TO_DATE} == "0" ]]; then
               echo "\"$${PROJECT_NAME}\" in \"$${SPACE}\" is up to date with the upstream template."
             elif [[ $${MERGE_RESULT} != "0" ]]; then
-                echo "\"$${PROJECT_NAME}\" in \"$${SPACE}\" has a merge conflict with the changes in the upstream template."
+              >&2 echo "\"$${PROJECT_NAME}\" in \"$${SPACE}\" has a merge conflict with the changes in the upstream template."
+              EXIT_CODE=1
             else
-                echo "\"$${PROJECT_NAME}\" in \"$${SPACE}\" can be merged with the changes int the upstream template."
+              write_warning "\"$${PROJECT_NAME}\" in \"$${SPACE}\" can be merged with the changes int the upstream template."
             fi
         done
+        exit $EXIT_CODE
         EOT
         "OctopusUseBundledTooling"                  = "False"
       }
