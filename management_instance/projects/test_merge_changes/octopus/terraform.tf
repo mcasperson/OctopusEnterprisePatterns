@@ -178,11 +178,11 @@ resource "octopusdeploy_deployment_process" "deployment_process" {
             mkdir $${i}
             pushd $${i}
 
-            git clone $URL ./ 2>&1
+            git clone $${URL} ./ 2>&1
             git remote add upstream $${TEMPLATE_REPO} 2>&1
             git fetch --all 2>&1
             git checkout -b upstream-$${BRANCH} upstream/$${BRANCH} 2>&1
-            git checkout -b $BRANCH origin/$BRANCH 2>&1
+            git checkout -b $${BRANCH} origin/$${BRANCH} 2>&1
 
             # Test if the template branch needs to be merged into the project branch
             MERGE_BASE=$(git merge-base $${BRANCH} upstream-$${BRANCH})
