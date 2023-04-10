@@ -132,8 +132,8 @@ resource "octopusdeploy_deployment_process" "deployment_process" {
         # Clone the template repo to test for a step template reference
         mkdir template
         pushd template
-        git clone ${TEMPLATE_REPO} ./
-        git checkout -b $BRANCH origin/$BRANCH 2>&1
+        git clone $${TEMPLATE_REPO} ./
+        git checkout -b $BRANCH origin/$${BRANCH} 2>&1
         grep -Fxq "ActionTemplates" "$${PROJECT_DIR}/deployment_process.ocl"
         if [[ $? != "0" ]]; then
           >&2 echo "Template repo references a step template. Step templates can not be merged across spaces or instances."
@@ -144,14 +144,14 @@ resource "octopusdeploy_deployment_process" "deployment_process" {
         # Merge the template changes
         git clone #{Tenant.CaC.Url}/#{Tenant.CaC.Org}/$${NEW_REPO}.git 2>&1
         cd $${NEW_REPO}
-        git remote add upstream $TEMPLATE_REPO 2>&1
+        git remote add upstream $${TEMPLATE_REPO} 2>&1
         git fetch --all 2>&1
-        git checkout -b upstream-$BRANCH upstream/$BRANCH 2>&1
-        git checkout -b $BRANCH origin/$BRANCH 2>&1
-        git merge --no-commit upstream-$BRANCH 2>&1
+        git checkout -b upstream-$${BRANCH} upstream/$${BRANCH} 2>&1
+        git checkout -b $${BRANCH} origin/$${BRANCH} 2>&1
+        git merge --no-commit upstream-$${BRANCH} 2>&1
 
         if [[ $? == "0" ]]; then
-            git merge upstream-$BRANCH 2>&1
+            git merge upstream-$${BRANCH} 2>&1
 
             # Test that a merge is being performed
             git merge HEAD &> /dev/null
