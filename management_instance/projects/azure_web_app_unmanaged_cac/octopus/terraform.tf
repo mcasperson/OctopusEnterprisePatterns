@@ -218,7 +218,7 @@ resource "octopusdeploy_deployment_process" "deployment_process" {
         "Octopus.Action.Terraform.GoogleCloudAccount"           = "False"
         "Octopus.Action.Package.DownloadOnTentacle"             = "False"
         "Octopus.Action.Terraform.AdditionalInitParams"         = "-backend-config=\"key=managed_instance_project_azure_web_app_cac\" -backend-config=\"bucket=${var.bucket_name}\" -backend-config=\"region=${var.bucket_region}\""
-        "Octopus.Action.Terraform.AdditionalActionParams"       = "-var=octopus_server=#{Tenant.Octopus.Server} -var=octopus_apikey=#{Tenant.Octopus.ApiKey} -var=octopus_space_id=#{Tenant.Octopus.SpaceId} -var=cac_url=${local.git_url}.git \"-var=existing_project_group=Default Project Group\" \"-var=project_name=#{Project.Name}\""
+        "Octopus.Action.Terraform.AdditionalActionParams"       = "-var=octopus_server=#{Tenant.Octopus.Server} -var=octopus_apikey=#{Tenant.Octopus.ApiKey} -var=octopus_space_id=#{Tenant.Octopus.SpaceId} -var=cac_url=${local.git_url} \"-var=existing_project_group=Default Project Group\" \"-var=project_name=#{Project.Name}\""
         "Octopus.Action.Terraform.Workspace"                    = local.workspace
       }
       environments          = []
