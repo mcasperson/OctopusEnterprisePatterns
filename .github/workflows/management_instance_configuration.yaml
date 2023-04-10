@@ -298,7 +298,7 @@ jobs:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_KEY }}
 
-      - name: Apply the azure web app merge project module
+      - name: Apply the azure web app test merge project module
         run: |
           terraform init \
           -backend-config="key=unmanaged_azure_web_app_test_merge_project" \

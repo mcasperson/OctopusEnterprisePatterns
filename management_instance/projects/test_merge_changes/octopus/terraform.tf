@@ -28,8 +28,8 @@ data "octopusdeploy_feeds" "built_in_feed" {
 
 data "octopusdeploy_library_variable_sets" "config_as_code" {
   partial_name = "Config As Code"
-  skip = 0
-  take = 1
+  skip         = 0
+  take         = 1
 }
 
 data "octopusdeploy_feeds" "docker" {
@@ -52,6 +52,12 @@ data "octopusdeploy_project_groups" "project_group" {
   take         = 1
 }
 
+data "octopusdeploy_accounts" "aws" {
+  partial_name = "AWS Account"
+  skip         = 0
+  take         = 1
+}
+
 resource "octopusdeploy_project" "project" {
   name                                 = "Azure Web App (Test Merge Changes)"
   auto_create_release                  = false
@@ -66,7 +72,7 @@ resource "octopusdeploy_project" "project" {
   included_library_variable_sets       = [
     data.octopusdeploy_library_variable_sets.config_as_code.library_variable_sets[0].id
   ]
-  tenanted_deployment_participation    = "Untenanted"
+  tenanted_deployment_participation = "Untenanted"
 
   connectivity_policy {
     allow_deployments_to_no_targets = true
@@ -75,18 +81,36 @@ resource "octopusdeploy_project" "project" {
   }
 }
 
+resource "octopusdeploy_variable" "aws" {
+  owner_id     = "${octopusdeploy_project.project.id}"
+  value        = data.octopusdeploy_accounts.aws.accounts[0].id
+  name         = "AWS"
+  type         = "AmazonWebServicesAccount"
+  is_sensitive = false
+
+  scope {
+    actions      = []
+    channels     = []
+    environments = []
+    machines     = []
+    roles        = null
+    tenant_tags  = null
+  }
+  depends_on = []
+}
+
 resource "octopusdeploy_deployment_process" "deployment_process" {
   project_id = "${octopusdeploy_project.project.id}"
 
   step {
     condition           = "Success"
-    name                = "Merge Deployment Process"
+    name                = "Test Merge Deployment Process"
     package_requirement = "LetOctopusDecide"
     start_trigger       = "StartAfterPrevious"
 
     action {
-      action_type                        = "Octopus.Script"
-      name                               = "Merge Deployment Process"
+      action_type                        = "Octopus.AwsRunScript"
+      name                               = "Test Merge Deployment Process"
       condition                          = "Success"
       run_on_server                      = true
       is_disabled                        = false
@@ -94,9 +118,14 @@ resource "octopusdeploy_deployment_process" "deployment_process" {
       is_required                        = false
       worker_pool_id                     = "${data.octopusdeploy_worker_pools.workerpool_hosted_ubuntu.worker_pools[0].id}"
       properties                         = {
-        "Octopus.Action.Script.ScriptSource" = "Inline"
-        "Octopus.Action.Script.Syntax" = "Bash"
-        "Octopus.Action.Script.ScriptBody" = <<EOT
+        "Octopus.Action.Aws.Region"                 = "ap-southeast-2"
+        "Octopus.Action.AwsAccount.UseInstanceRole" = "False"
+        "Octopus.Action.AwsAccount.Variable"        = "AWS"
+        "Octopus.Action.Aws.AssumeRole"             = "False"
+        "OctopusUseBundledTooling"                  = "False"
+        "Octopus.Action.Script.ScriptSource"        = "Inline"
+        "Octopus.Action.Script.Syntax"              = "Bash"
+        "Octopus.Action.Script.ScriptBody"          = <<EOT
         TEMPLATE_REPO=https://github.com/mcasperson/OctopusEnterprisePatternsAzureWebAppCaCTemplate.git
         BRANCH=octopus-vcs-conversion
 
@@ -165,7 +194,7 @@ resource "octopusdeploy_deployment_process" "deployment_process" {
             fi
         done
         EOT
-        "OctopusUseBundledTooling" = "False"
+        "OctopusUseBundledTooling"                  = "False"
       }
 
       container {
@@ -185,7 +214,7 @@ resource "octopusdeploy_deployment_process" "deployment_process" {
         feed_id                   = "${data.octopusdeploy_feeds.built_in_feed.feeds[0].id}"
         properties                = { Extract = "True", Purpose = "", SelectionMode = "immediate" }
       }
-      features              = []
+      features = []
     }
 
     properties   = {}
