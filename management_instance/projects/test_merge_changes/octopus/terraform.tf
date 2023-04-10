@@ -211,7 +211,7 @@ resource "octopusdeploy_deployment_process" "deployment_process" {
               write_warning "\"$${PROJECT_NAME}\" in \"$${SPACE}\" can be merged with the changes int the upstream template."
             fi
         done
-        exit $EXIT_CODE
+        exit $${EXIT_CODE}
         EOT
         "OctopusUseBundledTooling"                  = "False"
       }
