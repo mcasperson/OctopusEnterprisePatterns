@@ -175,8 +175,8 @@ resource "octopusdeploy_deployment_process" "deployment_process" {
                 continue
             fi
 
-            mkdir $i
-            pushd $i
+            mkdir $${i}
+            pushd $${i}
 
             git clone $URL ./ 2>&1
             git remote add upstream $${TEMPLATE_REPO} 2>&1
