@@ -165,7 +165,7 @@ resource "octopusdeploy_deployment_process" "deployment_process" {
       is_required                        = false
       worker_pool_id                     = data.octopusdeploy_worker_pools.workerpool_hosted_ubuntu.worker_pools[0].id
       properties                         = {
-        "Octopus.Action.Script.ScriptBody"   = templatefile("forkrepo.sh", {
+        "Octopus.Action.Script.ScriptBody"   = templatefile("${path.module}/forkrepo.sh", {
           cac_url = local.cac_url,
           cac_org = local.cac_org,
           cac_password = local.cac_password,
