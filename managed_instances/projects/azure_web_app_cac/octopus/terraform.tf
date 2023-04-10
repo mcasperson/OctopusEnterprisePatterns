@@ -8,6 +8,14 @@ output cac_url {
   value = var.cac_url
 }
 
+output project_name {
+  value = var.project_name
+}
+
+output space_name {
+  value = data.octopusdeploy_spaces.space.spaces[0].name
+}
+
 variable "existing_project_group" {
   type        = string
   nullable    = false
@@ -36,6 +44,12 @@ variable "octopus_space_id" {
   nullable    = false
   sensitive   = false
   description = "The ID of the Octopus space to populate."
+}
+
+data "octopusdeploy_spaces" "space" {
+  ids          = [var.octopus_space_id]
+  skip         = 0
+  take         = 1
 }
 
 data "octopusdeploy_lifecycles" "lifecycle_default_lifecycle" {
