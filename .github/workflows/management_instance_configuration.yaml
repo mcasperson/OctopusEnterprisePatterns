@@ -298,6 +298,19 @@ jobs:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_KEY }}
 
+      - name: Apply the azure web app merge project module
+        run: |
+          terraform init \
+          -backend-config="key=unmanaged_azure_web_app_test_merge_project" \
+          -backend-config="bucket=${{ secrets.BUCKET_NAME }}" \
+          -backend-config="region=${{ secrets.BUCKET_REGION }}"
+          
+          terraform apply -auto-approve -input=false
+        working-directory: management_instance/projects/test_merge_changes/s3backend
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_KEY }}
+
 
       # Tenants
       - name: Apply the Europe tenants module
