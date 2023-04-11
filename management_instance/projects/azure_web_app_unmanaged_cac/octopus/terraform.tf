@@ -146,7 +146,7 @@ resource "octopusdeploy_variable" "project_name_variable" {
 }
 
 resource "octopusdeploy_deployment_process" "deployment_process" {
-  project_id = "${octopusdeploy_project.project.id}"
+  project_id = octopusdeploy_project.project.id
 
   step {
     condition           = "Success"

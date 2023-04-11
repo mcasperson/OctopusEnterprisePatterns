@@ -61,7 +61,7 @@ resource "octopusdeploy_project" "project" {
   discrete_channel_release             = false
   is_disabled                          = false
   is_version_controlled                = false
-  lifecycle_id                         = "${data.octopusdeploy_lifecycles.lifecycle.lifecycles[0].id}"
+  lifecycle_id                         = data.octopusdeploy_lifecycles.lifecycle.lifecycles[0].id
   project_group_id                     = data.octopusdeploy_project_groups.project_group.project_groups[0].id
   included_library_variable_sets       = [
     data.octopusdeploy_library_variable_sets.config_as_code.library_variable_sets[0].id
@@ -88,7 +88,7 @@ resource "octopusdeploy_variable" "project_name_variable" {
 }
 
 resource "octopusdeploy_deployment_process" "deployment_process" {
-  project_id = "${octopusdeploy_project.project.id}"
+  project_id = octopusdeploy_project.project.id
 
   step {
     condition           = "Success"
@@ -104,66 +104,66 @@ resource "octopusdeploy_deployment_process" "deployment_process" {
       is_disabled                        = false
       can_be_used_for_project_versioning = true
       is_required                        = false
-      worker_pool_id                     = "${data.octopusdeploy_worker_pools.workerpool_hosted_ubuntu.worker_pools[0].id}"
+      worker_pool_id                     = data.octopusdeploy_worker_pools.workerpool_hosted_ubuntu.worker_pools[0].id
       properties                         = {
         "Octopus.Action.Script.ScriptSource" = "Inline"
         "Octopus.Action.Script.Syntax" = "Bash"
         "Octopus.Action.Script.ScriptBody" = <<EOT
-        NEW_REPO="#{Octopus.Deployment.Tenant.Name | ToLower}-#{Project.Name | ToLower | Replace "[^a-zA-Z0-9]" "-"}"
-        TEMPLATE_REPO=https://github.com/mcasperson/OctopusEnterprisePatternsAzureWebAppCaCTemplate.git
-        PROJECT_DIR=.octopus/azure-web-app
-        BRANCH=octopus-vcs-conversion
+NEW_REPO="#{Octopus.Deployment.Tenant.Name | ToLower}-#{Project.Name | ToLower | Replace "[^a-zA-Z0-9]" "-"}"
+TEMPLATE_REPO=https://github.com/mcasperson/OctopusEnterprisePatternsAzureWebAppCaCTemplate.git
+PROJECT_DIR=.octopus/azure-web-app
+BRANCH=octopus-vcs-conversion
 
-        cd gh/gh_2.25.1_linux_amd64/bin
+cd gh/gh_2.25.1_linux_amd64/bin
 
-        # Fix executable flag
-        chmod +x gh
+# Fix executable flag
+chmod +x gh
 
-        # Log into GitHub
-        cat <<< #{Tenant.CaC.Password} | ./gh auth login --with-token
+# Log into GitHub
+cat <<< #{Tenant.CaC.Password} | ./gh auth login --with-token
 
-        # Use the github cli as the credential helper
-        ./gh auth setup-git
+# Use the github cli as the credential helper
+./gh auth setup-git
 
-        # Replace these with some sensible values
-        git config --global user.email "octopus@octopus.com" 2>&1
-        git config --global user.name "Octopus Server" 2>&1
+# Replace these with some sensible values
+git config --global user.email "octopus@octopus.com" 2>&1
+git config --global user.name "Octopus Server" 2>&1
 
-        # Clone the template repo to test for a step template reference
-        mkdir template
-        pushd template
-        git clone $${TEMPLATE_REPO} ./
-        git checkout -b $BRANCH origin/$${BRANCH} 2>&1
-        grep -Fxq "ActionTemplates" "$${PROJECT_DIR}/deployment_process.ocl"
-        if [[ $? != "0" ]]; then
-          >&2 echo "Template repo references a step template. Step templates can not be merged across spaces or instances."
-          exit 1
-        fi
-        popd
+# Clone the template repo to test for a step template reference
+mkdir template
+pushd template
+git clone $${TEMPLATE_REPO} ./
+git checkout -b $BRANCH origin/$${BRANCH} 2>&1
+grep -Fxq "ActionTemplates" "$${PROJECT_DIR}/deployment_process.ocl"
+if [[ $? != "0" ]]; then
+  >&2 echo "Template repo references a step template. Step templates can not be merged across spaces or instances."
+  exit 1
+fi
+popd
 
-        # Merge the template changes
-        git clone #{Tenant.CaC.Url}/#{Tenant.CaC.Org}/$${NEW_REPO}.git 2>&1
-        cd $${NEW_REPO}
-        git remote add upstream $${TEMPLATE_REPO} 2>&1
-        git fetch --all 2>&1
-        git checkout -b upstream-$${BRANCH} upstream/$${BRANCH} 2>&1
-        git checkout -b $${BRANCH} origin/$${BRANCH} 2>&1
-        git merge --no-commit upstream-$${BRANCH} 2>&1
+# Merge the template changes
+git clone #{Tenant.CaC.Url}/#{Tenant.CaC.Org}/$${NEW_REPO}.git 2>&1
+cd $${NEW_REPO}
+git remote add upstream $${TEMPLATE_REPO} 2>&1
+git fetch --all 2>&1
+git checkout -b upstream-$${BRANCH} upstream/$${BRANCH} 2>&1
+git checkout -b $${BRANCH} origin/$${BRANCH} 2>&1
+git merge --no-commit upstream-$${BRANCH} 2>&1
 
-        if [[ $? == "0" ]]; then
-            git merge upstream-$${BRANCH} 2>&1
+if [[ $? == "0" ]]; then
+    git merge upstream-$${BRANCH} 2>&1
 
-            # Test that a merge is being performed
-            git merge HEAD &> /dev/null
-            if [[ $? -ne 0 ]]; then
-              GIT_EDITOR=/bin/true git merge --continue 2>&1
-              git push origin 2>&1
-            fi
-        else
-            >&2 echo "Template repo branch could not be automatically merged into project branch. This merge will need to be resolved manually."
-            exit 1
-        fi
-        EOT
+    # Test that a merge is being performed
+    git merge HEAD &> /dev/null
+    if [[ $? -ne 0 ]]; then
+      GIT_EDITOR=/bin/true git merge --continue 2>&1
+      git push origin 2>&1
+    fi
+else
+    >&2 echo "Template repo branch could not be automatically merged into project branch. This merge will need to be resolved manually."
+    exit 1
+fi
+EOT
         "OctopusUseBundledTooling" = "False"
       }
 
@@ -181,7 +181,7 @@ resource "octopusdeploy_deployment_process" "deployment_process" {
         package_id                = "gh"
         acquisition_location      = "Server"
         extract_during_deployment = false
-        feed_id                   = "${data.octopusdeploy_feeds.built_in_feed.feeds[0].id}"
+        feed_id                   = data.octopusdeploy_feeds.built_in_feed.feeds[0].id
         properties                = { Extract = "True", Purpose = "", SelectionMode = "immediate" }
       }
       features              = []
