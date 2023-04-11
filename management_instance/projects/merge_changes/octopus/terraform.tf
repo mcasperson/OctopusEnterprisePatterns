@@ -135,7 +135,7 @@ pushd template
 git clone $${TEMPLATE_REPO} ./
 git checkout -b $BRANCH origin/$${BRANCH} 2>&1
 grep -Fxq "ActionTemplates" "$${PROJECT_DIR}/deployment_process.ocl"
-if [[ $? != "0" ]]; then
+if [[ $? == "0" ]]; then
   >&2 echo "Template repo references a step template. Step templates can not be merged across spaces or instances."
   exit 1
 fi

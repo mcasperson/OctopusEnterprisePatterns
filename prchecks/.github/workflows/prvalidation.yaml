@@ -1,0 +1,17 @@
+name: OCL PR Validation
+on:
+  pull_request:
+    types: [opened, reopened]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: '0'
+      - name: Get Dependencies
+        run: npm install
+        shell: bash
+      - name: Validate OCL
+        run: nodejs index.js .octopus/azure-web-app
+        shell: bash
