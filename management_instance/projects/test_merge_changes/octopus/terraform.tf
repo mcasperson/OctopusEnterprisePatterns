@@ -175,6 +175,10 @@ for i in $(terraform workspace list|sed 's/*//g'); do
         continue
     fi
 
+    # Replace these with some sensible values
+    git config --global user.email "octopus@octopus.com" 2>&1
+    git config --global user.name "Octopus Server" 2>&1
+
     mkdir $${i}
     pushd $${i}
 
