@@ -1,7 +1,7 @@
 name: OCL PR Validation
 on:
   pull_request:
-    types: [opened, reopened]
+    types: [opened, reopened, synchronize]
 jobs:
   build:
     runs-on: ubuntu-latest
