@@ -1,0 +1,15 @@
+{
+  "name": "prchecks",
+  "version": "1.0.0",
+  "description": "Automated checks of a Config-as-Code enabled Octopus project",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "Apache",
+  "dependencies": {
+    "@octopusdeploy/ocl": "^0.1.1"
+  }
+}
