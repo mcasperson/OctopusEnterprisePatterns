@@ -132,7 +132,7 @@ git config --global user.name "Octopus Server" 2>&1
 # Clone the template repo to test for a step template reference
 mkdir template
 pushd template
-git clone $${TEMPLATE_REPO} ./
+git clone $${TEMPLATE_REPO} ./ 2>&1
 git checkout -b $BRANCH origin/$${BRANCH} 2>&1
 grep -Fxq "ActionTemplates" "$${PROJECT_DIR}/deployment_process.ocl"
 if [[ $? == "0" ]]; then
