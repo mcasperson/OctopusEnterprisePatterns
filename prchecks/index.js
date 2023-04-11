@@ -81,3 +81,55 @@ fs.readFile(path.join(process.argv[2], 'deployment_process.ocl'), 'utf8', (err, 
     console.log("All tests passed!")
     process.exit(0)
 })
+
+function blockEquals(a, b) {
+    if (a.type !== NodeType.BLOCK_NODE || b.type !== NodeType.BLOCK_NODE) {
+        return false
+    }
+
+    if (a.name.type !== b.name.type) {
+        return false
+    }
+
+    if (a.name.value !== b.name.value) {
+        return false
+    }
+
+    if (a.children.length !== b.children.length) {
+        return false
+    }
+
+    for (let i = 0; i < a.children.length; ++i) {
+        if (a.children[i].type === NodeType.BLOCK_NODE) {
+            if (!blockEquals(a.children[i], b.children[i])) {
+                return false
+            }
+        }
+
+        if (a.children[i].type === NodeType.ATTRIBUTE_NODE) {
+            if (!attributeEquals(a.children[i], b.children[i])) {
+                return false
+            }
+        }
+    }
+}
+
+function attributeEquals(a, b) {
+    if (a.type !== NodeType.ATTRIBUTE_NODE || b.type !== NodeType.ATTRIBUTE_NODE) {
+        return false
+    }
+
+    if (a.name.type !== b.name.type) {
+        return false
+    }
+
+    if (a.name.value !== b.name.value) {
+        return false
+    }
+
+    if (a.value.value.value !== b.value.value.value) {
+        return false
+    }
+
+    return true
+}
