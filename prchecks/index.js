@@ -19,7 +19,7 @@ import {Lexer, NodeType, Parser, TokenType} from "@octopusdeploy/ocl"
 import * as fs from "fs";
 import * as path from "path";
 
-const FirstStepName = "\"Manual Intervention Required\""
+const FirstStepName = "\"Manual Intervention\""
 const ManualInterventionType = "\"Octopus.Manual\""
 
 /*
