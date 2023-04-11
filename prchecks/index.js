@@ -2,7 +2,8 @@
 
 /*
     This script provides an example of parsing and validating the Octopus Configuration Language (OCL) file
-    defining the deployment process in a Config-as-Code (CaC) enabled project.
+    defining the deployment process in a Config-as-Code (CaC) enabled project. This allows you to ensure any
+    changes to a deployment process meet your minimum custom requirements.
 
     The workflow this script enables is:
     1. Create a new branch in your CaC enabled project.
